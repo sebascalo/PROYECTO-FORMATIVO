@@ -35,8 +35,8 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 
 export function AppSidebar() {
   return (
-    <Sidebar variant="inset" collapsible="icon" className="relative flex flex-col h-full w-64 border-r bg-blue-700 text-white">
-      <SidebarContent className="bg-blue-700 text-white">
+    <Sidebar variant="inset" collapsible="icon" className="relative flex flex-col h-full w-64 border-r bg-blue2 text-white">
+      <SidebarContent className="bg-blue2 text-white">
         {/* Módulo Bovinos */}
         <Collapsible defaultOpen={false} className="group/collapsible">
           <SidebarMenu>

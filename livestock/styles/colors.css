@@ -1,0 +1,109 @@
+/* ========== DEGRADADOS ========== */
+.bg-gradient-nav {
+  background: linear-gradient(to right, #2B7FFF, #1448E6);
+}
+
+/* ========== COLORES DE FONDO ========== */
+.bg-fond {
+  background-color: #ffffff;
+}
+.bg-fond:hover {
+  background-color: #f0f0f0;
+}
+
+.bg-blue1 {
+  background-color: #2B7FFF;
+}
+.bg-blue1:hover {
+  background-color: #1a6ae6;
+}
+
+.bg-blue2 {
+  background-color: #1448E6;
+}
+.bg-blue2:hover {
+  background-color: #0f3ab8;
+}
+
+.bg-green {
+  background-color: #00A63E;
+}
+.bg-green:hover {
+  background-color: #008a33;
+}
+
+.bg-red {
+  background-color: #FF0000;
+}
+.bg-red:hover {
+  background-color: #cc0000;
+}
+
+/* ========== COLORES DE TEXTO ========== */
+.text-fond {
+  color: #ffffff;
+}
+.text-fond:hover {
+  color: #e0e0e0;
+}
+
+.text-title {
+  color: #000000;
+}
+.text-title:hover {
+  color: #333333;
+}
+
+.text-subtitle {
+  color: #364153;
+}
+.text-subtitle:hover {
+  color: #2a3342;
+}
+
+.text-parrafo {
+  color: #6A7282;
+}
+.text-parrafo:hover {
+  color: #555d6e;
+}
+
+.text-green {
+  color: #00A63E;
+}
+.text-green:hover {
+  color: #008a33;
+}
+
+.text-red {
+  color: #FF0000;
+}
+.text-red:hover {
+  color: #cc0000;
+}
+
+.text-blue1 {
+  color: #2B7FFF;
+}
+.text-blue1:hover {
+  color: #1a6ae6;
+}
+
+.text-blue2 {
+  color: #1448E6;
+}
+.text-blue2:hover {
+  color: #0f3ab8;
+}
+
+/* ========== BORDES ========== */
+.border-border {
+  border-color: #D1D5DC;
+}
+.border-border:hover {
+  border-color: #a0a8b8;
+}
+
+* {
+  transition: all 0.2s ease-in-out;
+}

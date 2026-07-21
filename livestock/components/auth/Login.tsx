@@ -30,10 +30,10 @@ export default function Login({ Textbutton = "", style = "" }: LoginProps) {
             <DialogTrigger asChild>
               <Button className={style}>{Textbutton}</Button>
             </DialogTrigger>
-            <DialogContent className="text-white bg-gradient-to-r from-blue-500 to-blue-700 sm:max-w-sm">
+            <DialogContent className="text-fond bg-gradient-nav hover:none sm:max-w-sm">
               <DialogHeader>
-                <DialogTitle className="font-bold text-center">Ingreso</DialogTitle>
-                <DialogDescription className="text-white">
+                <DialogTitle className="font-bold text-center hover:none">Ingreso</DialogTitle>
+                <DialogDescription className="text-fond hover:none">
                   Ingrese sus credenciales para acceder al sistema.
                 </DialogDescription>
               </DialogHeader>
