@@ -1,4 +1,4 @@
-const pasture = require ('../models/pasturemodel');
+const pasture = require ('../models/pastureModel');
 
 // crear potrero
 const pastureCreate = async (data) => {
@@ -11,7 +11,7 @@ const pastureCreate = async (data) => {
     }
 }
 // obtener todos los potreros
-const getAllPastures = async () => {
+const pasturesGetAll = async () => {
     try {
         const pastures = await pasture.findAll();
         return pastures;
@@ -43,16 +43,20 @@ const pastureDelete = async (id) => {
 // actualizar potrero
 const pastureUpdate = async (id, data) => {
     try {
-        const pastureUpdate = await pasture.update(data, { where: { id } });
-        return pastureUpdate;
-    }catch (error) {
+        const pastureToUpdate = await pasture.findOne({ where: { id } });
+        if (!pastureToUpdate) {
+            return null;
+        }
+        await pastureToUpdate.update(data);
+        return pastureToUpdate;
+    } catch (error) {
         console.log(error);
         throw error;
     }
-}
+};
 module.exports = {
     pastureCreate,
-    getAllPastures,
+    pasturesGetAll,
     getPastureById,
     pastureDelete,
     pastureUpdate

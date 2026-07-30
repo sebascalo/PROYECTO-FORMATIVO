@@ -1,12 +1,22 @@
-const { pastureCreate, pastureUpdate, pastureDelete, getPastureById } = require("../services/pastureService");
+const { pastureCreate, pastureUpdate, pastureDelete, getPastureById, pasturesGetAll } = require("../services/pastureService");
 const Response = require("../functions/response");
 
-const getAllPastures = (req, res) => {
-    const body = req.body
-    console.log("Body recibido:", body);
-    res.status(201);
-    res.json({ message: 'Obteniendo todos los potreros' });
-}
+// Obtener todos los registros de potreros
+const getAllPastures = async (req, res) => {
+    try {
+        const pastures = await pasturesGetAll();
+        const response = new Response("Registros de potreros obtenidos exitosamente", pastures, null);
+        res.status(200);
+        res.json(response.json);
+    } catch (error) {
+        console.error("Error en getAllPastures:", error);
+        const errorResponse = new Response("Error interno del servidor", null, [
+            { message: error.message || "Ocurrió un error inesperado" }
+        ]);
+        res.status(500);
+        res.json(errorResponse.json);
+    }
+};
 
 const getAllPasturesById = async (req, res) => {
     try {
@@ -16,19 +26,18 @@ const getAllPasturesById = async (req, res) => {
             errors.push("El ID del potrero es obligatorio");
         }
         if (errors.length > 0) {
-            var response = new Response(false, "error al obtener el potrero", errors)
-            res.status(400)
+            var response = new Response("Error al obtener el potrero", null, errors);
+            res.status(400);
             res.json(response.json);
             return;
         }
-        data = { id }
-        const pasture = await getPastureById(data)
-        var response = new Response(true, "Potrero obtenido exitosamente", pasture);
+        const pasture = await getPastureById(id)
+        var response = new Response(`Potrero ${id} obtenido exitosamente`, pasture, null);
         res.status(201);
         res.json(response.json);
     } catch (error) {
         console.error("Error en getAllPasturesById:", error);
-        const errorResponse = new Response(false, "Error interno del servidor", [
+        const errorResponse = new Response("Error interno del servidor", null, [
             { message: error.message || "Ocurrió un error inesperado" }
         ]);
         res.status(500);
@@ -70,19 +79,19 @@ const createPasture = async (req, res) => {
             errors.push("Los días de ocupación son obligatorios y deben ser un número");
         }
         if (errors.length > 0) {
-            var response = new Response(false, "error al crear el potrero", errors)
+            var response = new Response("Error al crear el potrero", null, errors)
             res.status(400)
             res.json(response.json);
             return;
         }
         data = { name, extension, maxCapacity, pastureType, currentStatus, restDays, occupationDays }
         const pasture = await pastureCreate(data)
-        var response = new Response(true, "Potrero creado exitosamente", pasture);
+        var response = new Response("Potrero creado exitosamente", pasture, null);
         res.status(201);
         res.json(response.json);
     } catch (error) {
         console.error("Error en createPasture:", error);
-        const errorResponse = new Response(false, "Error interno del servidor", [
+        const errorResponse = new Response("Error interno del servidor", null, [
             { message: error.message || "Ocurrió un error inesperado" }
         ]);
         res.status(500);
@@ -121,19 +130,19 @@ const updatePasture = async (req, res) => {
             errors.push("Los días de ocupación son obligatorios y deben ser un número");
         }
         if (errors.length > 0) {
-            var response = new Response(false, "error al actualizar el potrero", errors)
+            var response = new Response("Error al actualizar el potrero", null, errors)
             res.status(400)
             res.json(response.json);
             return;
         }
-        data = { id, name, extension, maxCapacity, pastureType, currentStatus, restDays, occupationDays }
-        const pasture = await pastureUpdate(data)
-        var response = new Response(true, "Potrero actualizado exitosamente", pasture);
-        res.status(201);
+        data = { name, extension, maxCapacity, pastureType, currentStatus, restDays, occupationDays }
+        const pasture = await pastureUpdate(id, data)
+        var response = new Response(`Potrero ${id} actualizado exitosamente`, pasture, null);
+        res.status(200);
         res.json(response.json);
     } catch (error) {
         console.error("Error en updatePasture:", error);
-        const errorResponse = new Response(false, "Error interno del servidor", [
+        const errorResponse = new Response("Error interno del servidor", null, [
             { message: error.message || "Ocurrió un error inesperado" }
         ]);
         res.status(500);
@@ -149,19 +158,19 @@ const deletePasture = async (req, res) => {
             errors.push("El ID del potrero es obligatorio");
         }
         if (errors.length > 0) {
-            var response = new Response(false, "error al eliminar el potrero", errors)
+            var response = new Response("Error al eliminar el potrero", null, errors)
             res.status(400)
             res.json(response.json);
             return;
         }
         data = { id }
-        const pasture = await pastureDelete(data)
-        var response = new Response(true, "Potrero eliminado exitosamente", pasture);
+        const pasture = await pastureDelete(id)
+        var response = new Response(`Potrero ${id} eliminado exitosamente`, { id }, null);
         res.status(201);
         res.json(response.json);
     } catch (error) {
         console.error("Error en deletePasture:", error);
-        const errorResponse = new Response(false, "Error interno del servidor", [
+        const errorResponse = new Response("Error interno del servidor", null, [
             { message: error.message || "Ocurrió un error inesperado" }
         ]);
         res.status(500);

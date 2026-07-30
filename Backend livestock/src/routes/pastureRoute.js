@@ -4,7 +4,7 @@ const {getAllPastures, getAllPasturesById, createPasture, updatePasture, deleteP
 
 /**
  * @swagger
- * /api/pastureAll:
+ * /api/PastureAll:
  *   get:
  *     summary: Obtener todos los potreros
  *     description: Retorna una lista de todos los potreros registrados en el sistema.
@@ -14,11 +14,11 @@ const {getAllPastures, getAllPasturesById, createPasture, updatePasture, deleteP
  */
 
 //Rutas para potreros
-router.get("/pastureAll", getAllPastures); 
+router.get("/PastureAll", getAllPastures); 
 
 /**
  * @swagger
- * /api/pasture/{id}:
+ * /api/PastureById/{id}:
  *   get:
  *     summary: Obtener potrero por ID
  *     description: Retorna un potrero según el ID enviado.
@@ -35,11 +35,11 @@ router.get("/pastureAll", getAllPastures);
  */
 
 //Rutas para potreros con id
-router.get("/pasture/:id", getAllPasturesById);
+router.get("/PastureById/:id", getAllPasturesById);
 
 /**
  * @swagger
- * /api/pasture:
+ * /api/CreatePasture:
  *   post:
  *     summary: Crear potrero
  *     description: Crea un nuevo potrero en el sistema.
@@ -49,11 +49,11 @@ router.get("/pasture/:id", getAllPasturesById);
  */
 
 //Rutas para crear un nuevo potrero
-router.post("/pasture", createPasture);
+router.post("/CreatePasture", createPasture);
 
 /**
  * @swagger
- * /api/pasture/{id}:
+ * /api/UpdatePasture/{id}:
  *   put:
  *     summary: Actualizar potrero
  *     description: Actualiza un potrero según el ID enviado.
@@ -70,11 +70,11 @@ router.post("/pasture", createPasture);
  */
 
 //Rutas para actualizar un potrero existente
-router.put("/pasture/:id", updatePasture);
+router.put("/UpdatePasture/:id", updatePasture);
 
 /**
  * @swagger
- * /api/pasture/{id}:
+ * /api/DeletePasture/{id}:
  *   delete:
  *     summary: Inactivar potrero
  *     description: Inactiva un potrero según el ID enviado.
@@ -90,7 +90,7 @@ router.put("/pasture/:id", updatePasture);
  *         description: Potrero inactivado exitosamente
  */
 
-//Rutas para inactivar un potrero existente
-router.delete("/pasture/:id", deletePasture);
+//Rutas para eliminar un potrero existente
+router.delete("/DeletePasture/:id", deletePasture);
 
 module.exports= router;

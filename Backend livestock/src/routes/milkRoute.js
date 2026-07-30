@@ -4,7 +4,7 @@ const {getAllMilks, getAllMilksById, createMilk, updateMilk, deleteMilk} = requi
 
 /**
  * @swagger
- * /api/milkAll:
+ * /api/MilkAll:
  *   get:
  *     summary: Obtener todas las producciones de leche
  *     description: Retorna una lista de todas las producciones de leche registradas en el sistema.
@@ -14,11 +14,11 @@ const {getAllMilks, getAllMilksById, createMilk, updateMilk, deleteMilk} = requi
  */
 
 //Rutas para produccion de leche
-router.get("/milkAll", getAllMilks);
+router.get("/MilkAll", getAllMilks);
 
 /**
  * @swagger
- * /api/milk/{id}:
+ * /api/MilkById/{id}:
  *   get:
  *     summary: Obtener producción de leche por ID
  *     description: Retorna una producción de leche según el ID enviado.
@@ -35,11 +35,11 @@ router.get("/milkAll", getAllMilks);
  */
 
 //Rutas para produccion de leche con id
-router.get("/milk/:id", getAllMilksById);
+router.get("/MilkById/:id", getAllMilksById);
 
 /**
  * @swagger
- * /api/milk:
+ * /api/CreateMilk:
  *   post:
  *     summary: Crear producción de leche
  *     description: Crea una nueva producción de leche en el sistema.
@@ -49,11 +49,11 @@ router.get("/milk/:id", getAllMilksById);
  */
 
 //Rutas para crear nueva produccion de leche
-router.post("/milk", createMilk);
+router.post("/CreateMilk", createMilk);
 
 /**
  * @swagger
- * /api/milk/{id}:
+ * /api/UpdateMilk/{id}:
  *   put:
  *     summary: Actualizar producción de leche
  *     description: Actualiza una producción de leche según el ID enviado.
@@ -70,11 +70,11 @@ router.post("/milk", createMilk);
  */
 
 //Rutas para actualizar una produccion de leche existente
-router.put("/milk/:id", updateMilk);
+router.put("/UpdateMilk/:id", updateMilk);
 
 /**
  * @swagger
- * /api/milk/{id}:
+ * /api/DeleteMilk/{id}:
  *   delete:
  *     summary: Inactivar producción de leche
  *     description: Inactiva una producción de leche según el ID enviado.
@@ -91,6 +91,6 @@ router.put("/milk/:id", updateMilk);
  */
 
 //Rutas para inactivar una produccion de leche existente
-router.delete("/milk/:id", deleteMilk);
+router.delete("/DeleteMilk/:id", deleteMilk);
 
 module.exports= router;

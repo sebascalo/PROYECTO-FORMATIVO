@@ -1,52 +1,42 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/conectionDB');
+const db = require('../config/conectionDB');
 
-const pasture = sequelize.define('pasture', {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
+const pasture = db.define('pasture', {
     name: {
         type: DataTypes.STRING,
-        allowNull: false,
-        unique: true
+        allowNull: false
     },
     extension: {
-        type: DataTypes.FLOAT,
+        type: DataTypes.DECIMAL(10, 2),
         allowNull: false
     },
-    maxCapacity: {//capacidad_max
-        type: DataTypes.FLOAT,
-        allowNull: false
-    },
-    pastureType: {//tipo_pastura
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    currentStatus: {//estado_actual
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    restDays: {//dias_de_descanso
+    maxCapacity: {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    occupationDays: {//dias_de_ocupacion
+    pastureType: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    currentStatus: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    restDays: {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    active:{
+    occupationDays: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    active: {
         type: DataTypes.BOOLEAN,
-         defaultValue: true     
-    },
-    createdAt:{
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW
-    },
-    updatedAt:{
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW
+        defaultValue: true
     }
+}, {
+    tableName: 'pastures',
+    timestamps: true
 });
+
 module.exports = pasture;

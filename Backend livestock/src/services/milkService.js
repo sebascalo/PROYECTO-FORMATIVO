@@ -11,7 +11,7 @@ const milkCreate = async (data) => {
     }
 }
 // obtener todos los registros de leche
-const getAllMilks = async () => {
+const milksGetAll = async () => {
     try {
         const milks = await milk.findAll();
         return milks;
@@ -42,17 +42,25 @@ const milkDelete = async (id) => {
 }
 // actualizar registro de leche
 const milkUpdate = async (id, data) => {
-    try {   
-        const milkUpdate = await milk.update(data, { where: { id } });
-        return milkUpdate;
-    }catch (error) {
+    try {
+        // 1. Buscar el registro de leche
+        const milkToUpdate = await milk.findOne({ where: { id } });
+        // 2. Si no existe, retornar null
+        if (!milkToUpdate) {
+            return null;
+        }
+        // 3. Actualizar el registro de leche
+        await milkToUpdate.update(data);
+        // 4. Retornar el registro de leche actualizado COMPLETO
+        return milkToUpdate;
+    } catch (error) {
         console.log(error);
         throw error;
     }
 }
 module.exports = {
     milkCreate,
-    getAllMilks,
+    milksGetAll,
     getMilkById,
     milkDelete,
     milkUpdate
