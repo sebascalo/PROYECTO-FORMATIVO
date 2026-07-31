@@ -1,5 +1,8 @@
 const { getUserById, userCreate, userUpdate, userDelete, usersGetAll } = require("../services/userService");
 const Response = require("../functions/response");
+const fs = require("fs");
+const path = require("path");
+const { sendEmail } = require("../services/emailService");
 
 // obtener todos los usuarios
 const getAllUsers = async (req, res) => {
@@ -67,6 +70,44 @@ const createUser = async (req, res) => {
         }
         data = { name, email, password, documentId, postJob };
         const user = await userCreate(data);
+
+        // Leer JSON
+        const emailTemplatePath = path.join(process.cwd(),"public", "confirmEmail.json");
+        const confirmTemplate = fs.readFileSync(emailTemplatePath,"utf-8");
+        const dataTemplate = JSON.parse(confirmTemplate);
+
+        // Leer HTML
+        const htmlPath = path.join(process.cwd(), dataTemplate.html);
+        let htmlModific = fs.readFileSync(htmlPath, "utf-8");
+
+        // Datos dinámicos
+        dataTemplate.params["@nombre"] = name;
+        dataTemplate.params["@fecha"] = new Date().toLocaleDateString("es-CO");
+        dataTemplate.params["@año"] = new Date().getFullYear();
+        dataTemplate.params["link"] = ``;
+
+        // Reemplazar variables
+        for (const key in dataTemplate.params) {
+            htmlModific = htmlModific.replaceAll(
+                key,
+                dataTemplate.params[key]
+            );
+        }
+        
+        // Mostrar el HTML en consola
+        console.log("===== HTML DEL CORREO =====");
+        console.log(htmlModific);
+        console.log("===== FIN HTML =====");
+        console.log("Enviando correo a:", email);
+
+        await sendEmail(
+            email,
+            dataTemplate.subject,
+            "Confirma tu correo electrónico",
+            htmlModific
+        );
+        console.log("Correo enviado correctamente");
+
         var response = new Response("Usuario creado exitosamente", user, null); 
         res.status(201);
         res.json(response.json);

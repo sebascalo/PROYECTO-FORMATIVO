@@ -1,5 +1,6 @@
 const express = require("express");
 
+const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
 
@@ -24,15 +25,17 @@ const milkRoute = require("./routes/milkRoute");
 const authRoute = require("./routes/authRoute");
 
 // Middlewares
+
 const limiter = require("./middlewares/rateLimit");
 const errorHandler = require("./middlewares/errorHandler");
 
 const app = express();
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 // Middlewares globales
 app.use(express.json());
+app.use(cors());
 app.use(helmet());
 app.use(morgan("dev"));
 app.use(limiter);
@@ -48,7 +51,6 @@ app.get("/", (req, res) => {
 });
 
 // Rutas API
-app.use(express.json());
 app.use("/api/users", userRoute);
 app.use("/api/pasture", pastureRoute);
 app.use("/api/reproduction", reproductionRoute);
@@ -308,7 +310,7 @@ const init = async () => {
     //         `,
     // );
 
-    console.log("Correo enviado correctamente.");
+    // console.log("Correo enviado correctamente.");
 
     app.listen(PORT, () => {
       console.log(`Servidor ejecutándose en el puerto ${PORT}`);
