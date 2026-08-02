@@ -108,34 +108,5 @@ const cattle = db.define("cattle",{
     //     allowNull: true 
     // },
     
-    // // gestion del pesaje 
-    // animalidentification: {// identificación del bovino
-    //     type: DataTypes.STRING,
-    //     allowNull: true
-    // },
-    // weighingdate: {// fecha del pesaje del bovino
-    //     type: DataTypes.DATE,
-    //     allowNull: true         
-    // },
-    // currentweight: {// peso actual del bovino
-    //     type: DataTypes.FLOAT,
-    //     allowNull: true
-    // },
-    // profitorloss: {// ganancia o pérdida de peso del bovino desde el último pesaje
-    //     type: DataTypes.FLOAT,
-    //     allowNull: true
-    // },
-    // bodycondition: {// condición corporal del bovino (delgado, normal, gordo)
-    //     type: DataTypes.STRING,
-    //     allowNull: true
-    // },
-    // observations: {// observaciones adicionales sobre el pesaje del bovino
-    //     type: DataTypes.STRING,
-    //     allowNull: true     
-    // },
-    // responsible: {// responsable del registro del pesaje del bovino
-    //     type: DataTypes.STRING,
-    //     allowNull: true 
-    // }
 });
 module.exports = cattle;

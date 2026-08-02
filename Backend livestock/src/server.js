@@ -15,14 +15,24 @@ const { sendEmail } = require("./services/emailService");
 
 // Rutas
 const userRoute = require("./routes/userRoute");
+//sebastian
 const pastureRoute = require("./routes/pastureRoute");
+const milkRoute = require("./routes/milkRoute");
+//stefany
+const cattleRoute = require("./routes/cattleRoute");
+const weighingRoute =require("./routes/weighingRoute");
+//dylan
+const nutritionRoute = require("./routes/nutritionRoute");
+const vacunationRoute = require("./routes/vacunationRoute");
+const treatment = require("./routes/treatmentRoute");
+//yeison
 const responsibleRoute = require("./routes/responsibleRoute");
 const reproductionRoute = require("./routes/reproductionRoute");
-const nutritionRoute = require("./routes/nutritionRoute");
-const healthRoute = require("./routes/healthRoute");
-const cattleRoute = require("./routes/cattleRoute");
-const milkRoute = require("./routes/milkRoute");
+const artificialInseminationRoute = require("./routes/artificialInseminationRoute");
+
 const authRoute = require("./routes/authRoute");
+
+
 
 // Middlewares
 
@@ -51,15 +61,27 @@ app.get("/", (req, res) => {
 });
 
 // Rutas API
-app.use("/api/users", userRoute);
+app.use("/api/user", userRoute);
+//sebastian
 app.use("/api/pasture", pastureRoute);
+app.use("/api/milk", milkRoute);
+//stefany
+app.use("/api/cattle", cattleRoute);
+app.use("/api/weighing", weighingRoute);
+
+
+//dylan
+app.use("/api/nutrition", nutritionRoute);
+app.use("/api/vacunation", vacunationRoute);
+app.use("/api/treatment", treatment);
+
+//yeison
 app.use("/api/reproduction", reproductionRoute);
 app.use("/api/responsible", responsibleRoute);
-app.use("/api/nutrition", nutritionRoute);
-app.use("/api/health", healthRoute);
-app.use("/api/cattle", cattleRoute);
-app.use("/api/milk", milkRoute);
+app.use("/api/artificialInsemination", artificialInseminationRoute);
+
 app.use("/api/auth", authRoute);
+
 
 // Ruta no encontrada
 app.use((req, res, next) => {

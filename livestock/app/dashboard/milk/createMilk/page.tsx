@@ -1,11 +1,11 @@
 import FormCreationMilk from "@/components/milk/formCreationMilk";
 
 function createMilk() {
-  return (
-        <>
+    return (
+        <div>
             <FormCreationMilk />
-        </>
-  );
+        </div>
+    );
 }
 
 export default createMilk;

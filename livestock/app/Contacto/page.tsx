@@ -47,7 +47,7 @@ export default function App() {
           <div className="bg-gray-100 p-6 rounded-2xl shadow text-center">
             <Mail className="mx-auto mb-3 text-purple-500" size={40} />
             <p className="font-semibold text-lg">Correo</p>
-            <p className="text-gray-600 mt-2">livestock@gmail.com</p>
+            <p className="text-gray-600 mt-2">livestocklagranja@gmail.com</p>
           </div>
 
           {/* Ubicación (ocupa toda la fila) */}

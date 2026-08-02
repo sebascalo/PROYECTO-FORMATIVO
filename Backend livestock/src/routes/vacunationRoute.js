@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {getAllHealth, getAllHealthById, createHealth, updateHealth, deleteHealth} = require("../controllers/healthController");
+const {getAllHealth, getAllHealthById, createHealth, updateHealth, deleteHealth} = require("../controllers/vacunationController");
 
 /**
  * @swagger

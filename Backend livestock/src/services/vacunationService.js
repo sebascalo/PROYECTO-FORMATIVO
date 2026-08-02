@@ -1,7 +1,7 @@
-const health = require('../models/healthModel'); 
+const vacunation = require('../models/vacunationhModel'); 
 
 //crear registro de salud
-const createHealth = async (data) => {
+const createVacunation = async (data) => {
     try {
         const newHealth = await health.create(data);
         return newHealth;

@@ -7,7 +7,7 @@ export default function tableUser() {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const response = await fetch('http://localhost:3000/api/users/UserAll');
+                const response = await fetch('http://localhost:3000/api/user/UserAll');
                 let resJson = await response.json();
                 setUsers(resJson.info);
             } catch (error) {
