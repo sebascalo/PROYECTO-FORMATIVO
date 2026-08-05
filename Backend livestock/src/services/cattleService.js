@@ -1,57 +1,68 @@
-const cattle = require('../models/cattle');
+const cattle = require('../models/cattleModel');
 
-// crear registro de bovinos
-const createCattle = async (data) => {
-    try {   
+// Crear bovino
+const cattleCreate = async (data) => {
+    try {
         const newCattle = await cattle.create(data);
         return newCattle;
-    }catch (error) {
+    } catch (error) {
         console.log(error);
-        throw error; 
+        throw error;
     }
 }
 
-// obtener todos los registros de bovinos
-const getAllCattles = async () => {
+// Obtener todos los bovinos
+const cattlesGetAll = async () => {
     try {
         const cattles = await cattle.findAll();
         return cattles;
-    }catch (error) {
+    } catch (error) {
         console.log(error);
-        throw error; 
+        throw error;
     }
 }
-// obtener registro de bovino por id
+
+// Obtener bovino por ID
 const getCattleById = async (id) => {
     try {
         const cattleid = await cattle.findOne({ where: { id } });
         return cattleid;
-    }catch (error) {
+    } catch (error) {
         console.log(error);
+        throw error;
     }
 }
-// eliminar registro de bovinos
-const deleteCattle = async (id) => {
+
+// Eliminar bovino
+const cattleDelete = async (id) => {
     try {
-        const deleteCattle = await cattle.destroy({ where: { id } });
-        return deleteCattle;
-    }catch (error) {
+        const cattleDelete = await cattle.destroy({ where: { id } });
+        return cattleDelete;
+    } catch (error) {
         console.log(error);
+        throw error;
     }
 }
-// actualizar registro de bovinos
-const updateCattle = async (id, data) => {
-    try {   
-        const updateCattle = await cattle.update(data, { where: { id } });
-        return updateCattle;
-    }catch (error) {
+
+// Actualizar bovino
+const cattleUpdate = async (id, data) => {
+    try {
+        const cattleToUpdate = await cattle.findOne({ where: { id } });
+        if (!cattleToUpdate) {
+            return null;
+        }
+        await cattleToUpdate.update(data);
+        return cattleToUpdate;
+    } catch (error) {
         console.log(error);
+        throw error;
     }
-}
+};
+
 module.exports = {
-    createCattle,
-    getAllCattles,
+    cattleCreate,
+    cattlesGetAll,
     getCattleById,
-    deleteCattle,
-    updateCattle
-}
+    cattleDelete,
+    cattleUpdate
+};

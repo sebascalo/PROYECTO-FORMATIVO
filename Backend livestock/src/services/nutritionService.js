@@ -1,64 +1,68 @@
 const nutrition = require('../models/nutritionModel');
 
-//crear registro de nutricion
-const createNutrition = async (data) => {
+// Crear registro de nutrición
+const nutritionCreate = async (data) => {
     try {
         const newNutrition = await nutrition.create(data);
         return newNutrition;
-    }
-    catch (error) {
+    } catch (error) {
         console.log(error);
         throw error;
     }
 }
-//obtener todos los registros de nutricion
-const getAllNutrition = async () => {
+
+// Obtener todos los registros de nutrición
+const nutritionsGetAll = async () => {
     try {
         const nutritions = await nutrition.findAll();
         return nutritions;
-    }
-    catch (error) {
+    } catch (error) {
         console.log(error);
         throw error;
     }
 }
-//obtener registro de nutricion por id
+
+// Obtener registro de nutrición por ID
 const getNutritionById = async (id) => {
     try {
-        const nutritionId = await nutrition.findOne({ where: { id } });
-        return nutritionId;
-    }
-    catch (error) {
+        const nutritionid = await nutrition.findOne({ where: { id } });
+        return nutritionid;
+    } catch (error) {
         console.log(error);
-        
+        throw error;
     }
 }
-//inactivar registro de nutricion
-const deleteNutrition = async (id) => {
+
+// Eliminar registro de nutrición
+const nutritionDelete = async (id) => {
     try {
-        const deleteNutrition = await nutrition.destroy({ where: { id } });
-        return deleteNutrition;
-    }
-    catch (error) {
+        const nutritionDelete = await nutrition.destroy({ where: { id } });
+        return nutritionDelete;
+    } catch (error) {
         console.log(error);
-        
+        throw error;
     }
 }
-//actualizar registro de nutricion
-const updateNutrition = async (id, data) => {
+
+// Actualizar registro de nutrición
+const nutritionUpdate = async (id, data) => {
     try {
-        const updateNutrition = await nutrition.update(data, { where: { id } });
-        return updateNutrition;
-    }
-    catch (error) {
+        const nutritionToUpdate = await nutrition.findOne({ where: { id } });
+        if (!nutritionToUpdate) {
+            return null;
+        }
+        await nutritionToUpdate.update(data);
+        return nutritionToUpdate;
+    } catch (error) {
         console.log(error);
-        
+        throw error;
     }
-}
+};
+
 module.exports = {
-    createNutrition,
-    getAllNutrition,
+    nutritionCreate,
+    nutritionsGetAll,
     getNutritionById,
-    deleteNutrition,
-    updateNutrition
-}
+    nutritionDelete,
+    nutritionUpdate
+};

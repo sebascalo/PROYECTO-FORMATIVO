@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const {getAllResponsibles, getResponsibleById, createResponsible, updateResponsible, deleteResponsible} = require("../controllers/responsibleController");
+const { getAllResponsibles, getAllResponsiblesById, createResponsible, updateResponsible, deleteResponsible } = require("../controllers/responsibleController");
 
 /**
  * @swagger
- * /api/responsible:
+ * /api/ResponsibleAll:
  *   get:
  *     summary: Obtener todos los responsables
  *     description: Retorna una lista de todos los responsables registrados en el sistema.
@@ -14,11 +14,11 @@ const {getAllResponsibles, getResponsibleById, createResponsible, updateResponsi
  */
 
 // Rutas para responsables
-router.get("/responsible", getAllResponsibles);
+router.get("/ResponsibleAll", getAllResponsibles);
 
 /**
  * @swagger
- * /api/responsible/{id}:
+ * /api/ResponsibleById/{id}:
  *   get:
  *     summary: Obtener responsable por ID
  *     description: Retorna un responsable según el ID enviado.
@@ -34,12 +34,12 @@ router.get("/responsible", getAllResponsibles);
  *         description: Responsable encontrado
  */
 
-// Rutas para responsable con id
-router.get("/responsible/:id", getResponsibleById);
+// Rutas para responsables con id
+router.get("/ResponsibleById/:id", getAllResponsiblesById);
 
 /**
  * @swagger
- * /api/responsible:
+ * /api/CreateResponsible:
  *   post:
  *     summary: Crear responsable
  *     description: Crea un nuevo responsable en el sistema.
@@ -49,11 +49,11 @@ router.get("/responsible/:id", getResponsibleById);
  */
 
 // Rutas para crear un nuevo responsable
-router.post("/responsible", createResponsible);
+router.post("/CreateResponsible", createResponsible);
 
 /**
  * @swagger
- * /api/responsible/{id}:
+ * /api/UpdateResponsible/{id}:
  *   put:
  *     summary: Actualizar responsable
  *     description: Actualiza un responsable según el ID enviado.
@@ -70,14 +70,14 @@ router.post("/responsible", createResponsible);
  */
 
 // Rutas para actualizar un responsable existente
-router.put("/responsible/:id", updateResponsible);
+router.put("/UpdateResponsible/:id", updateResponsible);
 
 /**
  * @swagger
- * /api/responsible/{id}:
+ * /api/DeleteResponsible/{id}:
  *   delete:
- *     summary: Inactivar responsable
- *     description: Inactiva un responsable según el ID enviado.
+ *     summary: Eliminar responsable
+ *     description: Elimina un responsable según el ID enviado.
  *     parameters:
  *       - in: path
  *         name: id
@@ -87,10 +87,10 @@ router.put("/responsible/:id", updateResponsible);
  *           type: integer
  *     responses:
  *       200:
- *         description: Responsable inactivado exitosamente
+ *         description: Responsable eliminado exitosamente
  */
 
-// Rutas para inactivar un responsable existente
-router.delete("/responsible/:id", deleteResponsible);
+// Rutas para eliminar un responsable existente
+router.delete("/DeleteResponsible/:id", deleteResponsible);
 
 module.exports = router;

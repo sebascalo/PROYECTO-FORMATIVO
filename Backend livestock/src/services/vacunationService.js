@@ -1,68 +1,68 @@
-const vacunation = require('../models/vacunationhModel'); 
+const vacunation = require('../models/vacunationModel');
 
-//crear registro de salud
-const createVacunation = async (data) => {
+// Crear vacunación
+const vacunationCreate = async (data) => {
     try {
-        const newHealth = await health.create(data);
-        return newHealth;
-    }
-    catch (error) {
+        const newVacunation = await vacunation.create(data);
+        return newVacunation;
+    } catch (error) {
         console.log(error);
-            throw error;
-    }
-}
-
-//obtener todos los registros de salud
-const getAllHealth = async () => {
-    try {
-        const healths = await health.findAll();
-        return healths;
-    }
-    catch (error) {
-        console.log(error);
-         throw error;
+        throw error;
     }
 }
 
-//obtener registro de salud por id
-const getHealthById = async (id) => {
+// Obtener todas las vacunaciones
+const vacunationsGetAll = async () => {
     try {
-        const healthId = await health.findOne({ where: { id } });
-        return healthId;
-    }
-    catch (error) {
+        const vacunations = await vacunation.findAll();
+        return vacunations;
+    } catch (error) {
         console.log(error);
-        
+        throw error;
     }
 }
-//eliminar registro de salud
-const deleteHealth = async (id) => {
+
+// Obtener vacunación por ID
+const getVacunationById = async (id) => {
     try {
-        const deleteHealth = await health.destroy({ where: { id } });
-        return deleteHealth;
-    }
-    catch (error) {
+        const vacunationid = await vacunation.findOne({ where: { id } });
+        return vacunationid;
+    } catch (error) {
         console.log(error);
-        
+        throw error;
     }
 }
-//actualizar registro de salud
-const updateHealth = async (id, data) => {
+
+// Inactivar vacunación
+const vacunationDelete = async (id) => {
     try {
-        const updateHealth = await health.update(data, { where: { id } });
-        return updateHealth;
-    }
-    catch (error) {
+        const vacunationDelete = await vacunation.destroy({ where: { id } });
+        return vacunationDelete;
+    } catch (error) {
         console.log(error);
-    
+        throw error;
     }
 }
+
+// Actualizar vacunación
+const vacunationUpdate = async (id, data) => {
+    try {
+        const vacunationToUpdate = await vacunation.findOne({ where: { id } });
+        if (!vacunationToUpdate) {
+            return null;
+        }
+        await vacunationToUpdate.update(data);
+        return vacunationToUpdate;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};
+
 module.exports = {
-    createHealth,
-    getAllHealth,
-    getHealthById,
-    deleteHealth,
-    updateHealth
-}
-
-
+    vacunationCreate,
+    vacunationsGetAll,
+    getVacunationById,
+    vacunationDelete,
+    vacunationUpdate
+};

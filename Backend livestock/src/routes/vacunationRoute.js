@@ -1,96 +1,95 @@
-const express = require('express');
-const router = express.Router();
-const {getAllHealth, getAllHealthById, createHealth, updateHealth, deleteHealth} = require("../controllers/vacunationController");
+const router = require('express').Router();
+const { getAllVacunations, getAllVacunationsById, createVacunation, updateVacunation, deleteVacunation } = require("../controllers/vacunationController");
 
 /**
  * @swagger
- * /api/healthAll:
+ * /api/VacunationAll:
  *   get:
- *     summary: Obtener todos los registros de salud
- *     description: Retorna una lista de todos los registros de salud registrados en el sistema.
+ *     summary: Obtener todas las vacunaciones
+ *     description: Retorna una lista de todas las vacunaciones registradas en el sistema.
  *     responses:
  *       200:
- *         description: Lista de registros de salud obtenida exitosamente
+ *         description: Lista de vacunaciones obtenida exitosamente
  */
 
-//Consultar todos registros de salud
-router.get('/healthAll', getAllHealth);
+// Rutas para vacunaciones
+router.get("/VacunationAll", getAllVacunations);
 
 /**
  * @swagger
- * /api/health/{id}:
+ * /api/VacunationById/{id}:
  *   get:
- *     summary: Obtener registro de salud por ID
- *     description: Retorna un registro de salud según el ID enviado.
+ *     summary: Obtener vacunación por ID
+ *     description: Retorna una vacunación según el ID enviado.
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID del registro de salud
+ *         description: ID de la vacunación
  *         schema:
  *           type: integer
  *     responses:
  *       200:
- *         description: Registro de salud encontrado
+ *         description: Vacunación encontrada
  */
 
-//consulta individual de salud por id
-router.get('/health/:id', getAllHealthById);
+// Rutas para vacunaciones con id
+router.get("/VacunationById/:id", getAllVacunationsById);
 
 /**
  * @swagger
- * /api/health:
+ * /api/CreateVacunation:
  *   post:
- *     summary: Crear registro de salud
- *     description: Crea un nuevo registro de salud en el sistema.
+ *     summary: Crear vacunación
+ *     description: Crea una nueva vacunación en el sistema.
  *     responses:
  *       200:
- *         description: Registro de salud creado exitosamente
+ *         description: Vacunación creada exitosamente
  */
 
-//Crear registro de salud
-router.post('/health', createHealth);
+// Rutas para crear una nueva vacunación
+router.post("/CreateVacunation", createVacunation);
 
 /**
  * @swagger
- * /api/health/{id}:
+ * /api/UpdateVacunation/{id}:
  *   put:
- *     summary: Actualizar registro de salud
- *     description: Actualiza un registro de salud según el ID enviado.
+ *     summary: Actualizar vacunación
+ *     description: Actualiza una vacunación según el ID enviado.
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID del registro de salud
+ *         description: ID de la vacunación
  *         schema:
  *           type: integer
  *     responses:
  *       200:
- *         description: Registro de salud actualizado exitosamente
+ *         description: Vacunación actualizada exitosamente
  */
 
-//Actualizar registro de salud
-router.put('/health/:id', updateHealth);
+// Rutas para actualizar una vacunación existente
+router.put("/UpdateVacunation/:id", updateVacunation);
 
 /**
  * @swagger
- * /api/health/{id}:
+ * /api/DeleteVacunation/{id}:
  *   delete:
- *     summary: Inactivar registro de salud
- *     description: Inactiva un registro de salud según el ID enviado.
+ *     summary: Inactivar vacunación
+ *     description: Inactiva una vacunación según el ID enviado.
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID del registro de salud
+ *         description: ID de la vacunación
  *         schema:
  *           type: integer
  *     responses:
  *       200:
- *         description: Registro de salud inactivado exitosamente
+ *         description: Vacunación inactivada exitosamente
  */
 
-//Inactivar registro de salud
-router.delete('/health/:id', deleteHealth);
+// Rutas para eliminar una vacunación existente
+router.delete("/DeleteVacunation/:id", deleteVacunation);
 
 module.exports = router;

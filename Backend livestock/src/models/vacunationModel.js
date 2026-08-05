@@ -8,7 +8,7 @@ const vacunation = db.define("vacunation", {
     primaryKey: true,
     autoIncrement: true,
   },
-  animal_identifier: {
+  idBovine: {
     type: DataTypes.STRING, //Bovino vacunado
     allowNull: false,
     unique: true,
@@ -29,7 +29,7 @@ const vacunation = db.define("vacunation", {
     type: DataTypes.STRING, //condición en la que se aplicó la vacuna
     allowNull: false,
   },
-  responsible: {
+  idResponsible: {
     type: DataTypes.STRING, //nombre del responsable de la vacunacion
     allowNull: false,
   },
@@ -37,5 +37,13 @@ const vacunation = db.define("vacunation", {
     type: DataTypes.STRING, //observaciones adicionales sobre la vacunacion
     allowNull: true,
   },
+  createdAt: { // Fecha de creación del registro
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW
+  },
+  updatedAt: { // Fecha de última actualización del registro
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW
+  }
 });
 module.exports = vacunation;

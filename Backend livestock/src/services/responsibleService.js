@@ -1,61 +1,68 @@
-const responsibleModel= require('../models/responsibleModel');
+const responsible = require('../models/responsibleModel');
 
 // Crear responsable
-const createResponsible = async (data) => {
+const responsibleCreate = async (data) => {
     try {
-        const newResponsible = await responsibleModel.create(data);
+        const newResponsible = await responsible.create(data);
         return newResponsible;
     } catch (error) {
-        console.error(error);
-        throw error; 
+        console.log(error);
+        throw error;
     }
-}   
+}
 
 // Obtener todos los responsables
-const getAllResponsibles = async () => {
+const responsiblesGetAll = async () => {
     try {
-        const responsibles = await responsibleModel.findAll();
+        const responsibles = await responsible.findAll();
         return responsibles;
     } catch (error) {
-        console.error(error);
-        throw error; 
+        console.log(error);
+        throw error;
     }
 }
 
-// Obtener responsable por id
-const getResponsibleById = async (id) => { 
+// Obtener responsable por ID
+const getResponsibleById = async (id) => {
     try {
-        const responsible = await responsibleModel.findByPk(id);
-        return responsible;
+        const responsibleid = await responsible.findOne({ where: { id } });
+        return responsibleid;
     } catch (error) {
-        console.error(error);
+        console.log(error);
+        throw error;
     }
 }
 
-// Inactivar responsable
-const deleteResponsible = async (id) => {
+// Eliminar responsable
+const responsibleDelete = async (id) => {
     try {
-        const deletedRows = await responsibleModel.destroy({ where: { id } });
-        return deletedRows;
+        const responsibleDelete = await responsible.destroy({ where: { id } });
+        return responsibleDelete;
     } catch (error) {
-        console.error(error);
+        console.log(error);
+        throw error;
     }
 }
 
 // Actualizar responsable
-const updateResponsible = async (id, data) => {
+const responsibleUpdate = async (id, data) => {
     try {
-        const updatedResponsible = await responsibleModel.update(data, { where: { id } });
-        return updatedResponsible;
+        const responsibleToUpdate = await responsible.findOne({ where: { id } });
+        if (!responsibleToUpdate) {
+            return null;
+        }
+        await responsibleToUpdate.update(data);
+        return responsibleToUpdate;
     } catch (error) {
-        console.error(error);
+        console.log(error);
+        throw error;
     }
-}
+};
 
 module.exports = {
-    createResponsible,
-    getAllResponsibles,
+    responsibleCreate,
+    responsiblesGetAll,
     getResponsibleById,
-    deleteResponsible,
-    updateResponsible,
+    responsibleDelete,
+    responsibleUpdate
 };

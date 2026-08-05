@@ -1,96 +1,96 @@
 const express = require('express');
 const router = express.Router();
-const {getAllNutritions, getNutritionById, createNutrition, updateNutrition, deleteNutrition} = require("../controllers/nutritionController");
+const { getAllNutritions, getAllNutritionsById, createNutrition, updateNutrition, deleteNutrition } = require("../controllers/nutritionController");
 
 /**
  * @swagger
- * /api/nutritionAll:
+ * /api/NutritionAll:
  *   get:
- *     summary: Obtener todas las nutriciones
- *     description: Retorna una lista de todas las nutriciones registradas en el sistema.
+ *     summary: Obtener todos los registros de nutrición
+ *     description: Retorna una lista de todos los registros de nutrición en el sistema.
  *     responses:
  *       200:
- *         description: Lista de nutriciones obtenida exitosamente
+ *         description: Lista de registros de nutrición obtenida exitosamente
  */
 
-//Consultar todos
-router.get('/nutritionAll', getAllNutritions);
+// Rutas para nutrición
+router.get("/NutritionAll", getAllNutritions);
 
 /**
  * @swagger
- * /api/nutrition/{id}:
+ * /api/NutritionById/{id}:
  *   get:
- *     summary: Obtener nutrición por ID
- *     description: Retorna una nutrición según el ID enviado.
+ *     summary: Obtener registro de nutrición por ID
+ *     description: Retorna un registro de nutrición según el ID enviado.
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID de la nutrición
+ *         description: ID del registro de nutrición
  *         schema:
  *           type: integer
  *     responses:
  *       200:
- *         description: Nutrición encontrada
+ *         description: Registro de nutrición encontrado
  */
 
-//consulta individual
-router.get('/nutrition/:id', getNutritionById);
+// Rutas para nutrición con id
+router.get("/NutritionById/:id", getAllNutritionsById);
 
 /**
  * @swagger
- * /api/nutrition:
+ * /api/CreateNutrition:
  *   post:
- *     summary: Crear nutrición
- *     description: Crea una nueva nutrición en el sistema.
+ *     summary: Crear registro de nutrición
+ *     description: Crea un nuevo registro de nutrición en el sistema.
  *     responses:
  *       200:
- *         description: Nutrición creada exitosamente
+ *         description: Registro de nutrición creado exitosamente
  */
 
-//Crear
-router.post('/nutrition', createNutrition);
+// Rutas para crear un nuevo registro de nutrición
+router.post("/CreateNutrition", createNutrition);
 
 /**
  * @swagger
- * /api/nutrition/{id}:
+ * /api/UpdateNutrition/{id}:
  *   put:
- *     summary: Actualizar nutrición
- *     description: Actualiza una nutrición según el ID enviado.
+ *     summary: Actualizar registro de nutrición
+ *     description: Actualiza un registro de nutrición según el ID enviado.
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID de la nutrición
+ *         description: ID del registro de nutrición
  *         schema:
  *           type: integer
  *     responses:
  *       200:
- *         description: Nutrición actualizada exitosamente
+ *         description: Registro de nutrición actualizado exitosamente
  */
 
-//Actualizar
-router.put('/nutrition/:id', updateNutrition);
+// Rutas para actualizar un registro de nutrición existente
+router.put("/UpdateNutrition/:id", updateNutrition);
 
 /**
  * @swagger
- * /api/nutrition/{id}:
+ * /api/DeleteNutrition/{id}:
  *   delete:
- *     summary: Inactivar nutrición
- *     description: Inactiva una nutrición según el ID enviado.
+ *     summary: Eliminar registro de nutrición
+ *     description: Elimina un registro de nutrición según el ID enviado.
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID de la nutrición
+ *         description: ID del registro de nutrición
  *         schema:
  *           type: integer
  *     responses:
  *       200:
- *         description: Nutrición inactivada exitosamente
+ *         description: Registro de nutrición eliminado exitosamente
  */
 
-//Inactivar nutrición
-router.delete('/nutrition/:id', deleteNutrition);
+// Rutas para eliminar un registro de nutrición existente
+router.delete("/DeleteNutrition/:id", deleteNutrition);
 
 module.exports = router;

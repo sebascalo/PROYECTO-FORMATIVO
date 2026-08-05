@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const {getAllCattle, getCattleById, createCattle, updateCattle, deleteCattle} = require("../controllers/cattleController");
+const { getAllCattles, getAllCattlesById, createCattle, updateCattle, deleteCattle } = require("../controllers/cattleController");
 
 /**
  * @swagger
- * /api/cattleAll:
+ * /api/CattleAll:
  *   get:
  *     summary: Obtener todos los bovinos
  *     description: Retorna una lista de todos los bovinos registrados en el sistema.
@@ -13,12 +13,12 @@ const {getAllCattle, getCattleById, createCattle, updateCattle, deleteCattle} = 
  *         description: Lista de bovinos obtenida exitosamente
  */
 
-// Rutas para bovino
-router.get("/cattleAll", getAllCattle); 
+// Rutas para bovinos
+router.get("/CattleAll", getAllCattles);
 
 /**
  * @swagger
- * /api/cattle/{id}:
+ * /api/CattleById/{id}:
  *   get:
  *     summary: Obtener bovino por ID
  *     description: Retorna un bovino según el ID enviado.
@@ -33,13 +33,13 @@ router.get("/cattleAll", getAllCattle);
  *       200:
  *         description: Bovino encontrado
  */
- 
-// Rutas para bovino con id
-router.get("/cattle/:id",  getCattleById);
+
+// Rutas para bovinos con id
+router.get("/CattleById/:id", getAllCattlesById);
 
 /**
  * @swagger
- * /api/cattle:
+ * /api/CreateCattle:
  *   post:
  *     summary: Crear bovino
  *     description: Crea un nuevo bovino en el sistema.
@@ -48,12 +48,12 @@ router.get("/cattle/:id",  getCattleById);
  *         description: Bovino creado exitosamente
  */
 
-// Rutas para crear una nueva reproducción
-router.post("/cattle", createCattle);
+// Rutas para crear un nuevo bovino
+router.post("/CreateCattle", createCattle);
 
 /**
  * @swagger
- * /api/cattle/{id}:
+ * /api/UpdateCattle/{id}:
  *   put:
  *     summary: Actualizar bovino
  *     description: Actualiza un bovino según el ID enviado.
@@ -70,14 +70,14 @@ router.post("/cattle", createCattle);
  */
 
 // Rutas para actualizar un bovino existente
-router.put("/cattle/:id", updateCattle);
+router.put("/UpdateCattle/:id", updateCattle);
 
 /**
  * @swagger
- * /api/cattle/{id}:
+ * /api/DeleteCattle/{id}:
  *   delete:
- *     summary: Inactivar bovino
- *     description: Inactiva un bovino según el ID enviado.
+ *     summary: Eliminar bovino
+ *     description: Elimina un bovino según el ID enviado.
  *     parameters:
  *       - in: path
  *         name: id
@@ -87,10 +87,10 @@ router.put("/cattle/:id", updateCattle);
  *           type: integer
  *     responses:
  *       200:
- *         description: Bovino inactivado exitosamente
+ *         description: Bovino eliminado exitosamente
  */
 
-// Rutas para inactivar un bovino existente
-router.delete("/cattle/:id", deleteCattle);
+// Rutas para eliminar un bovino existente
+router.delete("/DeleteCattle/:id", deleteCattle);
 
 module.exports = router;

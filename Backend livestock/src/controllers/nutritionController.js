@@ -1,168 +1,184 @@
+const { nutritionCreate, nutritionUpdate, nutritionDelete, getNutritionById, nutritionsGetAll } = require("../services/nutritionService");
 const Response = require("../functions/response");
 
-const getAllNutritions = (req, res) => {
-    res.json({ message: 'Obteniendo todos los registros de nutrición' });
+// Obtener todos los registros de nutrición
+const getAllNutritions = async (req, res) => {
+    try {
+        const nutritions = await nutritionsGetAll();
+        const response = new Response("Registros de nutrición obtenidos exitosamente", nutritions, null);
+        res.status(200);
+        res.json(response.json);
+    } catch (error) {
+        console.error("Error en getAllNutritions:", error);
+        const errorResponse = new Response("Error interno del servidor", null, [
+            { message: error.message || "Ocurrió un error inesperado" }
+        ]);
+        res.status(500);
+        res.json(errorResponse.json);
+    }
+};
+
+const getAllNutritionsById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        var errors = [];
+        if (!id) {
+            errors.push("El ID del registro de nutrición es obligatorio");
+        }
+        if (errors.length > 0) {
+            var response = new Response("Error al obtener el registro de nutrición", null, errors);
+            res.status(400);
+            res.json(response.json);
+            return;
+        }
+        const nutrition = await getNutritionById(id)
+        var response = new Response(`Registro de nutrición ${id} obtenido exitosamente`, nutrition, null);
+        res.status(201);
+        res.json(response.json);
+    } catch (error) {
+        console.error("Error en getAllNutritionsById:", error);
+        const errorResponse = new Response("Error interno del servidor", null, [
+            { message: error.message || "Ocurrió un error inesperado" }
+        ]);
+        res.status(500);
+        res.json(errorResponse.json);
+    }
 }
 
-const getNutritionById = (req, res) => {
-    const { id } = req.params;
-    res.json({ message: `Obteniendo la nutrición con ID ${id}` });
+const createNutrition = async (req, res) => {
+    try {
+        const { idBovine, idFood, food_type, quantity, frequency, idResponsible } = req.body;
+        var errors = [];
+        
+        // Validaciones
+        if (!idBovine || idBovine.trim() === "") {
+            errors.push("La identificación del bovino es obligatoria");
+        }
+        if (!idFood || idFood.trim() === "") {
+            errors.push("El código del alimento es obligatorio");
+        }
+        if (!food_type || food_type.trim() === "") {
+            errors.push("El tipo de alimento es obligatorio");
+        }
+        if (!quantity || quantity.trim() === "") {
+            errors.push("La cantidad de alimento es obligatoria");
+        }
+        if (!frequency || frequency.trim() === "") {
+            errors.push("La frecuencia de alimentación es obligatoria");
+        }
+        if (frequency && !["Mañana", "Tarde", "Noche"].includes(frequency)) {
+            errors.push("La frecuencia debe ser: Mañana, Tarde o Noche");
+        }
+        if (!idResponsible || idResponsible.trim() === "") {
+            errors.push("El responsable de la nutrición es obligatorio");
+        }
+
+        if (errors.length > 0) {
+            var response = new Response("Error al crear el registro de nutrición", null, errors)
+            res.status(400)
+            res.json(response.json);
+            return;
+        }
+        
+        data = { idBovine, idFood, food_type, quantity, frequency, idResponsible }
+        const nutrition = await nutritionCreate(data)
+        var response = new Response("Registro de nutrición creado exitosamente", nutrition, null);
+        res.status(201);
+        res.json(response.json);
+    } catch (error) {
+        console.error("Error en createNutrition:", error);
+        const errorResponse = new Response("Error interno del servidor", null, [
+            { message: error.message || "Ocurrió un error inesperado" }
+        ]);
+        res.status(500);
+        res.json(errorResponse.json);
+    }
 }
-const createNutrition = (req, res) => {
-    // Campos típicos de nutrición:
-    // - animalId: ID del animal
-    // - fecha: fecha de alimentación
-    // - tipoAlimento: tipo de alimento (concentrado, forraje, etc.)
-    // - cantidad: cantidad suministrada
-    // - unidad: unidad de medida (kg, lb, etc.)
-    // - observaciones: novedades o incidencias
-    // - operarioId: ID del operario responsable
-    const { 
-        animalId, 
-        fecha, 
-        tipoAlimento, 
-        cantidad, 
-        unidad, 
-        observaciones, 
-        operarioId 
-    } = req.body;
-    const errores = [];
-    // Validaciones
-    if (!animalId || animalId.trim() === "") {
-        errores.push("El ID del animal es obligatorio");
+
+const updateNutrition = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { idBovine, idFood, food_type, quantity, frequency, idResponsible } = req.body;
+        var errors = [];
+        
+        // Validaciones
+        if (!id) {
+            errors.push("El ID del registro de nutrición es obligatorio");
+        }
+        if (!idBovine || idBovine.trim() === "") {
+            errors.push("La identificación del bovino es obligatoria");
+        }
+        if (!idFood || idFood.trim() === "") {
+            errors.push("El código del alimento es obligatorio");
+        }
+        if (!food_type || food_type.trim() === "") {
+            errors.push("El tipo de alimento es obligatorio");
+        }
+        if (!quantity || quantity.trim() === "") {
+            errors.push("La cantidad de alimento es obligatoria");
+        }
+        if (!frequency || frequency.trim() === "") {
+            errors.push("La frecuencia de alimentación es obligatoria");
+        }
+        if (frequency && !["Mañana", "Tarde", "Noche"].includes(frequency)) {
+            errors.push("La frecuencia debe ser: Mañana, Tarde o Noche");
+        }
+        if (!idResponsible || idResponsible.trim() === "") {
+            errors.push("El responsable de la nutrición es obligatorio");
+        }
+
+        if (errors.length > 0) {
+            var response = new Response("Error al actualizar el registro de nutrición", null, errors)
+            res.status(400)
+            res.json(response.json);
+            return;
+        }
+        
+        data = { idBovine, idFood, food_type, quantity, frequency, idResponsible }
+        const nutrition = await nutritionUpdate(id, data)
+        var response = new Response(`Registro de nutrición ${id} actualizado exitosamente`, nutrition, null);
+        res.status(200);
+        res.json(response.json);
+    } catch (error) {
+        console.error("Error en updateNutrition:", error);
+        const errorResponse = new Response("Error interno del servidor", null, [
+            { message: error.message || "Ocurrió un error inesperado" }
+        ]);
+        res.status(500);
+        res.json(errorResponse.json);
     }
-    if (!fecha || fecha.trim() === "") {
-        errores.push("La fecha de alimentación es obligatoria");
-    } else if (isNaN(Date.parse(fecha))) {
-        errores.push("La fecha no es válida");
-    }
-    if (!tipoAlimento || tipoAlimento.trim() === "") {
-        errores.push("El tipo de alimento es obligatorio");
-    }
-    if (!cantidad || cantidad.toString().trim() === "") {
-        errores.push("La cantidad de alimento es obligatoria");
-    } else if (isNaN(cantidad)) {
-        errores.push("La cantidad debe ser un número");
-    }
-    if (!unidad || unidad.trim() === "") {
-        errores.push("La unidad de medida es obligatoria");
-    }
-    if (!operarioId || operarioId.trim() === "") {
-        errores.push("El ID del operario encargado es obligatorio");
-    }
-    if (errores.length > 0) {
-        const response = new Response(
-            "Faltan datos obligatorios para crear el registro de nutrición", 
-            null, 
-            errores
-        );
-        return res.status(400).json(response.failed);
-    }
-    res.json({ 
-        success: true,
-        message: 'Creando una nueva nutrición',
-        data: req.body
-    });
 }
-const updateNutrition = (req, res) => {
-    const { id } = req.params;
-    const { 
-        animalId, 
-        fecha, 
-        tipoAlimento, 
-        cantidad, 
-        unidad, 
-        observaciones, 
-        operarioId 
-    } = req.body;
-    const errores = [];
-    if (!animalId || animalId.trim() === "") {
-        errores.push("El ID del animal es obligatorio");
+
+const deleteNutrition = async (req, res) => {
+    try {
+        const { id } = req.params;
+        var errors = [];
+        if (!id) {
+            errors.push("El ID del registro de nutrición es obligatorio");
+        }
+        if (errors.length > 0) {
+            var response = new Response("Error al eliminar el registro de nutrición", null, errors)
+            res.status(400)
+            res.json(response.json);
+            return;
+        }
+        const nutrition = await nutritionDelete(id)
+        var response = new Response(`Registro de nutrición ${id} eliminado exitosamente`, { id }, null);
+        res.status(201);
+        res.json(response.json);
+    } catch (error) {
+        console.error("Error en deleteNutrition:", error);
+        const errorResponse = new Response("Error interno del servidor", null, [
+            { message: error.message || "Ocurrió un error inesperado" }
+        ]);
+        res.status(500);
+        res.json(errorResponse.json);
     }
-    if (!fecha || fecha.trim() === "") {
-        errores.push("La fecha de alimentación es obligatoria");
-    } else if (isNaN(Date.parse(fecha))) {
-        errores.push("La fecha no es válida");
-    }
-    if (!tipoAlimento || tipoAlimento.trim() === "") {
-        errores.push("El tipo de alimento es obligatorio");
-    }
-    if (!cantidad || cantidad.toString().trim() === "") {
-        errores.push("La cantidad de alimento es obligatoria");
-    } else if (isNaN(cantidad)) {
-        errores.push("La cantidad debe ser un número");
-    }
-    if (!unidad || unidad.trim() === "") {
-        errores.push("La unidad de medida es obligatoria");
-    }
-    if (!operarioId || operarioId.trim() === "") {
-        errores.push("El ID del operario encargado es obligatorio");
-    }
-    if (errores.length > 0) {
-        const response = new Response(
-            "Faltan datos para actualizar el registro de nutrición", 
-            null, 
-            errores
-        );
-        return res.status(400).json(response.failed);
-    }
-    res.json({ 
-        success: true,
-        message: `Actualizando la nutrición con ID ${id}`,
-        data: req.body
-    });
 }
-const deleteNutrition = (req, res) => {
-    const { id } = req.params;
-    const { 
-        animalId, 
-        fecha, 
-        tipoAlimento, 
-        cantidad, 
-        unidad, 
-        observaciones, 
-        operarioId 
-    } = req.body;
-    
-    const errores = [];
-    if (!animalId || animalId.trim() === "") {
-        errores.push("El ID del animal es obligatorio para eliminar");
-    }
-    if (!fecha || fecha.trim() === "") {
-        errores.push("La fecha de alimentación es obligatoria para eliminar");
-    } else if (isNaN(Date.parse(fecha))) {
-        errores.push("La fecha no es válida");
-    }
-    if (!tipoAlimento || tipoAlimento.trim() === "") {
-        errores.push("El tipo de alimento es obligatorio para eliminar");
-    }
-    if (!cantidad || cantidad.toString().trim() === "") {
-        errores.push("La cantidad de alimento es obligatoria para eliminar");
-    } else if (isNaN(cantidad)) {
-        errores.push("La cantidad debe ser un número");
-    }
-    if (!unidad || unidad.trim() === "") {
-        errores.push("La unidad de medida es obligatoria para eliminar");
-    }
-    if (!operarioId || operarioId.trim() === "") {
-        errores.push("El ID del operario encargado es obligatorio para eliminar");
-    }
-    if (errores.length > 0) {
-        const response = new Response(
-            "Faltan datos obligatorios para eliminar el registro de nutrición", 
-            null, 
-            errores
-        );
-        return res.status(400).json(response.failed);
-    }
-    res.json({ 
-        success: true,
-        message: `Eliminando la nutrición con ID ${id}` 
-    });
-}
+
 module.exports = {
     getAllNutritions,
-    getNutritionById,
+    getAllNutritionsById,
     createNutrition,
     updateNutrition,
     deleteNutrition

@@ -1,82 +1,70 @@
-export default function TableNutrition() {
-  return (
-<div className="overflow-x-auto shadow-lg rounded-lg">
+"use client";
+import { useEffect, useState } from "react";
+
+export default function tableNutrition() {
+    const [nutritions, setNutritions] = useState([]);
+
+    useEffect(() => {
+        const fetchNutritions = async () => {
+            try {
+                const response = await fetch('http://localhost:3000/api/nutrition/NutritionAll');
+                let resJson = await response.json();
+                setNutritions(resJson.info);
+            } catch (error) {
+                console.error('Error:', error);
+                setNutritions([]);
+            }
+        }
+        fetchNutritions();
+    }, []);
+
+    return (
+        <div className="overflow-x-auto shadow-lg rounded-lg">
             <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gradient-to-r from-blue-500 to-blue-700">
                     <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                            Identificador del animal
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                            Código del alimento
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                            Tipo de comida
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                            Cantidad de comida (g)
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                            Frecuencia
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                            Responsable
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                            Fecha de alimentación
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                            Hora de alimentación
-                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">ID</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Bovino</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Alimento</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Tipo</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Cantidad</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Frecuencia</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Responsable</th>
                     </tr>
                 </thead>
-
                 <tbody className="bg-white divide-y divide-gray-200">
-                    <tr className="hover:bg-gray-50 transition-colors duration-200">
-                        <td className="px-6 py-4 text-sm text-gray-900">35</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">Alimento 1</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">Comida 1</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">500</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">Diaria</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">Dr. López</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">2023-01-01</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">08:00</td>
-                    </tr>
-
-                    <tr className="hover:bg-gray-50 transition-colors duration-200">
-                        <td className="px-6 py-4 text-sm text-gray-900">36</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">Alimento 2</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">Comida 2</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">300</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">Diaria</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">Dr. García</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">2023-01-01</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">12:00</td>
-                    </tr>
-
-                    <tr className="hover:bg-gray-50 transition-colors duration-200">
-                        <td className="px-6 py-4 text-sm text-gray-900">37</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">Alimento 3</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">Comida 3</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">400</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">Diaria</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">Dr. Martínez</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">2023-01-01</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">18:00</td>
-                    </tr>
-
-                    <tr className="hover:bg-gray-50 transition-colors duration-200">
-                        <td className="px-6 py-4 text-sm text-gray-900">38</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">Alimento 4</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">Comida 4</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">600</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">Diaria</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">Dr. Rodríguez</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">2023-01-01</td>
-                        <td className="px-6 py-4 text-sm text-gray-900">20:00</td>
-                    </tr>
+                    {nutritions.map((nutrition: any) => (
+                        <tr key={nutrition.id}>
+                            <td className="px-6 py-4 whitespace-nowrap">{nutrition.id}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{nutrition.idBovine || '-'}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{nutrition.idFood || '-'}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                    nutrition.food_type === 'Pasto' ? 'bg-green-100 text-green-800' :
+                                    nutrition.food_type === 'Concentrado' ? 'bg-yellow-100 text-yellow-800' :
+                                    nutrition.food_type === 'Silo' ? 'bg-orange-100 text-orange-800' :
+                                    nutrition.food_type === 'Forraje' ? 'bg-blue-100 text-blue-800' :
+                                    'bg-gray-100 text-gray-800'
+                                }`}>
+                                    {nutrition.food_type}
+                                </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">{nutrition.quantity}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                    nutrition.frequency === 'Mañana' ? 'bg-yellow-100 text-yellow-800' :
+                                    nutrition.frequency === 'Tarde' ? 'bg-orange-100 text-orange-800' :
+                                    nutrition.frequency === 'Noche' ? 'bg-indigo-100 text-indigo-800' :
+                                    'bg-gray-100 text-gray-800'
+                                }`}>
+                                    {nutrition.frequency}
+                                </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">{nutrition.idResponsible || '-'}</td>
+                        </tr>
+                    ))}
                 </tbody>
             </table>
         </div>
-  );
+    );
 }

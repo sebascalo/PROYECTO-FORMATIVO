@@ -3,7 +3,7 @@ const router = express.Router();
 
 const verifyToken = require("../middlewares/authMiddleware");
 
-const { login } = require("../controllers/authController");
+const { login, resetPassword, validateResetPassword, newPassword } = require("../controllers/authController");
 
 /**
  * @swagger
@@ -31,5 +31,13 @@ const { login } = require("../controllers/authController");
 
 // Ruta login
 router.post('/login', login);
+
+// Rutas para restablecer contraseña
+// Ruta para solicitar restablecimiento de contraseña
+router.post('/reset-password', resetPassword);
+// Ruta para validar el restablecimiento de contraseña
+router.post('/validate-reset-password', validateResetPassword);
+// Ruta para establecer una nueva contraseña
+router.post('/new-password', newPassword);
 
 module.exports = router;

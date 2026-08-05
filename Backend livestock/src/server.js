@@ -21,13 +21,16 @@ const milkRoute = require("./routes/milkRoute");
 //stefany
 const cattleRoute = require("./routes/cattleRoute");
 const weighingRoute =require("./routes/weighingRoute");
+const mortalityRoute = require("./routes/mortalityRoute");
+const birthRoute = require("./routes/birthRoute");
 //dylan
 const nutritionRoute = require("./routes/nutritionRoute");
+const foodRoute = require("./routes/foodRoute");
 const vacunationRoute = require("./routes/vacunationRoute");
 const treatment = require("./routes/treatmentRoute");
 //yeison
 const responsibleRoute = require("./routes/responsibleRoute");
-const reproductionRoute = require("./routes/reproductionRoute");
+const mountRoute = require("./routes/mountRoute");
 const artificialInseminationRoute = require("./routes/artificialInseminationRoute");
 
 const authRoute = require("./routes/authRoute");
@@ -68,15 +71,15 @@ app.use("/api/milk", milkRoute);
 //stefany
 app.use("/api/cattle", cattleRoute);
 app.use("/api/weighing", weighingRoute);
-
-
+app.use("/api/mortality", mortalityRoute);
+app.use("/api/birth", birthRoute);
 //dylan
 app.use("/api/nutrition", nutritionRoute);
+app.use("/api/food", foodRoute);
 app.use("/api/vacunation", vacunationRoute);
 app.use("/api/treatment", treatment);
-
 //yeison
-app.use("/api/reproduction", reproductionRoute);
+app.use("/api/mount", mountRoute);
 app.use("/api/responsible", responsibleRoute);
 app.use("/api/artificialInsemination", artificialInseminationRoute);
 

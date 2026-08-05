@@ -63,7 +63,7 @@ export default function FormCreationPasture() {
     return (
         <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
             <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b border-gray-200 pb-2">
-                Crear potrero
+                Crear Potrero
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">

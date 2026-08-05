@@ -1,6 +1,7 @@
 const express = require ('express');
 const router = express.Router();
 const {getAllPastures, getAllPasturesById, createPasture, updatePasture, deletePasture} = require("../controllers/pastureController");
+const ValidateToken = require("../middlewares/handlerToken");
 
 /**
  * @swagger
@@ -14,7 +15,7 @@ const {getAllPastures, getAllPasturesById, createPasture, updatePasture, deleteP
  */
 
 //Rutas para potreros
-router.get("/PastureAll", getAllPastures); 
+router.get("/PastureAll", ValidateToken, getAllPastures); 
 
 /**
  * @swagger
@@ -35,7 +36,7 @@ router.get("/PastureAll", getAllPastures);
  */
 
 //Rutas para potreros con id
-router.get("/PastureById/:id", getAllPasturesById);
+router.get("/PastureById/:id", ValidateToken, getAllPasturesById);
 
 /**
  * @swagger
@@ -49,7 +50,7 @@ router.get("/PastureById/:id", getAllPasturesById);
  */
 
 //Rutas para crear un nuevo potrero
-router.post("/CreatePasture", createPasture);
+router.post("/CreatePasture", ValidateToken, createPasture);
 
 /**
  * @swagger
@@ -70,7 +71,7 @@ router.post("/CreatePasture", createPasture);
  */
 
 //Rutas para actualizar un potrero existente
-router.put("/UpdatePasture/:id", updatePasture);
+router.put("/UpdatePasture/:id", ValidateToken, updatePasture);
 
 /**
  * @swagger
@@ -91,6 +92,6 @@ router.put("/UpdatePasture/:id", updatePasture);
  */
 
 //Rutas para eliminar un potrero existente
-router.delete("/DeletePasture/:id", deletePasture);
+router.delete("/DeletePasture/:id", ValidateToken, deletePasture);
 
 module.exports= router;
