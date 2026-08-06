@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const { getAllVacunations, getAllVacunationsById, createVacunation, updateVacunation, deleteVacunation } = require("../controllers/vacunationController");
+const ValidateToken = require("../middlewares/handlerToken");
 
 /**
  * @swagger
@@ -13,7 +14,7 @@ const { getAllVacunations, getAllVacunationsById, createVacunation, updateVacuna
  */
 
 // Rutas para vacunaciones
-router.get("/VacunationAll", getAllVacunations);
+router.get("/VacunationAll", ValidateToken, getAllVacunations);
 
 /**
  * @swagger
@@ -34,7 +35,7 @@ router.get("/VacunationAll", getAllVacunations);
  */
 
 // Rutas para vacunaciones con id
-router.get("/VacunationById/:id", getAllVacunationsById);
+router.get("/VacunationById/:id", ValidateToken, getAllVacunationsById);
 
 /**
  * @swagger
@@ -48,7 +49,7 @@ router.get("/VacunationById/:id", getAllVacunationsById);
  */
 
 // Rutas para crear una nueva vacunación
-router.post("/CreateVacunation", createVacunation);
+router.post("/CreateVacunation", ValidateToken, createVacunation);
 
 /**
  * @swagger
@@ -69,7 +70,7 @@ router.post("/CreateVacunation", createVacunation);
  */
 
 // Rutas para actualizar una vacunación existente
-router.put("/UpdateVacunation/:id", updateVacunation);
+router.put("/UpdateVacunation/:id", ValidateToken, updateVacunation);
 
 /**
  * @swagger
@@ -90,6 +91,6 @@ router.put("/UpdateVacunation/:id", updateVacunation);
  */
 
 // Rutas para eliminar una vacunación existente
-router.delete("/DeleteVacunation/:id", deleteVacunation);
+router.delete("/DeleteVacunation/:id", ValidateToken, deleteVacunation);
 
 module.exports = router;

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { getAllBirths, getAllBirthsById, createBirth, updateBirth, deleteBirth } = require("../controllers/birthController");
+const ValidateToken = require("../middlewares/handlerToken");
 
 /**
  * @swagger
@@ -14,7 +15,7 @@ const { getAllBirths, getAllBirthsById, createBirth, updateBirth, deleteBirth } 
  */
 
 // Rutas para nacimientos
-router.get("/BirthAll", getAllBirths);
+router.get("/BirthAll", ValidateToken, getAllBirths);
 
 /**
  * @swagger
@@ -35,7 +36,7 @@ router.get("/BirthAll", getAllBirths);
  */
 
 // Rutas para nacimientos con id
-router.get("/BirthById/:id", getAllBirthsById);
+router.get("/BirthById/:id", ValidateToken, getAllBirthsById);
 
 /**
  * @swagger
@@ -49,7 +50,7 @@ router.get("/BirthById/:id", getAllBirthsById);
  */
 
 // Rutas para crear un nuevo nacimiento
-router.post("/CreateBirth", createBirth);
+router.post("/CreateBirth", ValidateToken, createBirth);
 
 /**
  * @swagger
@@ -70,7 +71,7 @@ router.post("/CreateBirth", createBirth);
  */
 
 // Rutas para actualizar un nacimiento existente
-router.put("/UpdateBirth/:id", updateBirth);
+router.put("/UpdateBirth/:id", ValidateToken, updateBirth);
 
 /**
  * @swagger
@@ -91,6 +92,6 @@ router.put("/UpdateBirth/:id", updateBirth);
  */
 
 // Rutas para eliminar un nacimiento existente
-router.delete("/DeleteBirth/:id", deleteBirth);
+router.delete("/DeleteBirth/:id", ValidateToken, deleteBirth);
 
 module.exports = router;

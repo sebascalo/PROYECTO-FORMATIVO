@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { getAllTreatments, getAllTreatmentsById, createTreatment, updateTreatment, deleteTreatment } = require("../controllers/treatmentController");
+const ValidateToken = require("../middlewares/handlerToken");
 
 /**
  * @swagger
@@ -14,7 +15,7 @@ const { getAllTreatments, getAllTreatmentsById, createTreatment, updateTreatment
  */
 
 // Rutas para tratamientos
-router.get("/TreatmentAll", getAllTreatments);
+router.get("/TreatmentAll", ValidateToken, getAllTreatments);
 
 /**
  * @swagger
@@ -35,7 +36,7 @@ router.get("/TreatmentAll", getAllTreatments);
  */
 
 // Rutas para tratamientos con id
-router.get("/TreatmentById/:id", getAllTreatmentsById);
+router.get("/TreatmentById/:id", ValidateToken, getAllTreatmentsById);
 
 /**
  * @swagger
@@ -49,7 +50,7 @@ router.get("/TreatmentById/:id", getAllTreatmentsById);
  */
 
 // Rutas para crear un nuevo tratamiento
-router.post("/CreateTreatment", createTreatment);
+router.post("/CreateTreatment", ValidateToken, createTreatment);
 
 /**
  * @swagger
@@ -70,7 +71,7 @@ router.post("/CreateTreatment", createTreatment);
  */
 
 // Rutas para actualizar un tratamiento existente
-router.put("/UpdateTreatment/:id", updateTreatment);
+router.put("/UpdateTreatment/:id", ValidateToken, updateTreatment);
 
 /**
  * @swagger
@@ -91,6 +92,6 @@ router.put("/UpdateTreatment/:id", updateTreatment);
  */
 
 // Rutas para eliminar un tratamiento existente
-router.delete("/DeleteTreatment/:id", deleteTreatment);
+router.delete("/DeleteTreatment/:id", ValidateToken, deleteTreatment);
 
 module.exports = router;

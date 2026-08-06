@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { getAllCattles, getAllCattlesById, createCattle, updateCattle, deleteCattle } = require("../controllers/cattleController");
+const ValidateToken = require("../middlewares/handlerToken");
 
 /**
  * @swagger
@@ -14,7 +15,7 @@ const { getAllCattles, getAllCattlesById, createCattle, updateCattle, deleteCatt
  */
 
 // Rutas para bovinos
-router.get("/CattleAll", getAllCattles);
+router.get("/CattleAll", ValidateToken, getAllCattles);
 
 /**
  * @swagger
@@ -35,7 +36,7 @@ router.get("/CattleAll", getAllCattles);
  */
 
 // Rutas para bovinos con id
-router.get("/CattleById/:id", getAllCattlesById);
+router.get("/CattleById/:id", ValidateToken, getAllCattlesById);
 
 /**
  * @swagger
@@ -49,7 +50,7 @@ router.get("/CattleById/:id", getAllCattlesById);
  */
 
 // Rutas para crear un nuevo bovino
-router.post("/CreateCattle", createCattle);
+router.post("/CreateCattle", ValidateToken, createCattle);
 
 /**
  * @swagger
@@ -70,7 +71,7 @@ router.post("/CreateCattle", createCattle);
  */
 
 // Rutas para actualizar un bovino existente
-router.put("/UpdateCattle/:id", updateCattle);
+router.put("/UpdateCattle/:id", ValidateToken, updateCattle);
 
 /**
  * @swagger
@@ -91,6 +92,6 @@ router.put("/UpdateCattle/:id", updateCattle);
  */
 
 // Rutas para eliminar un bovino existente
-router.delete("/DeleteCattle/:id", deleteCattle);
+router.delete("/DeleteCattle/:id", ValidateToken, deleteCattle);
 
 module.exports = router;

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { getAllNutritions, getAllNutritionsById, createNutrition, updateNutrition, deleteNutrition } = require("../controllers/nutritionController");
+const ValidateToken = require("../middlewares/handlerToken");
 
 /**
  * @swagger
@@ -14,7 +15,7 @@ const { getAllNutritions, getAllNutritionsById, createNutrition, updateNutrition
  */
 
 // Rutas para nutrición
-router.get("/NutritionAll", getAllNutritions);
+router.get("/NutritionAll", ValidateToken, getAllNutritions);
 
 /**
  * @swagger
@@ -35,7 +36,7 @@ router.get("/NutritionAll", getAllNutritions);
  */
 
 // Rutas para nutrición con id
-router.get("/NutritionById/:id", getAllNutritionsById);
+router.get("/NutritionById/:id", ValidateToken, getAllNutritionsById);
 
 /**
  * @swagger
@@ -49,7 +50,7 @@ router.get("/NutritionById/:id", getAllNutritionsById);
  */
 
 // Rutas para crear un nuevo registro de nutrición
-router.post("/CreateNutrition", createNutrition);
+router.post("/CreateNutrition", ValidateToken, createNutrition);
 
 /**
  * @swagger
@@ -70,7 +71,7 @@ router.post("/CreateNutrition", createNutrition);
  */
 
 // Rutas para actualizar un registro de nutrición existente
-router.put("/UpdateNutrition/:id", updateNutrition);
+router.put("/UpdateNutrition/:id", ValidateToken, updateNutrition);
 
 /**
  * @swagger
@@ -91,6 +92,6 @@ router.put("/UpdateNutrition/:id", updateNutrition);
  */
 
 // Rutas para eliminar un registro de nutrición existente
-router.delete("/DeleteNutrition/:id", deleteNutrition);
+router.delete("/DeleteNutrition/:id", ValidateToken, deleteNutrition);
 
 module.exports = router;

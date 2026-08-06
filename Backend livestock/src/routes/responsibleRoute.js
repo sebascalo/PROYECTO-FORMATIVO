@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { getAllResponsibles, getAllResponsiblesById, createResponsible, updateResponsible, deleteResponsible } = require("../controllers/responsibleController");
+const ValidateToken = require("../middlewares/handlerToken");
 
 /**
  * @swagger
@@ -14,7 +15,7 @@ const { getAllResponsibles, getAllResponsiblesById, createResponsible, updateRes
  */
 
 // Rutas para responsables
-router.get("/ResponsibleAll", getAllResponsibles);
+router.get("/ResponsibleAll", ValidateToken, getAllResponsibles);
 
 /**
  * @swagger
@@ -35,7 +36,7 @@ router.get("/ResponsibleAll", getAllResponsibles);
  */
 
 // Rutas para responsables con id
-router.get("/ResponsibleById/:id", getAllResponsiblesById);
+router.get("/ResponsibleById/:id", ValidateToken, getAllResponsiblesById);
 
 /**
  * @swagger
@@ -49,7 +50,7 @@ router.get("/ResponsibleById/:id", getAllResponsiblesById);
  */
 
 // Rutas para crear un nuevo responsable
-router.post("/CreateResponsible", createResponsible);
+router.post("/CreateResponsible", ValidateToken, createResponsible);
 
 /**
  * @swagger
@@ -70,7 +71,7 @@ router.post("/CreateResponsible", createResponsible);
  */
 
 // Rutas para actualizar un responsable existente
-router.put("/UpdateResponsible/:id", updateResponsible);
+router.put("/UpdateResponsible/:id", ValidateToken, updateResponsible);
 
 /**
  * @swagger
@@ -91,6 +92,6 @@ router.put("/UpdateResponsible/:id", updateResponsible);
  */
 
 // Rutas para eliminar un responsable existente
-router.delete("/DeleteResponsible/:id", deleteResponsible);
+router.delete("/DeleteResponsible/:id", ValidateToken, deleteResponsible);
 
 module.exports = router;

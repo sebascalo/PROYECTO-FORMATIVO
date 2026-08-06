@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { getAllWeighings, getAllWeighingsById, createWeighing, updateWeighing, deleteWeighing } = require("../controllers/weighingController");
+const ValidateToken = require("../middlewares/handlerToken");
 
 /**
  * @swagger
@@ -14,7 +15,7 @@ const { getAllWeighings, getAllWeighingsById, createWeighing, updateWeighing, de
  */
 
 // Rutas para pesajes
-router.get("/WeighingAll", getAllWeighings);
+router.get("/WeighingAll", ValidateToken, getAllWeighings);
 
 /**
  * @swagger
@@ -35,7 +36,7 @@ router.get("/WeighingAll", getAllWeighings);
  */
 
 // Rutas para pesajes con id
-router.get("/WeighingById/:id", getAllWeighingsById);
+router.get("/WeighingById/:id", ValidateToken, getAllWeighingsById);
 
 /**
  * @swagger
@@ -49,7 +50,7 @@ router.get("/WeighingById/:id", getAllWeighingsById);
  */
 
 // Rutas para crear un nuevo pesaje
-router.post("/CreateWeighing", createWeighing);
+router.post("/CreateWeighing", ValidateToken, createWeighing);
 
 /**
  * @swagger
@@ -70,7 +71,7 @@ router.post("/CreateWeighing", createWeighing);
  */
 
 // Rutas para actualizar un pesaje existente
-router.put("/UpdateWeighing/:id", updateWeighing);
+router.put("/UpdateWeighing/:id", ValidateToken, updateWeighing);
 
 /**
  * @swagger
@@ -91,6 +92,6 @@ router.put("/UpdateWeighing/:id", updateWeighing);
  */
 
 // Rutas para eliminar un pesaje existente
-router.delete("/DeleteWeighing/:id", deleteWeighing);
+router.delete("/DeleteWeighing/:id", ValidateToken, deleteWeighing);
 
 module.exports = router;

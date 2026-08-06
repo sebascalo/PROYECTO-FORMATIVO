@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { getAllMortalities, getAllMortalitiesById, createMortality, updateMortality, deleteMortality } = require("../controllers/mortalityController");
+const ValidateToken = require("../middlewares/handlerToken");
 
 /**
  * @swagger
@@ -14,7 +15,7 @@ const { getAllMortalities, getAllMortalitiesById, createMortality, updateMortali
  */
 
 // Rutas para mortalidad
-router.get("/MortalityAll", getAllMortalities);
+router.get("/MortalityAll", ValidateToken, getAllMortalities);
 
 /**
  * @swagger
@@ -35,7 +36,7 @@ router.get("/MortalityAll", getAllMortalities);
  */
 
 // Rutas para mortalidad con id
-router.get("/MortalityById/:id", getAllMortalitiesById);
+router.get("/MortalityById/:id", ValidateToken, getAllMortalitiesById);
 
 /**
  * @swagger
@@ -49,7 +50,7 @@ router.get("/MortalityById/:id", getAllMortalitiesById);
  */
 
 // Rutas para crear un nuevo registro de mortalidad
-router.post("/CreateMortality", createMortality);
+router.post("/CreateMortality", ValidateToken, createMortality);
 
 /**
  * @swagger
@@ -70,7 +71,7 @@ router.post("/CreateMortality", createMortality);
  */
 
 // Rutas para actualizar un registro de mortalidad existente
-router.put("/UpdateMortality/:id", updateMortality);
+router.put("/UpdateMortality/:id", ValidateToken, updateMortality);
 
 /**
  * @swagger
@@ -91,6 +92,6 @@ router.put("/UpdateMortality/:id", updateMortality);
  */
 
 // Rutas para eliminar un registro de mortalidad existente
-router.delete("/DeleteMortality/:id", deleteMortality);
+router.delete("/DeleteMortality/:id", ValidateToken, deleteMortality);
 
 module.exports = router;

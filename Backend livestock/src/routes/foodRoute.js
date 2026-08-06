@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { getAllFoods, getAllFoodsById, createFood, updateFood, deleteFood } = require("../controllers/foodController");
+const ValidateToken = require("../middlewares/handlerToken");
 
 /**
  * @swagger
@@ -14,7 +15,7 @@ const { getAllFoods, getAllFoodsById, createFood, updateFood, deleteFood } = req
  */
 
 // Rutas para alimentos
-router.get("/FoodAll", getAllFoods);
+router.get("/FoodAll", ValidateToken, getAllFoods);
 
 /**
  * @swagger
@@ -35,7 +36,7 @@ router.get("/FoodAll", getAllFoods);
  */
 
 // Rutas para alimentos con id
-router.get("/FoodById/:id", getAllFoodsById);
+router.get("/FoodById/:id", ValidateToken, getAllFoodsById);
 
 /**
  * @swagger
@@ -49,7 +50,7 @@ router.get("/FoodById/:id", getAllFoodsById);
  */
 
 // Rutas para crear un nuevo alimento
-router.post("/CreateFood", createFood);
+router.post("/CreateFood", ValidateToken, createFood);
 
 /**
  * @swagger
@@ -70,7 +71,7 @@ router.post("/CreateFood", createFood);
  */
 
 // Rutas para actualizar un alimento existente
-router.put("/UpdateFood/:id", updateFood);
+router.put("/UpdateFood/:id", ValidateToken, updateFood);
 
 /**
  * @swagger
@@ -91,6 +92,6 @@ router.put("/UpdateFood/:id", updateFood);
  */
 
 // Rutas para eliminar un alimento existente
-router.delete("/DeleteFood/:id", deleteFood);
+router.delete("/DeleteFood/:id", ValidateToken, deleteFood);
 
 module.exports = router;

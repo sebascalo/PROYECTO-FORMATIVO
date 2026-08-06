@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { getAllArtificialInseminations, getAllArtificialInseminationsById, createArtificialInsemination, updateArtificialInsemination, deleteArtificialInsemination } = require("../controllers/artificialInseminationController");
+const ValidateToken = require("../middlewares/handlerToken");
 
 /**
  * @swagger
@@ -14,7 +15,7 @@ const { getAllArtificialInseminations, getAllArtificialInseminationsById, create
  */
 
 // Rutas para inseminaciones artificiales
-router.get("/ArtificialInseminationAll", getAllArtificialInseminations);
+router.get("/ArtificialInseminationAll", ValidateToken, getAllArtificialInseminations);
 
 /**
  * @swagger
@@ -35,7 +36,7 @@ router.get("/ArtificialInseminationAll", getAllArtificialInseminations);
  */
 
 // Rutas para inseminaciones artificiales con id
-router.get("/ArtificialInseminationById/:id", getAllArtificialInseminationsById);
+router.get("/ArtificialInseminationById/:id", ValidateToken, getAllArtificialInseminationsById);
 
 /**
  * @swagger
@@ -49,7 +50,7 @@ router.get("/ArtificialInseminationById/:id", getAllArtificialInseminationsById)
  */
 
 // Rutas para crear una nueva inseminación artificial
-router.post("/CreateArtificialInsemination", createArtificialInsemination);
+router.post("/CreateArtificialInsemination", ValidateToken, createArtificialInsemination);
 
 /**
  * @swagger
@@ -70,7 +71,7 @@ router.post("/CreateArtificialInsemination", createArtificialInsemination);
  */
 
 // Rutas para actualizar una inseminación artificial existente
-router.put("/UpdateArtificialInsemination/:id", updateArtificialInsemination);
+router.put("/UpdateArtificialInsemination/:id", ValidateToken, updateArtificialInsemination);
 
 /**
  * @swagger
@@ -91,6 +92,6 @@ router.put("/UpdateArtificialInsemination/:id", updateArtificialInsemination);
  */
 
 // Rutas para eliminar una inseminación artificial existente
-router.delete("/DeleteArtificialInsemination/:id", deleteArtificialInsemination);
+router.delete("/DeleteArtificialInsemination/:id", ValidateToken, deleteArtificialInsemination);
 
 module.exports = router;

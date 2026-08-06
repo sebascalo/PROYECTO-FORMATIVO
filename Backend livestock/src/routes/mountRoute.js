@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { getAllMounts, getAllMountsById, createMount, updateMount, deleteMount } = require("../controllers/mountController");
+const ValidateToken = require("../middlewares/handlerToken");
 
 /**
  * @swagger
@@ -14,7 +15,7 @@ const { getAllMounts, getAllMountsById, createMount, updateMount, deleteMount } 
  */
 
 // Rutas para montas naturales
-router.get("/MountAll", getAllMounts);
+router.get("/MountAll", ValidateToken, getAllMounts);
 
 /**
  * @swagger
@@ -35,7 +36,7 @@ router.get("/MountAll", getAllMounts);
  */
 
 // Rutas para montas naturales con id
-router.get("/MountById/:id", getAllMountsById);
+router.get("/MountById/:id", ValidateToken, getAllMountsById);
 
 /**
  * @swagger
@@ -49,7 +50,7 @@ router.get("/MountById/:id", getAllMountsById);
  */
 
 // Rutas para crear una nueva monta natural
-router.post("/CreateMount", createMount);
+router.post("/CreateMount", ValidateToken, createMount);
 
 /**
  * @swagger
@@ -70,7 +71,7 @@ router.post("/CreateMount", createMount);
  */
 
 // Rutas para actualizar una monta natural existente
-router.put("/UpdateMount/:id", updateMount);
+router.put("/UpdateMount/:id", ValidateToken, updateMount);
 
 /**
  * @swagger
@@ -91,6 +92,6 @@ router.put("/UpdateMount/:id", updateMount);
  */
 
 // Rutas para eliminar una monta natural existente
-router.delete("/DeleteMount/:id", deleteMount);
+router.delete("/DeleteMount/:id", ValidateToken, deleteMount);
 
 module.exports = router;
