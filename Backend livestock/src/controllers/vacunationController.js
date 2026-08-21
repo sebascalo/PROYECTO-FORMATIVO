@@ -62,7 +62,8 @@ const createVacunation = async (req, res) => {
             idBovine, 
             vaccination_date, 
             applied_dose, 
-            application_site, 
+            vaccine_lot,        // CAMBIADO: application_site → vaccine_lot
+            medicine_name,      // NUEVO CAMPO
             application_condition, 
             idResponsible, 
             observations 
@@ -80,8 +81,11 @@ const createVacunation = async (req, res) => {
         if (!applied_dose || applied_dose.trim() === "") {
             errors.push("La dosis aplicada es obligatoria");
         }
-        if (!application_site || application_site.trim() === "") {
-            errors.push("El lugar de aplicación es obligatorio");
+        if (!vaccine_lot || vaccine_lot.trim() === "") {  // CAMBIADO
+            errors.push("El lote de la vacuna es obligatorio");
+        }
+        if (!medicine_name || medicine_name.trim() === "") {  // NUEVA VALIDACIÓN
+            errors.push("El nombre del medicamento es obligatorio");
         }
         if (!application_condition || application_condition.trim() === "") {
             errors.push("La condición de aplicación es obligatoria");
@@ -91,6 +95,13 @@ const createVacunation = async (req, res) => {
         }
         if (observations && observations.length > 255) {
             errors.push("Las observaciones no pueden exceder los 255 caracteres");
+        }
+        // Validación adicional para medicine_name
+        if (medicine_name && medicine_name.length > 100) {
+            errors.push("El nombre del medicamento no puede exceder los 100 caracteres");
+        }
+        if (vaccine_lot && vaccine_lot.length > 50) {
+            errors.push("El lote de la vacuna no puede exceder los 50 caracteres");
         }
 
         if (errors.length > 0) {
@@ -104,7 +115,8 @@ const createVacunation = async (req, res) => {
             idBovine, 
             vaccination_date, 
             applied_dose, 
-            application_site, 
+            vaccine_lot,        // CAMBIADO
+            medicine_name,      // NUEVO CAMPO
             application_condition, 
             idResponsible, 
             observations 
@@ -132,7 +144,8 @@ const updateVacunation = async (req, res) => {
             idBovine, 
             vaccination_date, 
             applied_dose, 
-            application_site, 
+            vaccine_lot,        // CAMBIADO: application_site → vaccine_lot
+            medicine_name,      // NUEVO CAMPO
             application_condition, 
             idResponsible, 
             observations 
@@ -153,8 +166,11 @@ const updateVacunation = async (req, res) => {
         if (!applied_dose || applied_dose.trim() === "") {
             errors.push("La dosis aplicada es obligatoria");
         }
-        if (!application_site || application_site.trim() === "") {
-            errors.push("El lugar de aplicación es obligatorio");
+        if (!vaccine_lot || vaccine_lot.trim() === "") {  // CAMBIADO
+            errors.push("El lote de la vacuna es obligatorio");
+        }
+        if (!medicine_name || medicine_name.trim() === "") {  // NUEVA VALIDACIÓN
+            errors.push("El nombre del medicamento es obligatorio");
         }
         if (!application_condition || application_condition.trim() === "") {
             errors.push("La condición de aplicación es obligatoria");
@@ -164,6 +180,13 @@ const updateVacunation = async (req, res) => {
         }
         if (observations && observations.length > 255) {
             errors.push("Las observaciones no pueden exceder los 255 caracteres");
+        }
+        // Validación adicional para medicine_name
+        if (medicine_name && medicine_name.length > 100) {
+            errors.push("El nombre del medicamento no puede exceder los 100 caracteres");
+        }
+        if (vaccine_lot && vaccine_lot.length > 50) {
+            errors.push("El lote de la vacuna no puede exceder los 50 caracteres");
         }
 
         if (errors.length > 0) {
@@ -177,7 +200,8 @@ const updateVacunation = async (req, res) => {
             idBovine, 
             vaccination_date, 
             applied_dose, 
-            application_site, 
+            vaccine_lot,        // CAMBIADO
+            medicine_name,      // NUEVO CAMPO
             application_condition, 
             idResponsible, 
             observations 

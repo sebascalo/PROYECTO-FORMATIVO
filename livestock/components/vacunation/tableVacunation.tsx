@@ -4,6 +4,17 @@ import { useEffect, useState } from "react";
 export default function tableVacunation() {
     const [vacunations, setVacunations] = useState([]);
 
+    // Función para formatear fecha
+    const formatDate = (dateString) => {
+        if (!dateString) return '-';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('es-ES', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        });
+    };
+
     useEffect(() => {
         const fetchVacunations = async () => {
             try {
@@ -27,7 +38,8 @@ export default function tableVacunation() {
                         <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Bovino</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Fecha</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Dosis</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Lugar</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Lote de vacuna</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Medicamento</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Condición</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Responsable</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Observaciones</th>
@@ -38,9 +50,10 @@ export default function tableVacunation() {
                         <tr key={vacunation.id}>
                             <td className="px-6 py-4 whitespace-nowrap">{vacunation.id}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{vacunation.idBovine}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{vacunation.vaccination_date}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{formatDate(vacunation.vaccination_date)}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{vacunation.applied_dose}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{vacunation.application_site}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{vacunation.vaccine_lot}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{vacunation.medicine_name}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{vacunation.application_condition}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{vacunation.idResponsible}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{vacunation.observations || '-'}</td>

@@ -21,8 +21,14 @@ const vacunation = db.define("vacunation", {
     type: DataTypes.STRING, //dosis aplicada
     allowNull: false,
   },
-  application_site: {
-    type: DataTypes.STRING, //lugar de aplicacion de la vacuna
+  // CAMBIO: application_site → vaccine_lot
+  vaccine_lot: {
+    type: DataTypes.STRING, //lote de la vacuna
+    allowNull: false,
+  },
+  // NUEVO CAMPO: nombre del medicamento
+  medicine_name: {
+    type: DataTypes.STRING, //nombre del medicamento
     allowNull: false,
   },
   application_condition: {
