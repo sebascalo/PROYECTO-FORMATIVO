@@ -47,7 +47,7 @@ const getAllMountsById = async (req, res) => {
 
 const createMount = async (req, res) => {
     try {
-        const { idBovine, bullId, breedingDate, serviceNumber, bovineCondition, observations, idResponsible } = req.body;
+        const { idBovine, bullId, breedingDate, serviceNumber, observations, idResponsible } = req.body;
         var errors = [];
         
         // Validaciones
@@ -62,9 +62,6 @@ const createMount = async (req, res) => {
         }
         if (!serviceNumber || serviceNumber.toString().trim() === "" || isNaN(serviceNumber)) {
             errors.push("El número de servicio es obligatorio y debe ser un número");
-        }
-        if (!bovineCondition || bovineCondition.trim() === "") {
-            errors.push("La condición de la vaca es obligatoria");
         }
         if (!idResponsible || idResponsible.trim() === "") {
             errors.push("El responsable de la monta es obligatorio");
@@ -81,7 +78,7 @@ const createMount = async (req, res) => {
             return;
         }
         
-        data = { idBovine, bullId, breedingDate, serviceNumber, bovineCondition, observations, idResponsible }
+        data = { idBovine, bullId, breedingDate, serviceNumber, observations, idResponsible }
         const mount = await mountCreate(data)
         var response = new Response("Monta natural creada exitosamente", mount, null);
         res.status(201);
@@ -99,7 +96,7 @@ const createMount = async (req, res) => {
 const updateMount = async (req, res) => {
     try {
         const { id } = req.params;
-        const { idBovine, bullId, breedingDate, serviceNumber, bovineCondition, observations, idResponsible } = req.body;
+        const { idBovine, bullId, breedingDate, serviceNumber, observations, idResponsible } = req.body;
         var errors = [];
         
         // Validaciones
@@ -117,9 +114,6 @@ const updateMount = async (req, res) => {
         }
         if (!serviceNumber || serviceNumber.toString().trim() === "" || isNaN(serviceNumber)) {
             errors.push("El número de servicio es obligatorio y debe ser un número");
-        }
-        if (!bovineCondition || bovineCondition.trim() === "") {
-            errors.push("La condición de la vaca es obligatoria");
         }
         if (!idResponsible || idResponsible.trim() === "") {
             errors.push("El responsable de la monta es obligatorio");

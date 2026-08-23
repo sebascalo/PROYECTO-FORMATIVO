@@ -27,9 +27,9 @@ const artificialInsemination = db.define('artificialInsemination', {
         type: DataTypes.STRING(100),
         allowNull: true
     },
-    semenDose: { // Cantidad en cc o pajillas (opcional)
-        type: DataTypes.DECIMAL(10, 2),
-        allowNull: true
+    raze: { // Raza de la pajilla
+        type: DataTypes.STRING(100),
+        allowNull: false
     },
     observations: { // Comentarios adicionales
         type: DataTypes.TEXT,

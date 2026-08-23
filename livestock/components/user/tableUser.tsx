@@ -33,8 +33,8 @@ export default function tableUser() {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                     {users.map((user: any) => (
-                        <tr key={user.id}>
-                            <td className="px-6 py-4 whitespace-nowrap">{user.id}</td>
+                        <tr key={user.userId}>
+                            <td className="px-6 py-4 whitespace-nowrap">{user.userId}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{user.name}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{user.documentId}</td>

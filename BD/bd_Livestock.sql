@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS livestock_completo;
-USE livestock_completo;
+CREATE DATABASE  IF NOT EXISTS `livestock_completo` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `livestock_completo`;
 -- MySQL dump 10.13  Distrib 8.0.46, for Win64 (x86_64)
 --
 -- Host: localhost    Database: livestock
@@ -18,6 +18,33 @@ USE livestock_completo;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `approute`
+--
+
+DROP TABLE IF EXISTS `approute`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `approute` (
+  `idapproute` int NOT NULL AUTO_INCREMENT,
+  `group` varchar(50) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `icon` varchar(50) DEFAULT NULL,
+  `route` varchar(100) NOT NULL,
+  `active` tinyint NOT NULL DEFAULT '1',
+  PRIMARY KEY (`idapproute`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `approute`
+--
+
+LOCK TABLES `approute` WRITE;
+/*!40000 ALTER TABLE `approute` DISABLE KEYS */;
+/*!40000 ALTER TABLE `approute` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `artificialinseminations`
 --
 
@@ -29,8 +56,7 @@ CREATE TABLE `artificialinseminations` (
   `idBovine` int NOT NULL COMMENT 'Vaca a inseminar',
   `inseminationDate` date NOT NULL COMMENT 'Día del procedimiento',
   `semenID` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Código o lote de la pajilla',
-  `donorBull` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Nombre o código del toro (opcional)',
-  `semenDose` decimal(10,2) DEFAULT NULL COMMENT 'Cantidad en cc o pajillas (opcional)',
+  `raze` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Cantidad en cc o pajillas (opcional)',
   `observations` text COLLATE utf8mb4_unicode_ci COMMENT 'Comentarios adicionales',
   `idResponsible` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Quién realizó la inseminación',
   `createdAt` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación del registro',
@@ -38,6 +64,16 @@ CREATE TABLE `artificialinseminations` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Tabla para registrar inseminaciones artificiales de bovinos';
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `artificialinseminations`
+--
+
+LOCK TABLES `artificialinseminations` WRITE;
+/*!40000 ALTER TABLE `artificialinseminations` DISABLE KEYS */;
+INSERT INTO `artificialinseminations` VALUES (1,1,'2026-07-31','SEM-001','girolando','Primera inseminación, buena receptividad','Dr. Juan Pérez','2026-08-01 12:54:02','2026-08-21 12:57:38'),(2,2,'2026-07-30','SEM-002','girolando','Segunda inseminación, esperando resultados','Dra. María Gómez','2026-08-01 12:54:02','2026-08-21 12:57:38'),(3,77,'2026-08-01','SEM-001','girolando','Primera inseminación, buena receptividad','Dr. Juan Pérez','2026-08-01 12:54:02','2026-08-21 12:57:38');
+/*!40000 ALTER TABLE `artificialinseminations` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `births`
@@ -65,6 +101,16 @@ CREATE TABLE `births` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `births`
+--
+
+LOCK TABLES `births` WRITE;
+/*!40000 ALTER TABLE `births` DISABLE KEYS */;
+INSERT INTO `births` VALUES (1,'VACA-001','Potrero Norte','2026-07-10 06:30:00','Hembra','Holstein',38.5,'Normal','Parto sin complicaciones, ternera saludable','Dr. Juan Pérez',1,'2026-08-05 07:57:04','2026-08-05 07:57:04'),(2,'VACA-002','Potrero Sur','2026-07-15 08:15:00','Macho','Brahman',42,'Normal','Parto exitoso, ternero fuerte','Dra. María Gómez',1,'2026-08-05 07:57:04','2026-08-05 07:57:04'),(3,'VACA-003','Potrero Este','2026-07-20 22:45:00','Hembra','Jersey',32,'Prematuro','Parto prematuro, ternera necesita cuidados especiales','Dr. Carlos Rodríguez',1,'2026-08-05 07:57:04','2026-08-05 07:57:04'),(4,'VACA-004','Potrero Oeste','2026-07-25 04:00:00','Macho','Angus',40.5,'Débil','Parto asistido, ternero débil pero estable','Dra. Ana Martínez',1,'2026-08-05 07:57:04','2026-08-05 07:57:04'),(5,'VACA-001','Potrero Norte','2026-07-10 11:30:00','Hembra','Holstein',38.5,'Normal','Parto sin complicaciones, ternera saludable','Dr. Juan Pérez',1,'2026-08-05 12:58:22','2026-08-05 12:58:22');
+/*!40000 ALTER TABLE `births` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `cattles`
 --
 
@@ -75,19 +121,29 @@ CREATE TABLE `cattles` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'Identificador único del bovino',
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Nombre del bovino',
   `raze` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Raza del bovino',
+  `sex` varchar(45) COLLATE utf8mb4_unicode_ci NOT NULL,
   `entrydate` datetime NOT NULL COMMENT 'Fecha de ingreso del bovino',
   `paddock` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Potrero donde se encuentra el bovino',
   `birthdate` datetime NOT NULL COMMENT 'Fecha de nacimiento del bovino',
   `photo` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'URL de la foto del bovino (opcional)',
   `currentweight` float NOT NULL COMMENT 'Peso actual del bovino',
   `classificationbytype` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Clasificación del bovino por tipo (ej: lechero, carne, doble propósito)',
-  `state` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Estado del bovino (ej: saludable, enfermo, en tratamiento)',
   `active` tinyint(1) DEFAULT '1' COMMENT 'Estado del bovino (activo/inactivo)',
   `createdAt` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación del registro',
   `updatedAt` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización del registro',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Tabla para registrar bovinos';
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cattles`
+--
+
+LOCK TABLES `cattles` WRITE;
+/*!40000 ALTER TABLE `cattles` DISABLE KEYS */;
+INSERT INTO `cattles` VALUES (1,'Luna','Holstein','','2026-01-15 10:00:00','Potrero Norte','2024-03-20 08:00:00','luna.jpg',450.5,'Lechero',1,'2026-08-05 07:19:01','2026-08-05 07:19:01'),(2,'Toro Bravo','Brahman','','2026-01-20 14:30:00','Potrero Sur','2023-05-10 07:00:00','torobravo.jpg',650,'Carne',1,'2026-08-05 07:19:01','2026-08-05 07:19:01'),(3,'Manchita','Jersey','','2026-02-01 09:15:00','Potrero Este','2024-07-15 06:00:00','manchita.jpg',380,'Lechero',1,'2026-08-05 07:19:01','2026-08-05 07:19:01'),(4,'Negro','Angus','','2026-02-10 16:45:00','Potrero Oeste','2023-11-25 05:00:00','negro.jpg',580,'Carne',1,'2026-08-05 07:19:01','2026-08-05 07:19:01'),(5,'Chochinegra','GYR','','2026-01-15 15:00:00','Rozo','2024-03-20 13:00:00','chichinegra.jpg',450.5,'Lechero',1,'2026-08-05 12:20:35','2026-08-05 12:20:35');
+/*!40000 ALTER TABLE `cattles` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `food`
@@ -114,6 +170,16 @@ CREATE TABLE `food` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `food`
+--
+
+LOCK TABLES `food` WRITE;
+/*!40000 ALTER TABLE `food` DISABLE KEYS */;
+INSERT INTO `food` VALUES (1,'Pasto Elefante','Pasto','kg',5000,150,'Proveedor A','Excelente para engorde',1,'2026-08-05 13:33:54','2026-08-05 13:33:54');
+/*!40000 ALTER TABLE `food` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `milk`
 --
 
@@ -137,6 +203,16 @@ CREATE TABLE `milk` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `milk`
+--
+
+LOCK TABLES `milk` WRITE;
+/*!40000 ALTER TABLE `milk` DISABLE KEYS */;
+INSERT INTO `milk` VALUES (1,1,'2026-06-19 00:00:00','Mañana',15.5,'Excelente','Vaca en buen estado, sin novedades',1,1,'2026-06-20 00:05:42','2026-06-20 00:05:42'),(2,1,'2026-06-21 00:00:00','Mañana',5,'Excelente','Vaca en buen estado, sin novedades',1,1,'2026-06-22 00:57:55','2026-06-22 00:57:55'),(3,1,'2026-06-21 00:00:00','Mañana',5,' super Excelente','Vaca en buen estado, sin novedades',1,1,'2026-06-27 18:57:32','2026-06-27 18:57:32');
+/*!40000 ALTER TABLE `milk` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `mortalities`
 --
 
@@ -158,6 +234,16 @@ CREATE TABLE `mortalities` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `mortalities`
+--
+
+LOCK TABLES `mortalities` WRITE;
+/*!40000 ALTER TABLE `mortalities` DISABLE KEYS */;
+INSERT INTO `mortalities` VALUES (1,'BOV-001','2026-07-15 08:30:00','Enfermedad respiratoria','Dr. Juan Pérez','Enterrado','Animal enfermo desde hace 3 días, no respondió al tratamiento','2026-08-05 07:49:21','2026-08-05 07:49:21'),(2,'BOV-002','2026-07-20 14:00:00','Accidente','Dra. María Gómez','Incinerado','Cayó y se fracturó la pata, se tomó la decisión de sacrificio','2026-08-05 07:49:21','2026-08-05 07:49:21'),(3,'BOV-003','2026-07-25 10:15:00','Vejez','Carlos Rodríguez','Vendido para consumo','Animal de 12 años, muerte natural por edad avanzada','2026-08-05 07:49:21','2026-08-05 07:49:21'),(4,'BOV-004','2026-07-28 16:45:00','Parasitosis','Dr. Juan Pérez','Enterrado','Desparasitación tardía, no logró recuperarse','2026-08-05 07:49:21','2026-08-05 07:49:21'),(5,'BOV-001','2026-07-15 13:30:00','Enfermedad respiratoria','Dr. Juan Pérez','Enterrado','Animal enfermo desde hace 3 días, no respondió al tratamiento','2026-08-05 12:52:11','2026-08-05 12:52:11');
+/*!40000 ALTER TABLE `mortalities` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `mounts`
 --
 
@@ -170,7 +256,6 @@ CREATE TABLE `mounts` (
   `bullId` int NOT NULL,
   `breedingDate` date NOT NULL,
   `serviceNumber` int NOT NULL,
-  `bovineCondition` enum('Celo','Quieta','Rechaza') NOT NULL,
   `observations` text,
   `idResponsible` varchar(100) NOT NULL,
   `createdAt` datetime DEFAULT CURRENT_TIMESTAMP,
@@ -178,6 +263,16 @@ CREATE TABLE `mounts` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `mounts`
+--
+
+LOCK TABLES `mounts` WRITE;
+/*!40000 ALTER TABLE `mounts` DISABLE KEYS */;
+INSERT INTO `mounts` VALUES (1,1,2,'2026-08-01',1,'Primer servicio, buena receptividad','Dr. Juan Pérez','2026-08-05 12:07:20','2026-08-05 12:07:20');
+/*!40000 ALTER TABLE `mounts` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `nutrition`
@@ -201,6 +296,16 @@ CREATE TABLE `nutrition` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `nutrition`
+--
+
+LOCK TABLES `nutrition` WRITE;
+/*!40000 ALTER TABLE `nutrition` DISABLE KEYS */;
+INSERT INTO `nutrition` VALUES (1,'BOV-001','FOOD-001','Pasto','15 kg','Mañana','Dr. Juan Pérez','2026-08-05 08:55:36','2026-08-05 08:55:36'),(2,'BOV-002','FOOD-002','Concentrado','5 kg','Tarde','Dra. María Gómez','2026-08-05 08:55:36','2026-08-05 08:55:36'),(3,'BOV-003','FOOD-003','Silo','10 kg','Noche','Dr. Carlos Rodríguez','2026-08-05 08:55:36','2026-08-05 08:55:36'),(4,'BOV-004','FOOD-001','Pasto','12 kg','Mañana','Dr. Juan Pérez','2026-08-05 08:55:36','2026-08-05 08:55:36'),(5,'BOV-005','FOOD-002','Concentrado','6 kg','Tarde','Dra. Ana Martínez','2026-08-05 08:55:36','2026-08-05 08:55:36'),(6,'BOV-67','FOOD-001','Pasto','15 kg','Mañana','Dr. Juan Pérez','2026-08-05 13:59:19','2026-08-05 13:59:19');
+/*!40000 ALTER TABLE `nutrition` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `pastures`
 --
 
@@ -209,19 +314,29 @@ DROP TABLE IF EXISTS `pastures`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `pastures` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(45) NOT NULL,
-  `extension` float NOT NULL,
-  `maxCapacity` float NOT NULL,
-  `pastureType` varchar(45) NOT NULL,
-  `currentStatus` varchar(45) NOT NULL,
-  `restDays` int NOT NULL,
-  `occupationDays` int NOT NULL,
-  `active` tinyint DEFAULT '0',
-  `createdAt` datetime DEFAULT NULL,
-  `updatedAt` datetime DEFAULT NULL,
+  `name` varchar(255) NOT NULL,
+  `extension` decimal(10,2) NOT NULL,
+  `forageCapacity` int NOT NULL COMMENT 'Aforo: Capacidad máxima de animales',
+  `pastureType` varchar(255) NOT NULL,
+  `cattleEntryDate` datetime DEFAULT NULL COMMENT 'Fecha de ingreso del ganado',
+  `cattleExitDate` datetime DEFAULT NULL COMMENT 'Fecha de salida del ganado',
+  `currentStatus` varchar(255) NOT NULL,
+  `lastChemicalApplication` varchar(255) DEFAULT NULL COMMENT 'Nombre del último fertilizante, herbicida o químico aplicado',
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pastures`
+--
+
+LOCK TABLES `pastures` WRITE;
+/*!40000 ALTER TABLE `pastures` DISABLE KEYS */;
+INSERT INTO `pastures` VALUES (1,'Potrero Norte',12.50,25,'Brachiaria','2026-08-10 08:00:00',NULL,'Ocupado','Glifosato','2026-08-21 12:27:34','2026-08-21 12:27:34'),(2,'Potrero Sur',8.75,15,'Kikuyo',NULL,'2026-08-05 17:00:00','En descanso','Fertilizante NPK','2026-08-21 12:27:34','2026-08-21 12:27:34'),(3,'Potrero Este',20.00,40,'Pasto Elefante','2026-08-15 07:30:00',NULL,'Disponible',NULL,'2026-08-21 12:27:34','2026-08-21 12:27:34');
+/*!40000 ALTER TABLE `pastures` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `responsibles`
@@ -241,8 +356,75 @@ CREATE TABLE `responsibles` (
   `updatedAt` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización del registro',
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Tabla para registrar responsables del sistema';
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Tabla para registrar responsables del sistema';
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `responsibles`
+--
+
+LOCK TABLES `responsibles` WRITE;
+/*!40000 ALTER TABLE `responsibles` DISABLE KEYS */;
+INSERT INTO `responsibles` VALUES (1,'Dr. Juan Pérez','Veterinario','juan.perez@livestock.com','3001234567','Active','2026-08-05 07:12:18','2026-08-05 07:12:18'),(2,'Dra. María Gómez','Veterinaria','maria.gomez@livestock.com','3007654321','Active','2026-08-05 07:12:18','2026-08-05 07:12:18'),(3,'Carlos Rodríguez','Operario','carlos.rodriguez@livestock.com','3109876543','Active','2026-08-05 07:12:18','2026-08-05 07:12:18'),(4,'Ana Martínez','Administrador','ana.martinez@livestock.com','3204567890','Active','2026-08-05 07:12:18','2026-08-05 07:12:18'),(5,'Luis Fernández','Veterinario','luis.fernandez@livestock.com','3009876543','Inactive','2026-08-05 07:12:18','2026-08-05 07:12:18'),(8,'Dr. Juan Pérez','Veterinario','juanpablo@livestock.com','3001234567','Active','2026-08-05 12:14:19','2026-08-05 12:14:19');
+/*!40000 ALTER TABLE `responsibles` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `roll`
+--
+
+DROP TABLE IF EXISTS `roll`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `roll` (
+  `idroll` int NOT NULL,
+  `slug` varchar(45) NOT NULL,
+  `label` varchar(45) NOT NULL,
+  `idrollroute` int NOT NULL,
+  `active` tinyint DEFAULT '0',
+  PRIMARY KEY (`idroll`),
+  KEY `fk_roll_rollroute_idx` (`idrollroute`),
+  CONSTRAINT `fk_roll_rollroute` FOREIGN KEY (`idrollroute`) REFERENCES `rollroute` (`idrollroute`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `roll`
+--
+
+LOCK TABLES `roll` WRITE;
+/*!40000 ALTER TABLE `roll` DISABLE KEYS */;
+/*!40000 ALTER TABLE `roll` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `rollroute`
+--
+
+DROP TABLE IF EXISTS `rollroute`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `rollroute` (
+  `idrollroute` int NOT NULL AUTO_INCREMENT,
+  `idapproute` int NOT NULL,
+  `is_admin` tinyint NOT NULL DEFAULT '0',
+  `is_instructor` tinyint NOT NULL DEFAULT '0',
+  `is_pasante` tinyint NOT NULL DEFAULT '0',
+  `active` tinyint NOT NULL DEFAULT '1',
+  PRIMARY KEY (`idrollroute`),
+  KEY `fk_rollroute_approute_idx` (`idapproute`),
+  CONSTRAINT `fk_rollroute_approute` FOREIGN KEY (`idapproute`) REFERENCES `approute` (`idapproute`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `rollroute`
+--
+
+LOCK TABLES `rollroute` WRITE;
+/*!40000 ALTER TABLE `rollroute` DISABLE KEYS */;
+/*!40000 ALTER TABLE `rollroute` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `treatments`
@@ -260,7 +442,6 @@ CREATE TABLE `treatments` (
   `application_route` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Vía de administración del medicamento (oral, intramuscular, intravenosa)',
   `associated_diagnosis` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Enfermedad o condición que se está tratando',
   `treatment_duration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Duración del tratamiento',
-  `treatment_result` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Resultado del tratamiento',
   `observations` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Observaciones adicionales sobre el tratamiento',
   `idResponsible` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Nombre del responsable del tratamiento aplicado',
   `createdAt` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación del registro',
@@ -270,6 +451,16 @@ CREATE TABLE `treatments` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `treatments`
+--
+
+LOCK TABLES `treatments` WRITE;
+/*!40000 ALTER TABLE `treatments` DISABLE KEYS */;
+INSERT INTO `treatments` VALUES (1,'BOV-001','2026-07-31 13:36:40','Ivermectina','1 ml / 50 kg','Intramuscular','Parasitosis','3 días','Tratamiento exitoso','Dr. Juan Pérez','2026-07-31 13:36:40','2026-07-31 13:36:40'),(2,'BOV-002','2026-07-30 13:36:40','Penicilina','2 ml','Intramuscular','Infección respiratoria','5 días','Pendiente de evolución','Dra. María Gómez','2026-07-31 13:36:40','2026-07-31 13:36:40'),(4,'BOV-001','2026-07-31 15:00:00','Ivermectina','1 ml / 50 kg','Intramuscular','Parasitosis','3 días','Tratamiento exitoso, continuar monitoreo','Dr. Juan Pérez','2026-07-31 18:42:06','2026-07-31 18:42:06');
+/*!40000 ALTER TABLE `treatments` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `users`
 --
 
@@ -277,19 +468,33 @@ DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `users` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `userId` int NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
+  `uuid` varchar(45) DEFAULT NULL,
   `email` varchar(50) NOT NULL,
   `password` varchar(50) NOT NULL,
   `documentId` varchar(30) NOT NULL,
   `postJob` varchar(50) NOT NULL,
+  `idroll` int DEFAULT NULL,
   `verifyEmail` tinyint DEFAULT '0',
   `active` tinyint DEFAULT '0',
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`userId`),
+  KEY `idRoll_idx` (`idroll`),
+  CONSTRAINT `idRoll` FOREIGN KEY (`idroll`) REFERENCES `roll` (`idroll`)
 ) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (1,'sebas',NULL,'sebastian@gmail.com','1234567','12345678901','APRENDIZ',NULL,0,1,'2026-06-19 17:39:20','2026-06-19 17:39:20'),(2,'Carlos Rodríguez',NULL,'carlos@test.com','123456','98765432','Encargado de Ganado',NULL,0,1,'2026-07-23 20:29:08','2026-07-23 20:29:08'),(4,'Nombre del usuario',NULL,'correo@gm.com','contraseña','12345678','Cargo del usuario',NULL,0,1,'2026-07-27 12:21:39','2026-07-27 12:21:39'),(5,'Ana Sofia Gonzalez Yepes',NULL,'asgy2005@gmail.com','contraseña','1105305295','Psicologa',NULL,0,1,'2026-07-28 01:49:47','2026-07-28 01:49:47'),(6,'Zara',NULL,'zaritaGPT@gmail.com','1234','1205648732','Programada estrella',NULL,0,1,'2026-07-30 18:44:07','2026-07-30 18:44:07'),(7,'Sebitas prueba 1',NULL,'sebastiancalderon5204@gmail.com','1234','1049234658','Gerente livestock',NULL,0,1,'2026-07-31 05:11:09','2026-07-31 05:11:09'),(8,'Sebitas prueba2',NULL,'sebastiancalderon5204@gmail.com','1234','1049234658','Gerente livestock',NULL,0,1,'2026-07-31 05:15:24','2026-07-31 05:15:24'),(9,'Zara Ñustes',NULL,'zaranustes1702@gm.com','1234','12345678','Se lo tu quea ser',NULL,0,1,'2026-07-31 13:07:22','2026-07-31 13:07:22'),(10,'Zara Ñustes',NULL,'zaranustes1702@gmail.com','1234','12345678','Se lo tu quea ser',NULL,0,1,'2026-07-31 13:13:31','2026-07-31 13:13:31'),(11,'Zara Ñustes 2',NULL,'zaranustes1702@gmail.com','1234','12345678','Se lo tu quea ser',NULL,0,1,'2026-07-31 13:15:55','2026-07-31 13:15:55'),(12,'sebatian',NULL,'sebastiancalderonlozano@gmail.com','1234','12345678','OG',NULL,0,1,'2026-07-31 14:39:15','2026-07-31 14:39:15'),(13,'Natalia Prieto',NULL,'prietoguzmannatalia8@gmail.com','contraseña','12345678','eso',NULL,0,1,'2026-08-01 19:18:01','2026-08-01 19:18:01'),(14,'Danna Luzabell Villamizar Saldaña',NULL,'villamizarsaldanadaniela@gmail.com','soypobre123','1034401733','uu',NULL,0,1,'2026-08-03 01:40:28','2026-08-03 01:40:28');
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `vacunations`
@@ -303,15 +508,27 @@ CREATE TABLE `vacunations` (
   `idBovine` varchar(255) NOT NULL,
   `vaccination_date` datetime NOT NULL,
   `applied_dose` varchar(255) NOT NULL,
-  `application_site` varchar(255) NOT NULL,
+  `vaccine_lot` varchar(255) NOT NULL,
+  `medicine_name` varchar(255) NOT NULL,
   `application_condition` varchar(255) NOT NULL,
   `idResponsible` varchar(255) NOT NULL,
   `observations` varchar(255) DEFAULT NULL,
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idBovine` (`idBovine`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `vacunations`
+--
+
+LOCK TABLES `vacunations` WRITE;
+/*!40000 ALTER TABLE `vacunations` DISABLE KEYS */;
+INSERT INTO `vacunations` VALUES (1,'VACA-001','2026-08-15 08:30:00','2 ml','LOTE-ABC-123','Vacuna Antiaftosa','Sana','Juan Pérez','Primera dosis anual','2026-08-21 10:24:29','2026-08-21 10:24:29'),(2,'VACA-002','2026-08-16 09:00:00','5 ml','LOTE-DEF-456','Vacuna Brucelosis','Leve inflamación','María Gómez','Revisar en 24 horas','2026-08-21 10:24:29','2026-08-21 10:24:29'),(3,'VACA-003','2026-08-17 10:15:00','3 ml','LOTE-GHI-789','Vacuna Clostridial','Sana','Carlos Ruiz','Dosis de refuerzo','2026-08-21 10:24:29','2026-08-21 10:24:29');
+/*!40000 ALTER TABLE `vacunations` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `weighings`
@@ -334,6 +551,16 @@ CREATE TABLE `weighings` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Tabla para registrar pesajes de bovinos';
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `weighings`
+--
+
+LOCK TABLES `weighings` WRITE;
+/*!40000 ALTER TABLE `weighings` DISABLE KEYS */;
+INSERT INTO `weighings` VALUES (1,'BOV-001','2026-07-31 12:02:19',450.5,2.3,'Normal','Animal en buen estado, ganando peso adecuadamente','Juan Pérez','2026-07-31 12:02:19','2026-07-31 12:02:19'),(2,'BOV-002','2026-07-30 12:02:19',380,-1.5,'Delgado','Animal perdió peso, revisar alimentación','María Gómez','2026-07-31 12:02:19','2026-07-31 12:02:19'),(3,'BOV-003','2026-07-29 12:02:19',520.75,3.2,'Gordo','Excelente condición, animal listo para comercialización','Carlos Rodríguez','2026-07-31 12:02:19','2026-07-31 12:02:19'),(4,'BOV-001','2026-07-31 12:05:00',450.5,2.3,'Normal','Animal en buen estado, ganando peso adecuadamente','Juan Pérez','2026-07-31 12:05:00','2026-07-31 12:05:00'),(5,'BOV-002','2026-07-30 12:05:00',380,-1.5,'Delgado','Animal perdió peso, revisar alimentación','María Gómez','2026-07-31 12:05:00','2026-07-31 12:05:00'),(6,'BOV-003','2026-07-29 12:05:00',520.75,3.2,'Gordo','Excelente condición, animal listo para comercialización','Carlos Rodríguez','2026-07-31 12:05:00','2026-07-31 12:05:00'),(7,'BOV-001','2026-07-31 12:54:35',450.5,2.3,'Normal','Animal en buen estado, ganando peso adecuadamente','Juan Pérez','2026-07-31 12:54:35','2026-07-31 12:54:35'),(8,'BOV-002','2026-07-30 12:54:35',380,-1.5,'Delgado','Animal perdió peso, revisar alimentación','María Gómez','2026-07-31 12:54:35','2026-07-31 12:54:35'),(9,'BOV-003','2026-07-29 12:54:35',520.75,3.2,'Gordo','Excelente condición, animal listo para comercialización','Carlos Rodríguez','2026-07-31 12:54:35','2026-07-31 12:54:35'),(10,'BOV-001','2026-07-31 12:55:43',450.5,2.3,'Normal','Animal en buen estado, ganando peso adecuadamente','Juan Pérez','2026-07-31 12:55:43','2026-07-31 12:55:43'),(13,'BOV-023','2026-08-04 19:30:00',380,-1.5,'Delgado','Animal perdió peso, revisar alimentación',NULL,'2026-08-05 13:48:49','2026-08-05 13:48:49');
+/*!40000 ALTER TABLE `weighings` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -344,4 +571,4 @@ CREATE TABLE `weighings` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-08-06  9:14:07
+-- Dump completed on 2026-08-22 19:39:49

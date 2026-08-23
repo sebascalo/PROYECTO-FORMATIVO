@@ -4,6 +4,17 @@ import { useEffect, useState } from "react";
 export default function tableTreatment() {
     const [treatments, setTreatments] = useState([]);
 
+    // Función para formatear fecha
+    const formatDate = (dateString) => {
+        if (!dateString) return '-';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('es-ES', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        });
+    };
+
     useEffect(() => {
         const fetchTreatments = async () => {
             try {
@@ -30,7 +41,6 @@ export default function tableTreatment() {
                         <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Dosis</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Vía</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Diagnóstico</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Resultado</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Responsable</th>
                     </tr>
                 </thead>
@@ -39,12 +49,11 @@ export default function tableTreatment() {
                         <tr key={treatment.id}>
                             <td className="px-6 py-4 whitespace-nowrap">{treatment.id}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{treatment.idBovine}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{treatment.treatment_date}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{formatDate(treatment.treatment_date)}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{treatment.medication_used}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{treatment.applied_dose}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{treatment.application_route}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{treatment.associated_diagnosis}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{treatment.treatment_result}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{treatment.idResponsible}</td>
                         </tr>
                     ))}
