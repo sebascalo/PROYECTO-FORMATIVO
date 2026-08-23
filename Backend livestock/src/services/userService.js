@@ -23,9 +23,9 @@ const usersGetAll = async () => {
 }
 
 // obtener usuario por id
-const getUserById = async (id) => {
+const getUserById = async (userId) => {
     try {
-        const userid = await user.findOne({ where: { id } });
+        const userid = await user.findOne({ where: { userId } });
         return userid;
     } catch (error) {
         console.log(error);
@@ -34,9 +34,9 @@ const getUserById = async (id) => {
 }
 
 // eliminar usuario
-const userDelete = async (id) => {
+const userDelete = async (userId) => {
     try {
-        const userDelete = await user.destroy({ where: { id } });
+        const userDelete = await user.destroy({ where: { userId } });
         return userDelete;
     } catch (error) {
         console.log(error);
@@ -45,10 +45,10 @@ const userDelete = async (id) => {
 }
 
 // actualizar usuario
-const userUpdate = async (id, data) => {
+const userUpdate = async (userId, data) => {
     try {
         // 1. Buscar el usuario
-        const userToUpdate = await user.findOne({ where: { id } });
+        const userToUpdate = await user.findOne({ where: { userId } });
         // 2. Si no existe, retornar null
         if (!userToUpdate) {
             return null;

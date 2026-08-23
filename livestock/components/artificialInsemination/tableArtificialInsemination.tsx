@@ -27,8 +27,7 @@ export default function tableArtificialInsemination() {
                         <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Bovino</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Fecha</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Código Semen</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Toro</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Dosis</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Raza</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Responsable</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Observaciones</th>
                     </tr>
@@ -40,8 +39,7 @@ export default function tableArtificialInsemination() {
                             <td className="px-6 py-4 whitespace-nowrap">{insemination.idBovine}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{insemination.inseminationDate}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{insemination.semenID}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{insemination.donorBull || '-'}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{insemination.semenDose || '-'}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{insemination.raze || '-'}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{insemination.idResponsible}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{insemination.observations || '-'}</td>
                         </tr>

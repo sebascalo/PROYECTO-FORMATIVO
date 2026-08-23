@@ -28,7 +28,6 @@ export default function tableMount() {
                         <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Toro</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Fecha</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Servicio</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Condición</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Responsable</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Observaciones</th>
                     </tr>
@@ -41,16 +40,6 @@ export default function tableMount() {
                             <td className="px-6 py-4 whitespace-nowrap">{mount.bullId || '-'}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{mount.breedingDate || '-'}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{mount.serviceNumber || '-'}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                    mount.bovineCondition === 'Celo' ? 'bg-pink-100 text-pink-800' :
-                                    mount.bovineCondition === 'Quieta' ? 'bg-blue-100 text-blue-800' :
-                                    mount.bovineCondition === 'Rechaza' ? 'bg-red-100 text-red-800' :
-                                    'bg-gray-100 text-gray-800'
-                                }`}>
-                                    {mount.bovineCondition}
-                                </span>
-                            </td>
                             <td className="px-6 py-4 whitespace-nowrap">{mount.idResponsible || '-'}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{mount.observations || '-'}</td>
                         </tr>

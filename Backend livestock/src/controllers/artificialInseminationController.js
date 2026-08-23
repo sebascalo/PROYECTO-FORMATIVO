@@ -47,7 +47,7 @@ const getAllArtificialInseminationsById = async (req, res) => {
 
 const createArtificialInsemination = async (req, res) => {
     try {
-        const { idBovine, inseminationDate, semenID, donorBull, semenDose, observations, idResponsible } = req.body;
+        const { idBovine, inseminationDate, semenID, donorBull, raze, observations, idResponsible } = req.body;
         var errors = [];
         
         // Validaciones
@@ -63,8 +63,8 @@ const createArtificialInsemination = async (req, res) => {
         if (!idResponsible || idResponsible.trim() === "") {
             errors.push("El responsable de la inseminación es obligatorio");
         }
-        if (semenDose && semenDose.toString().trim() !== "" && isNaN(semenDose)) {
-            errors.push("La dosis de semen debe ser un número");
+        if (!raze || raze.trim() === "") {
+            errors.push("La raza de la pajilla es obligatoria");
         }
 
         if (errors.length > 0) {
@@ -74,7 +74,7 @@ const createArtificialInsemination = async (req, res) => {
             return;
         }
         
-        data = { idBovine, inseminationDate, semenID, donorBull, semenDose, observations, idResponsible }
+        data = { idBovine, inseminationDate, semenID, donorBull, raze, observations, idResponsible }
         const artificialInsemination = await artificialInseminationCreate(data)
         var response = new Response("Inseminación artificial creada exitosamente", artificialInsemination, null);
         res.status(201);
@@ -92,7 +92,7 @@ const createArtificialInsemination = async (req, res) => {
 const updateArtificialInsemination = async (req, res) => {
     try {
         const { id } = req.params;
-        const { idBovine, inseminationDate, semenID, donorBull, semenDose, observations, idResponsible } = req.body;
+        const { idBovine, inseminationDate, semenID, donorBull, raze, observations, idResponsible } = req.body;
         var errors = [];
         
         // Validaciones
@@ -111,8 +111,8 @@ const updateArtificialInsemination = async (req, res) => {
         if (!idResponsible || idResponsible.trim() === "") {
             errors.push("El responsable de la inseminación es obligatorio");
         }
-        if (semenDose && semenDose.toString().trim() !== "" && isNaN(semenDose)) {
-            errors.push("La dosis de semen debe ser un número");
+        if (!raze || raze.trim() === "") {
+            errors.push("La raza de la pajilla es obligatoria");
         }
 
         if (errors.length > 0) {
@@ -122,7 +122,7 @@ const updateArtificialInsemination = async (req, res) => {
             return;
         }
         
-        data = { idBovine, inseminationDate, semenID, donorBull, semenDose, observations, idResponsible }
+        data = { idBovine, inseminationDate, semenID, donorBull, raze, observations, idResponsible }
         const artificialInsemination = await artificialInseminationUpdate(id, data)
         var response = new Response(`Inseminación artificial ${id} actualizada exitosamente`, artificialInsemination, null);
         res.status(200);

@@ -15,6 +15,10 @@ const cattle = db.define("cattle", {
         type: DataTypes.STRING,
         allowNull: false
     },
+    sex: { // Sexo del bovino (Macho/Hembra)
+        type: DataTypes.STRING,
+        allowNull: false
+    },
     entrydate: { // Fecha de ingreso del bovino
         type: DataTypes.DATE,
         allowNull: false
@@ -36,10 +40,6 @@ const cattle = db.define("cattle", {
         allowNull: false
     },
     classificationbytype: { // Clasificación del bovino por tipo (ej: lechero, carne, doble propósito)
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    state: { // Estado del bovino (ej: saludable, enfermo, en tratamiento)
         type: DataTypes.STRING,
         allowNull: false
     },

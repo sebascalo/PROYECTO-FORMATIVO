@@ -47,7 +47,7 @@ const getAllTreatmentsById = async (req, res) => {
 
 const createTreatment = async (req, res) => {
     try {
-        const { idBovine, treatment_date, medication_used, applied_dose, application_route, associated_diagnosis, treatment_duration, treatment_result, observations, idResponsible } = req.body;
+        const { idBovine, treatment_date, medication_used, applied_dose, application_route, associated_diagnosis, treatment_duration, observations, idResponsible } = req.body;
         var errors = [];
         
         // Validaciones
@@ -72,9 +72,6 @@ const createTreatment = async (req, res) => {
         if (!treatment_duration || treatment_duration.trim() === "") {
             errors.push("La duración del tratamiento es obligatoria");
         }
-        if (!treatment_result || treatment_result.trim() === "") {
-            errors.push("El resultado del tratamiento es obligatorio");
-        }
         if (!idResponsible || idResponsible.trim() === "") {
             errors.push("El responsable del tratamiento es obligatorio");
         }
@@ -86,7 +83,7 @@ const createTreatment = async (req, res) => {
             return;
         }
         
-        data = { idBovine, treatment_date, medication_used, applied_dose, application_route, associated_diagnosis, treatment_duration, treatment_result, observations, idResponsible }
+        data = { idBovine, treatment_date, medication_used, applied_dose, application_route, associated_diagnosis, treatment_duration, observations, idResponsible }
         const treatment = await treatmentCreate(data)
         var response = new Response("Tratamiento creado exitosamente", treatment, null);
         res.status(201);
@@ -104,7 +101,7 @@ const createTreatment = async (req, res) => {
 const updateTreatment = async (req, res) => {
     try {
         const { id } = req.params;
-        const { idBovine, treatment_date, medication_used, applied_dose, application_route, associated_diagnosis, treatment_duration, treatment_result, observations, idResponsible } = req.body;
+        const { idBovine, treatment_date, medication_used, applied_dose, application_route, associated_diagnosis, treatment_duration, observations, idResponsible } = req.body;
         var errors = [];
         
         // Validaciones
@@ -132,9 +129,6 @@ const updateTreatment = async (req, res) => {
         if (!treatment_duration || treatment_duration.trim() === "") {
             errors.push("La duración del tratamiento es obligatoria");
         }
-        if (!treatment_result || treatment_result.trim() === "") {
-            errors.push("El resultado del tratamiento es obligatorio");
-        }
         if (!idResponsible || idResponsible.trim() === "") {
             errors.push("El responsable del tratamiento es obligatorio");
         }
@@ -146,7 +140,7 @@ const updateTreatment = async (req, res) => {
             return;
         }
         
-        data = { idBovine, treatment_date, medication_used, applied_dose, application_route, associated_diagnosis, treatment_duration, treatment_result, observations, idResponsible }
+        data = { idBovine, treatment_date, medication_used, applied_dose, application_route, associated_diagnosis, treatment_duration, observations, idResponsible }
         const treatment = await treatmentUpdate(id, data)
         var response = new Response(`Tratamiento ${id} actualizado exitosamente`, treatment, null);
         res.status(200);

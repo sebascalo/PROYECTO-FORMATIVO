@@ -4,6 +4,17 @@ import { useEffect, useState } from "react";
 export default function tableCattle() {
     const [cattles, setCattles] = useState([]);
 
+     // Función para formatear fecha
+    const formatDate = (dateString) => {
+        if (!dateString) return '-';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('es-ES', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        });
+    };
+
     useEffect(() => {
         const fetchCattles = async () => {
             try {
@@ -26,13 +37,13 @@ export default function tableCattle() {
                         <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">ID</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Nombre</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Raza</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Sexo</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Fecha Ingreso</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Potrero</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Fecha Nac.</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Peso (kg)</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Clasificación</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Estado</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Activo</th>
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -41,9 +52,10 @@ export default function tableCattle() {
                             <td className="px-6 py-4 whitespace-nowrap">{cattle.id}</td>
                             <td className="px-6 py-4 whitespace-nowrap font-medium">{cattle.name}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{cattle.raze}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{cattle.entrydate}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{cattle.sex}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{formatDate(cattle.entrydate)}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{cattle.paddock}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{cattle.birthdate}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{formatDate(cattle.birthdate)}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{cattle.currentweight} kg</td>
                             <td className="px-6 py-4 whitespace-nowrap">
                                 <span className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -52,16 +64,6 @@ export default function tableCattle() {
                                     'bg-green-100 text-green-800'
                                 }`}>
                                     {cattle.classificationbytype}
-                                </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                    cattle.state === 'Saludable' ? 'bg-green-100 text-green-800' :
-                                    cattle.state === 'Enfermo' ? 'bg-red-100 text-red-800' :
-                                    cattle.state === 'En tratamiento' ? 'bg-yellow-100 text-yellow-800' :
-                                    'bg-gray-100 text-gray-800'
-                                }`}>
-                                    {cattle.state}
                                 </span>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">

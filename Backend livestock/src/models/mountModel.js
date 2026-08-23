@@ -37,11 +37,6 @@ const mount = sequelize.define('mount', {
         allowNull: false,
         comment: '1º, 2º, 3º, etc.'
     },
-    bovineCondition: {//condición de la vaca
-        type: DataTypes.ENUM('Celo', 'Quieta', 'Rechaza'),
-        allowNull: false,
-        comment: 'Condición de la vaca: Celo, Quieta, Rechaza'
-    },
     observations: {//observaciones
         type: DataTypes.TEXT,
         allowNull: true,

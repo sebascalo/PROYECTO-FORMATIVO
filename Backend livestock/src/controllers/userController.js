@@ -24,9 +24,9 @@ const getAllUsers = async (req, res) => {
 // obtener un usuario por id
 const getAllUsersById = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { userId } = req.params;
         var errors = [];
-        if (!id) {
+        if (!userId) {
             errors.push("El ID del usuario es obligatorio");
         }
         if (errors.length > 0) {
@@ -35,9 +35,9 @@ const getAllUsersById = async (req, res) => {
             res.json(response.json);
             return;
         }
-        data = { id };
-        const user = await getUserById(id);
-        var response = new Response(`Usuario ${id} obtenido exitosamente`, user, null);
+        data = { userId };
+        const user = await getUserById(userId);
+        var response = new Response(`Usuario ${userId} obtenido exitosamente`, user, null);
         res.status(201);
         res.json(response.json);
     } catch (error) {
@@ -124,11 +124,11 @@ const createUser = async (req, res) => {
 // actualizar usuario
 const updateUser = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { userId } = req.params;
         const { name, email, password, documentId, postJob } = req.body;
         var errors = [];
         
-        if (!id) errors.push("El ID del usuario es obligatorio");
+        if (!userId) errors.push("El ID del usuario es obligatorio");
         if (!name || name.trim() === "") errors.push("El nombre del usuario es obligatorio");
         if (!email || email.trim() === "") errors.push("El correo del usuario es obligatorio");
         if (!password || password.trim() === "") errors.push("La contraseña es obligatoria");
@@ -142,8 +142,8 @@ const updateUser = async (req, res) => {
             return;
         }
         data = { name, email, password, documentId, postJob };
-        const user = await userUpdate(id, data);
-        var response = new Response(`Usuario ${id} actualizado exitosamente`, user, null); 
+        const user = await userUpdate(userId, data);
+        var response = new Response(`Usuario ${userId} actualizado exitosamente`, user, null); 
         res.status(201);
         res.json(response.json);
     } catch (error) {
@@ -159,9 +159,9 @@ const updateUser = async (req, res) => {
 // inactivar usuario
 const deleteUser = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { userId } = req.params;
         var errors = [];
-        if (!id) {
+        if (!userId) {
             errors.push("El ID del usuario es obligatorio");
         }
         if (errors.length > 0) {
@@ -170,8 +170,8 @@ const deleteUser = async (req, res) => {
             res.json(response.json);
             return;
         }
-        const user = await userDelete(id);
-        var response = new Response(`Usuario ${id} inactivado exitosamente`, { id }, null); 
+        const user = await userDelete(userId);
+        var response = new Response(`Usuario ${userId} inactivado exitosamente`, { userId }, null); 
         res.status(201);
         res.json(response.json);
     } catch (error) {

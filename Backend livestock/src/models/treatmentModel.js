@@ -35,10 +35,6 @@
             type: DataTypes.STRING,
             allowNull: false
         },
-        treatment_result: { // Resultado del tratamiento
-            type: DataTypes.STRING,
-            allowNull: false
-        },
         observations: { // Observaciones adicionales sobre el tratamiento
             type: DataTypes.STRING,
             allowNull: true
