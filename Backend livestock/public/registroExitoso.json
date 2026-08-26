@@ -1,0 +1,13 @@
+{
+    "subject": "correo de de regiistro exitoso",
+    "html": "public/html/registroExitoso.html",
+    "params": {
+        "@nombre": "",
+        "@email": "",
+        "@fechareg":"",
+        "@fecha": "",
+        "@año": "",
+        "link": "",
+        "@nombreBoton": "correo de de registro exitoso"
+    }
+}
