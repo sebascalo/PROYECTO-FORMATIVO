@@ -10,9 +10,6 @@ const swagger = require("./docs/swagger");
 // DB
 const db = require("./config/conectionDB");
 
-// Servicio de correo
-const { sendEmail } = require("./services/emailService");
-
 // Rutas
 const userRoute = require("./routes/userRoute");
 //sebastian
@@ -34,8 +31,6 @@ const mountRoute = require("./routes/mountRoute");
 const artificialInseminationRoute = require("./routes/artificialInseminationRoute");
 
 const authRoute = require("./routes/authRoute");
-
-
 
 // Middlewares
 
