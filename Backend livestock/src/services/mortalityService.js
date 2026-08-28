@@ -12,9 +12,9 @@ const mortalityCreate = async (data) => {
 }
 
 // Obtener todos los registros de mortalidad
-const mortalitiesGetAll = async () => {
+const mortalitiesGetAll = async (limit, offset) => {
     try {
-        const mortalities = await mortality.findAll();
+        const mortalities = await mortality.findAll({ offset: offset, limit: limit });
         return mortalities;
     } catch (error) {
         console.log(error);

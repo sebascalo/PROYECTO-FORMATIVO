@@ -4,7 +4,13 @@ const Response = require("../functions/response");
 // Obtener todos los registros de bovinos
 const getAllCattles = async (req, res) => {
     try {
-        const cattles = await cattlesGetAll();
+        let queryLimit = req.query.limit;
+        let queryOffset = req.query.offset;
+        
+        const limit = queryLimit ? Number(queryLimit) : 10;
+        const offset = queryOffset ? Number(queryOffset) : 0; 
+
+        const cattles = await cattlesGetAll(limit, offset);
         const response = new Response("Registros de bovinos obtenidos exitosamente", cattles, null);
         res.status(200);
         res.json(response.json);

@@ -4,7 +4,14 @@ const Response = require("../functions/response");
 // Obtener todos los registros de pesajes
 const getAllWeighings = async (req, res) => {
     try {
-        const weighings = await weighingsGetAll();
+        let queryLimit = req.query.limit;
+        let queryOffset = req.query.offset;
+        
+        const limit = queryLimit ? Number(queryLimit) : 10;
+        const offset = queryOffset ? Number(queryOffset) : 0; 
+
+
+        const weighings = await weighingsGetAll(limit, offset);
         const response = new Response("Registros de pesajes obtenidos exitosamente", weighings, null);
         res.status(200);
         res.json(response.json);

@@ -4,7 +4,13 @@ const Response = require("../functions/response");
 // Obtener todos los registros de montas naturales
 const getAllMounts = async (req, res) => {
     try {
-        const mounts = await mountsGetAll();
+        let queryLimit = req.query.limit;
+        let queryOffset = req.query.offset;
+        
+        const limit = queryLimit ? Number(queryLimit) : 10;
+        const offset = queryOffset ? Number(queryOffset) : 0; 
+
+        const mounts = await mountsGetAll(limit, offset);
         const response = new Response("Registros de montas naturales obtenidos exitosamente", mounts, null);
         res.status(200);
         res.json(response.json);

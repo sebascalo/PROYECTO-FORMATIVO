@@ -12,9 +12,9 @@ const nutritionCreate = async (data) => {
 }
 
 // Obtener todos los registros de nutrición
-const nutritionsGetAll = async () => {
+const nutritionsGetAll = async (limit, offset) => {
     try {
-        const nutritions = await nutrition.findAll();
+        const nutritions = await nutrition.findAll({ offset: offset, limit: limit });
         return nutritions;
     } catch (error) {
         console.log(error);

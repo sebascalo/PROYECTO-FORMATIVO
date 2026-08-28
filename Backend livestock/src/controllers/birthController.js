@@ -4,7 +4,13 @@ const Response = require("../functions/response");
 // Obtener todos los registros de nacimientos
 const getAllBirths = async (req, res) => {
     try {
-        const births = await birthsGetAll();
+        let queryLimit = req.query.limit;
+        let queryOffset = req.query.offset;
+        
+        const limit = queryLimit ? Number(queryLimit) : 10;
+        const offset = queryOffset ? Number(queryOffset) : 0; 
+
+        const births = await birthsGetAll(limit, offset);
         const response = new Response("Registros de nacimientos obtenidos exitosamente", births, null);
         res.status(200);
         res.json(response.json);

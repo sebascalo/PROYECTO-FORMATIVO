@@ -4,7 +4,13 @@ const Response = require("../functions/response");
 // Obtener todos los registros de inseminaciones artificiales
 const getAllArtificialInseminations = async (req, res) => {
     try {
-        const artificialInseminations = await artificialInseminationsGetAll();
+        let queryLimit = req.query.limit;
+        let queryOffset = req.query.offset;
+        
+        const limit = queryLimit ? Number(queryLimit) : 10;
+        const offset = queryOffset ? Number(queryOffset) : 0; 
+
+        const artificialInseminations = await artificialInseminationsGetAll(limit, offset);
         const response = new Response("Registros de inseminaciones artificiales obtenidos exitosamente", artificialInseminations, null);
         res.status(200);
         res.json(response.json);

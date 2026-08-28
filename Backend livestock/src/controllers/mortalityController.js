@@ -4,7 +4,13 @@ const Response = require("../functions/response");
 // Obtener todos los registros de mortalidad
 const getAllMortalities = async (req, res) => {
     try {
-        const mortalities = await mortalitiesGetAll();
+        let queryLimit = req.query.limit;
+        let queryOffset = req.query.offset;
+        
+        const limit = queryLimit ? Number(queryLimit) : 10;
+        const offset = queryOffset ? Number(queryOffset) : 0; 
+
+        const mortalities = await mortalitiesGetAll(limit, offset);
         const response = new Response("Registros de mortalidad obtenidos exitosamente", mortalities, null);
         res.status(200);
         res.json(response.json);

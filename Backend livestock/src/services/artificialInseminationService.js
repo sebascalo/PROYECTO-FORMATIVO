@@ -12,9 +12,9 @@ const artificialInseminationCreate = async (data) => {
 }
 
 // Obtener todas las inseminaciones artificiales
-const artificialInseminationsGetAll = async () => {
+const artificialInseminationsGetAll = async (limit, offset) => {
     try {
-        const artificialInseminations = await artificialInsemination.findAll();
+        const artificialInseminations = await artificialInsemination.findAll({ offset: offset, limit: limit });
         return artificialInseminations;
     } catch (error) {
         console.log(error);

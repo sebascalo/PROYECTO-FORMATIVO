@@ -31,10 +31,6 @@ const vacunation = db.define("vacunation", {
     type: DataTypes.STRING, //nombre del medicamento
     allowNull: false,
   },
-  application_condition: {
-    type: DataTypes.STRING, //condición en la que se aplicó la vacuna
-    allowNull: false,
-  },
   idResponsible: {
     type: DataTypes.STRING, //nombre del responsable de la vacunacion
     allowNull: false,

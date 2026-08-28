@@ -12,9 +12,9 @@ const birthCreate = async (data) => {
 }
 
 // Obtener todos los nacimientos
-const birthsGetAll = async () => {
+const birthsGetAll = async (limit, offset) => {
     try {
-        const births = await birth.findAll();
+        const births = await birth.findAll({ offset: offset, limit: limit });
         return births;
     } catch (error) {
         console.log(error);

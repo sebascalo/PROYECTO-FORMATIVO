@@ -4,7 +4,13 @@ const Response = require("../functions/response");
 // Obtener todos los registros de tratamientos
 const getAllTreatments = async (req, res) => {
     try {
-        const treatments = await treatmentsGetAll();
+        let queryLimit = req.query.limit;
+        let queryOffset = req.query.offset;
+        
+        const limit = queryLimit ? Number(queryLimit) : 10;
+        const offset = queryOffset ? Number(queryOffset) : 0; 
+
+        const treatments = await treatmentsGetAll(limit, offset);
         const response = new Response("Registros de tratamientos obtenidos exitosamente", treatments, null);
         res.status(200);
         res.json(response.json);

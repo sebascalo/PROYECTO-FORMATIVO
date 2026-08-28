@@ -4,7 +4,13 @@ const Response = require("../functions/response");
 // Obtener todos los registros de nutrición
 const getAllNutritions = async (req, res) => {
     try {
-        const nutritions = await nutritionsGetAll();
+        let queryLimit = req.query.limit;
+        let queryOffset = req.query.offset;
+        
+        const limit = queryLimit ? Number(queryLimit) : 10;
+        const offset = queryOffset ? Number(queryOffset) : 0; 
+
+        const nutritions = await nutritionsGetAll(limit, offset);
         const response = new Response("Registros de nutrición obtenidos exitosamente", nutritions, null);
         res.status(200);
         res.json(response.json);

@@ -10,7 +10,14 @@ const Response = require("../functions/response");
 // Obtener todos los registros de vacunaciones
 const getAllVacunations = async (req, res) => {
     try {
-        const vacunations = await vacunationsGetAll();
+        let queryLimit = req.query.limit;
+        let queryOffset = req.query.offset;
+        
+        const limit = queryLimit ? Number(queryLimit) : 10;
+        const offset = queryOffset ? Number(queryOffset) : 0; 
+
+
+        const vacunations = await vacunationsGetAll(limit, offset);
         const response = new Response("Registros de vacunaciones obtenidos exitosamente", vacunations, null);
         res.status(200);
         res.json(response.json);
