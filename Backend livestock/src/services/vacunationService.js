@@ -12,9 +12,9 @@ const vacunationCreate = async (data) => {
 }
 
 // Obtener todas las vacunaciones
-const vacunationsGetAll = async () => {
+const vacunationsGetAll = async (limit, offset) => {
     try {
-        const vacunations = await vacunation.findAll();
+        const vacunations = await vacunation.findAll({ offset: offset, limit: limit });
         return vacunations;
     } catch (error) {
         console.log(error);

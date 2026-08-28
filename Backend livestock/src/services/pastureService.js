@@ -11,9 +11,9 @@ const pastureCreate = async (data) => {
     }
 }
 // obtener todos los potreros
-const pasturesGetAll = async () => {
+const pasturesGetAll = async (limit, offset) => {
     try {
-        const pastures = await pasture.findAll();
+        const pastures = await pasture.findAll({ offset: offset, limit: limit });
         return pastures;
     }catch (error) {
         console.log(error);

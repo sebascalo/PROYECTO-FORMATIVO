@@ -11,9 +11,9 @@ const milkCreate = async (data) => {
     }
 }
 // obtener todos los registros de leche
-const milksGetAll = async () => {
+const milksGetAll = async (limit, offset) => {
     try {
-        const milks = await milk.findAll();
+        const milks = await milk.findAll({ offset: offset, limit: limit });
         return milks;
     }catch (error) {
         console.log(error);

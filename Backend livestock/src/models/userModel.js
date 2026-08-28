@@ -13,6 +13,11 @@ const user = db.define('user', {
         min: 3,
         allowNull: false
     },
+    uuid: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        allowNull: false
+    },
     email: {
         type: DataTypes.STRING,
         max: 50,

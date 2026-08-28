@@ -4,7 +4,13 @@ const Response = require("../functions/response");
 // Obtener todos los registros de potreros
 const getAllPastures = async (req, res) => {
     try {
-        const pastures = await pasturesGetAll();
+        let queryLimit = req.query.limit;
+        let queryOffset = req.query.offset;
+        
+        const limit = queryLimit ? Number(queryLimit) : 10;
+        const offset = queryOffset ? Number(queryOffset) : 0; 
+
+        const pastures = await pasturesGetAll(limit, offset);
         const response = new Response("Registros de potreros obtenidos exitosamente", pastures, null);
         res.status(200);
         res.json(response.json);

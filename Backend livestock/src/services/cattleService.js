@@ -12,9 +12,9 @@ const cattleCreate = async (data) => {
 }
 
 // Obtener todos los bovinos
-const cattlesGetAll = async () => {
+const cattlesGetAll = async (limit, offset) => {
     try {
-        const cattles = await cattle.findAll();
+        const cattles = await cattle.findAll({ offset: offset, limit: limit });
         return cattles;
     } catch (error) {
         console.log(error);

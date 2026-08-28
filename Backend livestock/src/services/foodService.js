@@ -12,9 +12,9 @@ const foodCreate = async (data) => {
 }
 
 // Obtener todos los alimentos
-const foodsGetAll = async () => {
+const foodsGetAll = async (limit, offset) => {
     try {
-        const foods = await food.findAll();
+        const foods = await food.findAll({ offset: offset, limit: limit });
         return foods;
     } catch (error) {
         console.log(error);

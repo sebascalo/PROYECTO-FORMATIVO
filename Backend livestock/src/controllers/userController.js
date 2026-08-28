@@ -7,14 +7,13 @@ const { sendEmail } = require("../services/emailService");
 // obtener todos los usuarios
 const getAllUsers = async (req, res) => {
     try {
-         let queryLimit = req.query.limit;
-         let queryOffset = req.query.offset;
+        let queryLimit = req.query.limit;
+        let queryOffset = req.query.offset;
+        
+        const limit = queryLimit ? Number(queryLimit) : 10;
+        const offset = queryOffset ? Number(queryOffset) : 0; 
 
-        //covertir y validar los datos usando la funcion
-        const limit = queryLimit ? Number(queryLimit): 10;
-        const offset = queryOffset ? Number (queryOffset): 0;
-
-        const users = await usersGetAll(limit,offset); 
+        const users = await usersGetAll(limit, offset);
         const response = new Response("Usuarios obtenidos exitosamente", users, null);
         res.status(200);
         res.json(response.json);

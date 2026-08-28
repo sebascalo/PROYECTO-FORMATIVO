@@ -12,9 +12,9 @@ const treatmentCreate = async (data) => {
 }
 
 // Obtener todos los tratamientos
-const treatmentsGetAll = async () => {
+const treatmentsGetAll = async (limit, offset) => {
     try {
-        const treatments = await treatment.findAll();
+        const treatments = await treatment.findAll({ offset: offset, limit: limit });
         return treatments;
     } catch (error) {
         console.log(error);

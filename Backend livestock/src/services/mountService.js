@@ -12,9 +12,9 @@ const mountCreate = async (data) => {
 }
 
 // Obtener todas las montas naturales
-const mountsGetAll = async () => {
+const mountsGetAll = async (limit, offset) => {
     try {
-        const mounts = await mount.findAll();
+        const mounts = await mount.findAll({ offset: offset, limit: limit });
         return mounts;
     } catch (error) {
         console.log(error);

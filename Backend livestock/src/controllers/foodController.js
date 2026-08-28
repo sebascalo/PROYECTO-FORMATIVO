@@ -4,7 +4,13 @@ const Response = require("../functions/response");
 // Obtener todos los registros de alimentos
 const getAllFoods = async (req, res) => {
     try {
-        const foods = await foodsGetAll();
+        let queryLimit = req.query.limit;
+        let queryOffset = req.query.offset;
+        
+        const limit = queryLimit ? Number(queryLimit) : 10;
+        const offset = queryOffset ? Number(queryOffset) : 0; 
+
+        const foods = await foodsGetAll(limit, offset);
         const response = new Response("Registros de alimentos obtenidos exitosamente", foods, null);
         res.status(200);
         res.json(response.json);
