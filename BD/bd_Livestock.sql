@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `livestock_completo` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `livestock_completo`;
 -- MySQL dump 10.13  Distrib 8.0.46, for Win64 (x86_64)
 --
 -- Host: localhost    Database: livestock
@@ -427,6 +425,32 @@ LOCK TABLES `rollroute` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `token-resetpassword`
+--
+
+DROP TABLE IF EXISTS `token-resetpassword`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `token-resetpassword` (
+  `idtoken-resetPassword` int NOT NULL,
+  `userId` int DEFAULT NULL,
+  `token` varchar(45) DEFAULT NULL,
+  `host` varchar(45) DEFAULT NULL,
+  `usado` tinyint DEFAULT '0',
+  PRIMARY KEY (`idtoken-resetPassword`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `token-resetpassword`
+--
+
+LOCK TABLES `token-resetpassword` WRITE;
+/*!40000 ALTER TABLE `token-resetpassword` DISABLE KEYS */;
+/*!40000 ALTER TABLE `token-resetpassword` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `treatments`
 --
 
@@ -480,10 +504,11 @@ CREATE TABLE `users` (
   `active` tinyint DEFAULT '0',
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
+  `solicito_newPassword` tinyint DEFAULT '0',
   PRIMARY KEY (`userId`),
   KEY `idRoll_idx` (`idroll`),
   CONSTRAINT `idRoll` FOREIGN KEY (`idroll`) REFERENCES `roll` (`idroll`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -492,7 +517,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'sebas',NULL,'sebastian@gmail.com','1234567','12345678901','APRENDIZ',NULL,0,1,'2026-06-19 17:39:20','2026-06-19 17:39:20'),(2,'Carlos Rodríguez',NULL,'carlos@test.com','123456','98765432','Encargado de Ganado',NULL,0,1,'2026-07-23 20:29:08','2026-07-23 20:29:08'),(4,'Nombre del usuario',NULL,'correo@gm.com','contraseña','12345678','Cargo del usuario',NULL,0,1,'2026-07-27 12:21:39','2026-07-27 12:21:39'),(5,'Ana Sofia Gonzalez Yepes',NULL,'asgy2005@gmail.com','contraseña','1105305295','Psicologa',NULL,0,1,'2026-07-28 01:49:47','2026-07-28 01:49:47'),(6,'Zara',NULL,'zaritaGPT@gmail.com','1234','1205648732','Programada estrella',NULL,0,1,'2026-07-30 18:44:07','2026-07-30 18:44:07'),(7,'Sebitas prueba 1',NULL,'sebastiancalderon5204@gmail.com','1234','1049234658','Gerente livestock',NULL,0,1,'2026-07-31 05:11:09','2026-07-31 05:11:09'),(8,'Sebitas prueba2',NULL,'sebastiancalderon5204@gmail.com','1234','1049234658','Gerente livestock',NULL,0,1,'2026-07-31 05:15:24','2026-07-31 05:15:24'),(9,'Zara Ñustes',NULL,'zaranustes1702@gm.com','1234','12345678','Se lo tu quea ser',NULL,0,1,'2026-07-31 13:07:22','2026-07-31 13:07:22'),(10,'Zara Ñustes',NULL,'zaranustes1702@gmail.com','1234','12345678','Se lo tu quea ser',NULL,0,1,'2026-07-31 13:13:31','2026-07-31 13:13:31'),(11,'Zara Ñustes 2',NULL,'zaranustes1702@gmail.com','1234','12345678','Se lo tu quea ser',NULL,0,1,'2026-07-31 13:15:55','2026-07-31 13:15:55'),(12,'sebatian',NULL,'sebastiancalderonlozano@gmail.com','1234','12345678','OG',NULL,0,1,'2026-07-31 14:39:15','2026-07-31 14:39:15'),(13,'Natalia Prieto',NULL,'prietoguzmannatalia8@gmail.com','contraseña','12345678','eso',NULL,0,1,'2026-08-01 19:18:01','2026-08-01 19:18:01'),(14,'Danna Luzabell Villamizar Saldaña',NULL,'villamizarsaldanadaniela@gmail.com','soypobre123','1034401733','uu',NULL,0,1,'2026-08-03 01:40:28','2026-08-03 01:40:28');
+INSERT INTO `users` VALUES (1,'sebas',NULL,'sebastian@gmail.com','1234567','12345678901','APRENDIZ',NULL,0,1,'2026-06-19 17:39:20','2026-06-19 17:39:20',0),(2,'Carlos Rodríguez',NULL,'carlos@test.com','123456','98765432','Encargado de Ganado',NULL,0,1,'2026-07-23 20:29:08','2026-07-23 20:29:08',0),(4,'Nombre del usuario',NULL,'correo@gm.com','contraseña','12345678','Cargo del usuario',NULL,0,1,'2026-07-27 12:21:39','2026-07-27 12:21:39',0),(5,'Ana Sofia Gonzalez Yepes',NULL,'asgy2005@gmail.com','contraseña','1105305295','Psicologa',NULL,0,1,'2026-07-28 01:49:47','2026-07-28 01:49:47',0),(6,'Zara',NULL,'zaritaGPT@gmail.com','1234','1205648732','Programada estrella',NULL,0,1,'2026-07-30 18:44:07','2026-07-30 18:44:07',0),(7,'Sebitas prueba 1',NULL,'sebastiancalderon5204@gmail.com','1234','1049234658','Gerente livestock',NULL,0,1,'2026-07-31 05:11:09','2026-07-31 05:11:09',0),(8,'Sebitas prueba2',NULL,'sebastiancalderon5204@gmail.com','1234','1049234658','Gerente livestock',NULL,0,1,'2026-07-31 05:15:24','2026-07-31 05:15:24',0),(9,'Zara Ñustes',NULL,'zaranustes1702@gm.com','1234','12345678','Se lo tu quea ser',NULL,0,1,'2026-07-31 13:07:22','2026-07-31 13:07:22',0),(10,'Zara Ñustes',NULL,'zaranustes1702@gmail.com','1234','12345678','Se lo tu quea ser',NULL,0,1,'2026-07-31 13:13:31','2026-07-31 13:13:31',0),(11,'Zara Ñustes 2',NULL,'zaranustes1702@gmail.com','1234','12345678','Se lo tu quea ser',NULL,0,1,'2026-07-31 13:15:55','2026-07-31 13:15:55',0),(12,'sebatian',NULL,'sebastiancalderonlozano@gmail.com','1234','12345678','OG',NULL,0,1,'2026-07-31 14:39:15','2026-07-31 14:39:15',0),(13,'Natalia Prieto',NULL,'prietoguzmannatalia8@gmail.com','contraseña','12345678','eso',NULL,0,1,'2026-08-01 19:18:01','2026-08-01 19:18:01',0),(14,'Danna Luzabell Villamizar Saldaña',NULL,'villamizarsaldanadaniela@gmail.com','soypobre123','1034401733','uu',NULL,0,1,'2026-08-03 01:40:28','2026-08-03 01:40:28',0),(15,'Sebastian Calderon','e370f2f8-26f3-4d1f-992f-587b080784e5','sebastiancalderon5204@gmail.com','Sebitas77','3121384','Administrador',NULL,0,1,'2026-08-28 16:46:42','2026-08-28 16:46:42',0),(16,'Sebastian Calderón','728b66c6-57c7-4e87-97b8-08cfe85d935b','sebastiancalderon5204@gmail.com','SEBITAS123','3206546','operario',NULL,0,1,'2026-08-28 17:21:32','2026-08-28 17:21:32',0),(17,'Shebas','d87d1041-7751-41bf-9321-db4590678cd0','sebastiancalderon5204@gmail.com','12345678','12345678','asistente',NULL,0,1,'2026-08-28 17:32:51','2026-08-28 17:32:51',0),(18,'Stefany','e8f177d5-0856-4e38-94f5-e4788fbb77f9','sebastiancalderon5204@gmail.com','123456789','12345678','veterinaria',NULL,0,1,'2026-08-28 17:40:07','2026-08-28 17:40:07',0);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -510,7 +535,6 @@ CREATE TABLE `vacunations` (
   `applied_dose` varchar(255) NOT NULL,
   `vaccine_lot` varchar(255) NOT NULL,
   `medicine_name` varchar(255) NOT NULL,
-  `application_condition` varchar(255) NOT NULL,
   `idResponsible` varchar(255) NOT NULL,
   `observations` varchar(255) DEFAULT NULL,
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -526,7 +550,7 @@ CREATE TABLE `vacunations` (
 
 LOCK TABLES `vacunations` WRITE;
 /*!40000 ALTER TABLE `vacunations` DISABLE KEYS */;
-INSERT INTO `vacunations` VALUES (1,'VACA-001','2026-08-15 08:30:00','2 ml','LOTE-ABC-123','Vacuna Antiaftosa','Sana','Juan Pérez','Primera dosis anual','2026-08-21 10:24:29','2026-08-21 10:24:29'),(2,'VACA-002','2026-08-16 09:00:00','5 ml','LOTE-DEF-456','Vacuna Brucelosis','Leve inflamación','María Gómez','Revisar en 24 horas','2026-08-21 10:24:29','2026-08-21 10:24:29'),(3,'VACA-003','2026-08-17 10:15:00','3 ml','LOTE-GHI-789','Vacuna Clostridial','Sana','Carlos Ruiz','Dosis de refuerzo','2026-08-21 10:24:29','2026-08-21 10:24:29');
+INSERT INTO `vacunations` VALUES (1,'VACA-001','2026-08-15 08:30:00','2 ml','LOTE-ABC-123','Vacuna Antiaftosa','Juan Pérez','Primera dosis anual','2026-08-21 10:24:29','2026-08-21 10:24:29'),(2,'VACA-002','2026-08-16 09:00:00','5 ml','LOTE-DEF-456','Vacuna Brucelosis','María Gómez','Revisar en 24 horas','2026-08-21 10:24:29','2026-08-21 10:24:29'),(3,'VACA-003','2026-08-17 10:15:00','3 ml','LOTE-GHI-789','Vacuna Clostridial','Carlos Ruiz','Dosis de refuerzo','2026-08-21 10:24:29','2026-08-21 10:24:29');
 /*!40000 ALTER TABLE `vacunations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -571,4 +595,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-08-22 19:39:49
+-- Dump completed on 2026-08-30 10:01:02
