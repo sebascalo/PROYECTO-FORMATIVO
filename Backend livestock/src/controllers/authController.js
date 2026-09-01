@@ -13,34 +13,26 @@ const JWT_KEY_SECRET = process.env.JWT_KEY_SECRET || "akhkjlvcakjhjlf666";
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-
     if (email == "" || password == "") {
       const response = new Response(
         "Error en login",
         null,
         "Correo o contraseña vacíos"
       );
-
       return res.status(400).json(response);
     }
-
     const user = await getUserByEmail(email);
-
-    // Si no existe el usuario
     if (!user) {
       const response = new Response(
         "Error en login",
         null,
         "Usuario y contraseña incorrectos"
       );
-
       return res.status(400).json(response.json);
     }
 
-    // Comparar contraseña
     const match = bcrypt.compareSync(password, user.password);
 
-    // Si la contraseña es incorrecta
     if (!match) {
       const response = new Response(
         "Error en login",
@@ -51,7 +43,6 @@ const login = async (req, res) => {
       return res.status(400).json(response.json);
     }
 
-    // Generar token SOLO si la contraseña es correcta
     const token = jwt.sign(
       { user: email },
       JWT_KEY_SECRET,
@@ -80,7 +71,6 @@ const login = async (req, res) => {
         },
       ]
     );
-
     return res.status(500).json(errorResponse.json);
   }
 };
