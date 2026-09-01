@@ -47,7 +47,7 @@ router.get("/UserById/:id",ValidateToken, getAllUsersById);
 
 /**
  * @swagger
- * /api/users/CreateUser:
+ * /api/user/CreateUser:
  *   post:
  *     summary: Crear usuario
  *     description: Crea un nuevo usuario en el sistema.

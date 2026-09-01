@@ -27,8 +27,13 @@ const user = db.define('user', {
     },  
     password: {
         type: DataTypes.STRING,
-        max: 50,
+        max: 200,
         min: 3,
+        allowNull: false
+    },
+    salt: {
+        type: DataTypes.STRING,
+        max: 50,
         allowNull: false
     },
     documentId: {
@@ -50,6 +55,10 @@ const user = db.define('user', {
     active:{
         type: DataTypes.BOOLEAN,
          defaultValue: true     
+    },
+    solNewPassword:{
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
     },
     createdAt:{
         type: DataTypes.DATE,

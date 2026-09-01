@@ -63,10 +63,22 @@ const userUpdate = async (userId, data) => {
     }
 }
 
+//buscar usuario por email
+const getUserByEmail = async (email) => {
+    try {
+        const userEmail = await user.findOne({ where: { email } });
+        return userEmail;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
 module.exports = {
     userCreate,
     usersGetAll,
     getUserById,
     userDelete,
-    userUpdate
+    userUpdate,
+    getUserByEmail
 }

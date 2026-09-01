@@ -3,6 +3,7 @@ const Response = require("../functions/response");
 const fs = require("fs");
 const path = require("path");
 const { sendEmail } = require("../services/emailService");
+const bycript = require("bcrypt");
 
 // obtener todos los usuarios
 const getAllUsers = async (req, res) => {
@@ -74,7 +75,11 @@ const createUser = async (req, res) => {
             res.json(response.json);
             return;
         }
-        data = { name, email, password, documentId, postJob };
+
+        const salt = bycript.genSaltSync(10);
+        const hashed_password = bycript.hashSync(password, salt);
+
+        data = { name, email, password: hashed_password, salt, documentId, postJob };
         const user = await userCreate(data);
 
         // Leer JSON
