@@ -19,11 +19,11 @@ import {
 
 export default function NavBarDashboard() {
   return (
-    <nav className="h-[60px] relative w-full px-2 md:px-6 lg:px-10 xl:px-16 flex items-center justify-between z-30 bg-gradient-nav transition-all">
+    <nav className="h-[60px] relative w-full px-2 md:px-6 lg:px-10 xl:px-16 flex items-center justify-between z-30 bg-gradient-to-r from-[#2B7FFF] to-[#1448E6]">
       {/* Logo - Izquierda */}
       <div className="flex items-center gap-1">
         <Image src={logo} alt="Logo" width={50} height={50} />
-        <span className="text-fond font-bold text-3xl tracking-wide">
+        <span className="text-white font-bold text-3xl tracking-wide">
           Livestock
         </span>
       </div>
@@ -35,7 +35,7 @@ export default function NavBarDashboard() {
           <DropdownMenuTrigger asChild>
             <Button 
               variant="ghost" 
-              className="text-white hover:text-white data-[state=open]:text-white hover:bg-blue-800/50 data-[state=open]:bg-blue-800/50 gap-2 transition-colors"
+              className="text-white gap-2"
             >
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">

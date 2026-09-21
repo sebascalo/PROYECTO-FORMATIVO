@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import {
   Sidebar,
   SidebarContent,
@@ -7,13 +7,14 @@ import {
   SidebarMenuButton,
   SidebarMenuSub,
   SidebarMenuSubItem,
-  SidebarMenuSubButton
-} from "@/components/ui/sidebar"
-import { 
-  ChevronDown, 
-  Milk, 
-  Map, 
-  User, 
+  SidebarMenuSubButton,
+  SidebarMenuAction,
+} from "@/components/ui/sidebar";
+import {
+  ChevronDown,
+  Milk,
+  Map,
+  User,
   Icon,
   Heart,
   Users,
@@ -27,103 +28,107 @@ import {
   Baby,
   Scale,
   Stethoscope,
-  Activity
-} from "lucide-react"
-import { Cow, Grains } from '@phosphor-icons/react';
-import { cowHead } from '@lucide/lab';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
-import { useRouter, usePathname } from 'next/navigation'; // Importar usePathname
+  Activity,
+} from "lucide-react";
+import { Cow, Grains } from "@phosphor-icons/react";
+import { cowHead } from "@lucide/lab";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { useRouter, usePathname } from "next/navigation";
 
 export function AppSidebar() {
   const router = useRouter();
-  const pathname = usePathname(); // Obtener la ruta actual
+  const pathname = usePathname();
 
-  // Función para verificar si una ruta está activa
   const isActive = (path: string) => {
     return pathname === path || pathname?.startsWith(path);
   };
 
   return (
-    <Sidebar variant="inset" collapsible="icon" className="relative flex flex-col h-full w-64 border-r bg-blue2 text-white">
-      <SidebarContent className="bg-blue2 text-white">
-        
+    <Sidebar
+      variant="inset"
+      collapsible="icon"
+      className="relative flex flex-col h-full w-64 border-r bg-gradient-to-r from-[#1448E6] to-[#2B7FFF] text-white"
+    >
+      <SidebarContent className="bg-gradient-to-r from-[#1448E6] to-[#2B7FFF] text-white">
         {/* ================= SECCIÓN 1: GESTIÓN DE BOVINOS ================= */}
         <div className="px-3 py-2 mt-2">
           <div className="flex items-center gap-2 text-xs font-bold text-blue-300 uppercase tracking-wider group-data-[collapsible=icon]:justify-center">
             <Cow size={14} />
-            <span className="group-data-[collapsible=icon]:hidden">Gestión de Bovinos</span>
+            <span className="group-data-[collapsible=icon]:hidden">
+              Gestión de Bovinos
+            </span>
           </div>
         </div>
 
         {/* Módulo Bovinos */}
-        <Collapsible defaultOpen={isActive('/dashboard/cattle')} className="group/collapsible">
+        <Collapsible
+          defaultOpen={isActive("/dashboard/cattle")}
+          className="group/collapsible"
+        >
           <SidebarMenu>
             <SidebarMenuItem>
-              <CollapsibleTrigger asChild className="text-white hover:text-white hover:bg-blue-600">
-                <SidebarMenuButton className={`hover:bg-blue-600 cursor-pointer group-data-[collapsible=icon]:justify-center ${
-                  isActive('/dashboard/cattle') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                }`}>
-                  <Icon iconNode={cowHead} size={20} />
-                  <span className="group-data-[collapsible=icon]:hidden">Bovino</span>
-                  <ChevronDown className="ml-auto transition-transform group-data-[collapsible=icon]:hidden group-data-[state=open]/collapsible:rotate-180" />
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
-              <CollapsibleContent className="group-data-[collapsible=icon]:hidden">
-                <SidebarMenuSub>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton 
-                      className={`hover:bg-blue-600 text-white hover:text-white cursor-pointer ${
-                        isActive('/dashboard/cattle/createCattle') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                      }`}
-                      onClick={() => router.push('/dashboard/cattle/createCattle')}
-                    >
-                      <span>Crear bovino</span>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                  <SidebarMenuSubItem>
-                    <SidebarMenuSubButton 
-                      className={`hover:bg-blue-600 text-white hover:text-white cursor-pointer ${
-                        isActive('/dashboard/cattle/listCattle') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                      }`}
-                      onClick={() => router.push('/dashboard/cattle/listCattle')}
-                    >
-                      <span>Listar bovinos</span>
-                    </SidebarMenuSubButton>
-                  </SidebarMenuSubItem>
-                </SidebarMenuSub>
-              </CollapsibleContent>
+              <SidebarMenuButton asChild>
+                <a href="/dashboard/cattle">
+                <Cow/> Bovino
+                </a>
+              </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
         </Collapsible>
 
         {/* Módulo Pesaje */}
-        <Collapsible defaultOpen={isActive('/dashboard/weighing')} className="group/collapsible">
+        <Collapsible
+          defaultOpen={isActive("/dashboard/weighing")}
+          className="group/collapsible"
+        >
           <SidebarMenu>
             <SidebarMenuItem>
-              <CollapsibleTrigger asChild className="text-white hover:text-white hover:bg-blue-600">
-                <SidebarMenuButton className={`hover:bg-blue-600 cursor-pointer group-data-[collapsible=icon]:justify-center ${
-                  isActive('/dashboard/weighing') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                }`}>
+              <CollapsibleTrigger asChild>
+                <SidebarMenuButton
+                  className={`cursor-pointer group-data-[collapsible=icon]:justify-center ${
+                    isActive("/dashboard/weighing")
+                      ? "bg-white text-[#1448E6]"
+                      : "text-white"
+                  }`}
+                >
                   <Scale size={20} />
-                  <span className="group-data-[collapsible=icon]:hidden">Pesaje</span>
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    Pesaje
+                  </span>
                   <ChevronDown className="ml-auto transition-transform group-data-[collapsible=icon]:hidden group-data-[state=open]/collapsible:rotate-180" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent className="group-data-[collapsible=icon]:hidden">
                 <SidebarMenuSub>
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className={`hover:bg-blue-600 text-white hover:text-white cursor-pointer ${
-                      isActive('/dashboard/weighing/createWeighing') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                    }`}
-                      onClick={() => router.push('/dashboard/weighing/createWeighing')}>
+                    <SidebarMenuSubButton
+                      className={`cursor-pointer ${
+                        isActive("/dashboard/weighing/createWeighing")
+                          ? "bg-white text-[#1448E6]"
+                          : "text-white"
+                      }`}
+                      onClick={() =>
+                        router.push("/dashboard/weighing/createWeighing")
+                      }
+                    >
                       <span>Crear pesaje</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className={`hover:bg-blue-600 text-white hover:text-white cursor-pointer ${
-                      isActive('/dashboard/weighing/listWeighing') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                    }`}
-                      onClick={() => router.push('/dashboard/weighing/listWeighing')}>
+                    <SidebarMenuSubButton
+                      className={`cursor-pointer ${
+                        isActive("/dashboard/weighing/listWeighing")
+                          ? "bg-white text-[#1448E6]"
+                          : "text-white"
+                      }`}
+                      onClick={() =>
+                        router.push("/dashboard/weighing/listWeighing")
+                      }
+                    >
                       <span>Listar pesajes</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
@@ -134,33 +139,52 @@ export function AppSidebar() {
         </Collapsible>
 
         {/* Módulo Nacimientos */}
-        <Collapsible defaultOpen={isActive('/dashboard/birth')} className="group/collapsible">
+        <Collapsible
+          defaultOpen={isActive("/dashboard/birth")}
+          className="group/collapsible"
+        >
           <SidebarMenu>
             <SidebarMenuItem>
-              <CollapsibleTrigger asChild className="text-white hover:text-white hover:bg-blue-600">
-                <SidebarMenuButton className={`hover:bg-blue-600 cursor-pointer group-data-[collapsible=icon]:justify-center ${
-                  isActive('/dashboard/birth') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                }`}>
+              <CollapsibleTrigger asChild>
+                <SidebarMenuButton
+                  className={`cursor-pointer group-data-[collapsible=icon]:justify-center ${
+                    isActive("/dashboard/birth")
+                      ? "bg-white text-[#1448E6]"
+                      : "text-white"
+                  }`}
+                >
                   <Baby size={20} />
-                  <span className="group-data-[collapsible=icon]:hidden">Nacimiento</span>
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    Nacimiento
+                  </span>
                   <ChevronDown className="ml-auto transition-transform group-data-[collapsible=icon]:hidden group-data-[state=open]/collapsible:rotate-180" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent className="group-data-[collapsible=icon]:hidden">
                 <SidebarMenuSub>
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className={`hover:bg-blue-600 text-white hover:text-white cursor-pointer ${
-                      isActive('/dashboard/birth/crearBirth') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                    }`}
-                      onClick={() => router.push('/dashboard/birth/crearBirth')}>
+                    <SidebarMenuSubButton
+                      className={`cursor-pointer ${
+                        isActive("/dashboard/birth/crearBirth")
+                          ? "bg-white text-[#1448E6]"
+                          : "text-white"
+                      }`}
+                      onClick={() => router.push("/dashboard/birth/crearBirth")}
+                    >
                       <span>Crear nacimiento</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className={`hover:bg-blue-600 text-white hover:text-white cursor-pointer ${
-                      isActive('/dashboard/birth/listarBirth') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                    }`}
-                      onClick={() => router.push('/dashboard/birth/listarBirth')}>
+                    <SidebarMenuSubButton
+                      className={`cursor-pointer ${
+                        isActive("/dashboard/birth/listarBirth")
+                          ? "bg-white text-[#1448E6]"
+                          : "text-white"
+                      }`}
+                      onClick={() =>
+                        router.push("/dashboard/birth/listarBirth")
+                      }
+                    >
                       <span>Listar nacimientos</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
@@ -171,33 +195,54 @@ export function AppSidebar() {
         </Collapsible>
 
         {/* Módulo Mortalidad */}
-        <Collapsible defaultOpen={isActive('/dashboard/mortality')} className="group/collapsible">
+        <Collapsible
+          defaultOpen={isActive("/dashboard/mortality")}
+          className="group/collapsible"
+        >
           <SidebarMenu>
             <SidebarMenuItem>
-              <CollapsibleTrigger asChild className="text-white hover:text-white hover:bg-blue-600">
-                <SidebarMenuButton className={`hover:bg-blue-600 cursor-pointer group-data-[collapsible=icon]:justify-center ${
-                  isActive('/dashboard/mortality') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                }`}>
+              <CollapsibleTrigger asChild>
+                <SidebarMenuButton
+                  className={`cursor-pointer group-data-[collapsible=icon]:justify-center ${
+                    isActive("/dashboard/mortality")
+                      ? "bg-white text-[#1448E6]"
+                      : "text-white"
+                  }`}
+                >
                   <AlertTriangle size={20} />
-                  <span className="group-data-[collapsible=icon]:hidden">Mortalidad</span>
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    Mortalidad
+                  </span>
                   <ChevronDown className="ml-auto transition-transform group-data-[collapsible=icon]:hidden group-data-[state=open]/collapsible:rotate-180" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent className="group-data-[collapsible=icon]:hidden">
                 <SidebarMenuSub>
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className={`hover:bg-blue-600 text-white hover:text-white cursor-pointer ${
-                      isActive('/dashboard/mortality/crearMortality') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                    }`}
-                      onClick={() => router.push('/dashboard/mortality/crearMortality')}>
+                    <SidebarMenuSubButton
+                      className={`cursor-pointer ${
+                        isActive("/dashboard/mortality/crearMortality")
+                          ? "bg-white text-[#1448E6]"
+                          : "text-white"
+                      }`}
+                      onClick={() =>
+                        router.push("/dashboard/mortality/crearMortality")
+                      }
+                    >
                       <span>Crear mortalidad</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className={`hover:bg-blue-600 text-white hover:text-white cursor-pointer ${
-                      isActive('/dashboard/mortality/listarMortality') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                    }`}
-                      onClick={() => router.push('/dashboard/mortality/listarMortality')}>
+                    <SidebarMenuSubButton
+                      className={`cursor-pointer ${
+                        isActive("/dashboard/mortality/listarMortality")
+                          ? "bg-white text-[#1448E6]"
+                          : "text-white"
+                      }`}
+                      onClick={() =>
+                        router.push("/dashboard/mortality/listarMortality")
+                      }
+                    >
                       <span>Listar mortalidades</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
@@ -208,44 +253,67 @@ export function AppSidebar() {
         </Collapsible>
 
         {/* Separador */}
-        <div className="my-2 border-t border-blue-600/30 mx-3" />
+        <div className="my-2 border-t border-white/30 mx-3" />
 
         {/* ================= SECCIÓN 2: COMIDAS ================= */}
         <div className="px-3 py-2 mt-2">
           <div className="flex items-center gap-2 text-xs font-bold text-blue-300 uppercase tracking-wider group-data-[collapsible=icon]:justify-center">
             <Grains size={14} />
-            <span className="group-data-[collapsible=icon]:hidden">Gestion de alimentacion</span>
+            <span className="group-data-[collapsible=icon]:hidden">
+              Gestion de alimentacion
+            </span>
           </div>
         </div>
 
         {/* Módulo Nutricion */}
-        <Collapsible defaultOpen={isActive('/dashboard/nutrition')} className="group/collapsible">
+        <Collapsible
+          defaultOpen={isActive("/dashboard/nutrition")}
+          className="group/collapsible"
+        >
           <SidebarMenu>
             <SidebarMenuItem>
-              <CollapsibleTrigger asChild className="text-white hover:text-white hover:bg-blue-600">
-                <SidebarMenuButton className={`hover:bg-blue-600 cursor-pointer group-data-[collapsible=icon]:justify-center ${
-                  isActive('/dashboard/nutrition') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                }`}>
+              <CollapsibleTrigger asChild>
+                <SidebarMenuButton
+                  className={`cursor-pointer group-data-[collapsible=icon]:justify-center ${
+                    isActive("/dashboard/nutrition")
+                      ? "bg-white text-[#1448E6]"
+                      : "text-white"
+                  }`}
+                >
                   <Sprout size={20} />
-                  <span className="group-data-[collapsible=icon]:hidden">Nutricion</span>
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    Nutricion
+                  </span>
                   <ChevronDown className="ml-auto transition-transform group-data-[collapsible=icon]:hidden group-data-[state=open]/collapsible:rotate-180" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent className="group-data-[collapsible=icon]:hidden">
                 <SidebarMenuSub>
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className={`hover:bg-blue-600 text-white hover:text-white cursor-pointer ${
-                      isActive('/dashboard/nutrition/createNutrition') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                    }`}
-                      onClick={() => router.push('/dashboard/nutrition/createNutrition')}>
+                    <SidebarMenuSubButton
+                      className={`cursor-pointer ${
+                        isActive("/dashboard/nutrition/createNutrition")
+                          ? "bg-white text-[#1448E6]"
+                          : "text-white"
+                      }`}
+                      onClick={() =>
+                        router.push("/dashboard/nutrition/createNutrition")
+                      }
+                    >
                       <span>Crear nutricion</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className={`hover:bg-blue-600 text-white hover:text-white cursor-pointer ${
-                      isActive('/dashboard/nutrition/listNutrition') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                    }`}
-                      onClick={() => router.push('/dashboard/nutrition/listNutrition')}>
+                    <SidebarMenuSubButton
+                      className={`cursor-pointer ${
+                        isActive("/dashboard/nutrition/listNutrition")
+                          ? "bg-white text-[#1448E6]"
+                          : "text-white"
+                      }`}
+                      onClick={() =>
+                        router.push("/dashboard/nutrition/listNutrition")
+                      }
+                    >
                       <span>Listar nutriciones</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
@@ -256,33 +324,50 @@ export function AppSidebar() {
         </Collapsible>
 
         {/* Módulo Alimento */}
-        <Collapsible defaultOpen={isActive('/dashboard/food')} className="group/collapsible">
+        <Collapsible
+          defaultOpen={isActive("/dashboard/food")}
+          className="group/collapsible"
+        >
           <SidebarMenu>
             <SidebarMenuItem>
-              <CollapsibleTrigger asChild className="text-white hover:text-white hover:bg-blue-600">
-                <SidebarMenuButton className={`hover:bg-blue-600 cursor-pointer group-data-[collapsible=icon]:justify-center ${
-                  isActive('/dashboard/food') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                }`}>
+              <CollapsibleTrigger asChild>
+                <SidebarMenuButton
+                  className={`cursor-pointer group-data-[collapsible=icon]:justify-center ${
+                    isActive("/dashboard/food")
+                      ? "bg-white text-[#1448E6]"
+                      : "text-white"
+                  }`}
+                >
                   <Wheat size={20} />
-                  <span className="group-data-[collapsible=icon]:hidden">Alimento</span>
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    Alimento
+                  </span>
                   <ChevronDown className="ml-auto transition-transform group-data-[collapsible=icon]:hidden group-data-[state=open]/collapsible:rotate-180" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent className="group-data-[collapsible=icon]:hidden">
                 <SidebarMenuSub>
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className={`hover:bg-blue-600 text-white hover:text-white cursor-pointer ${
-                      isActive('/dashboard/food/createFood') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                    }`}
-                      onClick={() => router.push('/dashboard/food/createFood')}>
+                    <SidebarMenuSubButton
+                      className={`cursor-pointer ${
+                        isActive("/dashboard/food/createFood")
+                          ? "bg-white text-[#1448E6]"
+                          : "text-white"
+                      }`}
+                      onClick={() => router.push("/dashboard/food/createFood")}
+                    >
                       <span>Crear alimento</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className={`hover:bg-blue-600 text-white hover:text-white cursor-pointer ${
-                      isActive('/dashboard/food/listFood') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                    }`}
-                      onClick={() => router.push('/dashboard/food/listFood')}>
+                    <SidebarMenuSubButton
+                      className={`cursor-pointer ${
+                        isActive("/dashboard/food/listFood")
+                          ? "bg-white text-[#1448E6]"
+                          : "text-white"
+                      }`}
+                      onClick={() => router.push("/dashboard/food/listFood")}
+                    >
                       <span>Listar alimentos</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
@@ -293,44 +378,67 @@ export function AppSidebar() {
         </Collapsible>
 
         {/* Separador */}
-        <div className="my-2 border-t border-blue-600/30 mx-3" />
+        <div className="my-2 border-t border-white/30 mx-3" />
 
         {/* ================= SECCIÓN 3: SANIDAD ================= */}
         <div className="px-3 py-2 mt-2">
           <div className="flex items-center gap-2 text-xs font-bold text-blue-300 uppercase tracking-wider group-data-[collapsible=icon]:justify-center">
             <Stethoscope size={14} />
-            <span className="group-data-[collapsible=icon]:hidden">Sanidad</span>
+            <span className="group-data-[collapsible=icon]:hidden">
+              Sanidad
+            </span>
           </div>
         </div>
 
         {/* Módulo Vacunación */}
-        <Collapsible defaultOpen={isActive('/dashboard/vacunation')} className="group/collapsible">
+        <Collapsible
+          defaultOpen={isActive("/dashboard/vacunation")}
+          className="group/collapsible"
+        >
           <SidebarMenu>
             <SidebarMenuItem>
-              <CollapsibleTrigger asChild className="text-white hover:text-white hover:bg-blue-600">
-                <SidebarMenuButton className={`hover:bg-blue-600 cursor-pointer group-data-[collapsible=icon]:justify-center ${
-                  isActive('/dashboard/vacunation') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                }`}>
+              <CollapsibleTrigger asChild>
+                <SidebarMenuButton
+                  className={`cursor-pointer group-data-[collapsible=icon]:justify-center ${
+                    isActive("/dashboard/vacunation")
+                      ? "bg-white text-[#1448E6]"
+                      : "text-white"
+                  }`}
+                >
                   <Syringe size={20} />
-                  <span className="group-data-[collapsible=icon]:hidden">Vacunación</span>
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    Vacunación
+                  </span>
                   <ChevronDown className="ml-auto transition-transform group-data-[collapsible=icon]:hidden group-data-[state=open]/collapsible:rotate-180" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent className="group-data-[collapsible=icon]:hidden">
                 <SidebarMenuSub>
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className={`hover:bg-blue-600 text-white hover:text-white cursor-pointer ${
-                      isActive('/dashboard/vacunation/createVacunation') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                    }`}
-                      onClick={() => router.push('/dashboard/vacunation/createVacunation')}>
+                    <SidebarMenuSubButton
+                      className={`cursor-pointer ${
+                        isActive("/dashboard/vacunation/createVacunation")
+                          ? "bg-white text-[#1448E6]"
+                          : "text-white"
+                      }`}
+                      onClick={() =>
+                        router.push("/dashboard/vacunation/createVacunation")
+                      }
+                    >
                       <span>Crear vacunación</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className={`hover:bg-blue-600 text-white hover:text-white cursor-pointer ${
-                      isActive('/dashboard/vacunation/listVacunation') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                    }`}
-                      onClick={() => router.push('/dashboard/vacunation/listVacunation')}>
+                    <SidebarMenuSubButton
+                      className={`cursor-pointer ${
+                        isActive("/dashboard/vacunation/listVacunation")
+                          ? "bg-white text-[#1448E6]"
+                          : "text-white"
+                      }`}
+                      onClick={() =>
+                        router.push("/dashboard/vacunation/listVacunation")
+                      }
+                    >
                       <span>Listar vacunaciones</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
@@ -341,33 +449,54 @@ export function AppSidebar() {
         </Collapsible>
 
         {/* Módulo Tratamiento */}
-        <Collapsible defaultOpen={isActive('/dashboard/treatment')} className="group/collapsible">
+        <Collapsible
+          defaultOpen={isActive("/dashboard/treatment")}
+          className="group/collapsible"
+        >
           <SidebarMenu>
             <SidebarMenuItem>
-              <CollapsibleTrigger asChild className="text-white hover:text-white hover:bg-blue-600">
-                <SidebarMenuButton className={`hover:bg-blue-600 cursor-pointer group-data-[collapsible=icon]:justify-center ${
-                  isActive('/dashboard/treatment') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                }`}>
+              <CollapsibleTrigger asChild>
+                <SidebarMenuButton
+                  className={`cursor-pointer group-data-[collapsible=icon]:justify-center ${
+                    isActive("/dashboard/treatment")
+                      ? "bg-white text-[#1448E6]"
+                      : "text-white"
+                  }`}
+                >
                   <Shield size={20} />
-                  <span className="group-data-[collapsible=icon]:hidden">Tratamiento</span>
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    Tratamiento
+                  </span>
                   <ChevronDown className="ml-auto transition-transform group-data-[collapsible=icon]:hidden group-data-[state=open]/collapsible:rotate-180" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent className="group-data-[collapsible=icon]:hidden">
                 <SidebarMenuSub>
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className={`hover:bg-blue-600 text-white hover:text-white cursor-pointer ${
-                      isActive('/dashboard/treatment/createTreatment') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                    }`}
-                      onClick={() => router.push('/dashboard/treatment/createTreatment')}>
+                    <SidebarMenuSubButton
+                      className={`cursor-pointer ${
+                        isActive("/dashboard/treatment/createTreatment")
+                          ? "bg-white text-[#1448E6]"
+                          : "text-white"
+                      }`}
+                      onClick={() =>
+                        router.push("/dashboard/treatment/createTreatment")
+                      }
+                    >
                       <span>Crear tratamiento</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className={`hover:bg-blue-600 text-white hover:text-white cursor-pointer ${
-                      isActive('/dashboard/treatment/listTreatment') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                    }`}
-                      onClick={() => router.push('/dashboard/treatment/listTreatment')}>
+                    <SidebarMenuSubButton
+                      className={`cursor-pointer ${
+                        isActive("/dashboard/treatment/listTreatment")
+                          ? "bg-white text-[#1448E6]"
+                          : "text-white"
+                      }`}
+                      onClick={() =>
+                        router.push("/dashboard/treatment/listTreatment")
+                      }
+                    >
                       <span>Listar tratamientos</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
@@ -378,44 +507,75 @@ export function AppSidebar() {
         </Collapsible>
 
         {/* Separador */}
-        <div className="my-2 border-t border-blue-600/30 mx-3" />
+        <div className="my-2 border-t border-white/30 mx-3" />
 
         {/* ================= SECCIÓN 4: REPRODUCCIÓN ================= */}
         <div className="px-3 py-2 mt-2">
           <div className="flex items-center gap-2 text-xs font-bold text-blue-300 uppercase tracking-wider group-data-[collapsible=icon]:justify-center">
             <Heart size={14} />
-            <span className="group-data-[collapsible=icon]:hidden">Reproducción</span>
+            <span className="group-data-[collapsible=icon]:hidden">
+              Reproducción
+            </span>
           </div>
         </div>
 
         {/* Módulo Inseminación Artificial */}
-        <Collapsible defaultOpen={isActive('/dashboard/artificialInsemination')} className="group/collapsible">
+        <Collapsible
+          defaultOpen={isActive("/dashboard/artificialInsemination")}
+          className="group/collapsible"
+        >
           <SidebarMenu>
             <SidebarMenuItem>
-              <CollapsibleTrigger asChild className="text-white hover:text-white hover:bg-blue-600">
-                <SidebarMenuButton className={`hover:bg-blue-600 cursor-pointer group-data-[collapsible=icon]:justify-center ${
-                  isActive('/dashboard/artificialInsemination') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                }`}>
+              <CollapsibleTrigger asChild>
+                <SidebarMenuButton
+                  className={`cursor-pointer group-data-[collapsible=icon]:justify-center ${
+                    isActive("/dashboard/artificialInsemination")
+                      ? "bg-white text-[#1448E6]"
+                      : "text-white"
+                  }`}
+                >
                   <Dna size={20} />
-                  <span className="group-data-[collapsible=icon]:hidden">Inseminación Artificial</span>
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    Inseminación Artificial
+                  </span>
                   <ChevronDown className="ml-auto transition-transform group-data-[collapsible=icon]:hidden group-data-[state=open]/collapsible:rotate-180" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent className="group-data-[collapsible=icon]:hidden">
                 <SidebarMenuSub>
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className={`hover:bg-blue-600 text-white hover:text-white cursor-pointer ${
-                      isActive('/dashboard/artificialInsemination/createArtificialInsemination') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                    }`}
-                      onClick={() => router.push('/dashboard/artificialInsemination/createArtificialInsemination')}>
+                    <SidebarMenuSubButton
+                      className={`cursor-pointer ${
+                        isActive(
+                          "/dashboard/artificialInsemination/createArtificialInsemination",
+                        )
+                          ? "bg-white text-[#1448E6]"
+                          : "text-white"
+                      }`}
+                      onClick={() =>
+                        router.push(
+                          "/dashboard/artificialInsemination/createArtificialInsemination",
+                        )
+                      }
+                    >
                       <span>Crear inseminación</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className={`hover:bg-blue-600 text-white hover:text-white cursor-pointer ${
-                      isActive('/dashboard/artificialInsemination/listArtificialInsemination') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                    }`}
-                      onClick={() => router.push('/dashboard/artificialInsemination/listArtificialInsemination')}>
+                    <SidebarMenuSubButton
+                      className={`cursor-pointer ${
+                        isActive(
+                          "/dashboard/artificialInsemination/listArtificialInsemination",
+                        )
+                          ? "bg-white text-[#1448E6]"
+                          : "text-white"
+                      }`}
+                      onClick={() =>
+                        router.push(
+                          "/dashboard/artificialInsemination/listArtificialInsemination",
+                        )
+                      }
+                    >
                       <span>Listar inseminaciones</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
@@ -426,33 +586,52 @@ export function AppSidebar() {
         </Collapsible>
 
         {/* Módulo Monta Natural */}
-        <Collapsible defaultOpen={isActive('/dashboard/mount')} className="group/collapsible">
+        <Collapsible
+          defaultOpen={isActive("/dashboard/mount")}
+          className="group/collapsible"
+        >
           <SidebarMenu>
             <SidebarMenuItem>
-              <CollapsibleTrigger asChild className="text-white hover:text-white hover:bg-blue-600">
-                <SidebarMenuButton className={`hover:bg-blue-600 cursor-pointer group-data-[collapsible=icon]:justify-center ${
-                  isActive('/dashboard/mount') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                }`}>
+              <CollapsibleTrigger asChild>
+                <SidebarMenuButton
+                  className={`cursor-pointer group-data-[collapsible=icon]:justify-center ${
+                    isActive("/dashboard/mount")
+                      ? "bg-white text-[#1448E6]"
+                      : "text-white"
+                  }`}
+                >
                   <Calendar size={20} />
-                  <span className="group-data-[collapsible=icon]:hidden">Monta Natural</span>
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    Monta Natural
+                  </span>
                   <ChevronDown className="ml-auto transition-transform group-data-[collapsible=icon]:hidden group-data-[state=open]/collapsible:rotate-180" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent className="group-data-[collapsible=icon]:hidden">
                 <SidebarMenuSub>
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className={`hover:bg-blue-600 text-white hover:text-white cursor-pointer ${
-                      isActive('/dashboard/mount/createMount') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                    }`}
-                      onClick={() => router.push('/dashboard/mount/createMount')}>
+                    <SidebarMenuSubButton
+                      className={`cursor-pointer ${
+                        isActive("/dashboard/mount/createMount")
+                          ? "bg-white text-[#1448E6]"
+                          : "text-white"
+                      }`}
+                      onClick={() =>
+                        router.push("/dashboard/mount/createMount")
+                      }
+                    >
                       <span>Crear monta</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className={`hover:bg-blue-600 text-white hover:text-white cursor-pointer ${
-                      isActive('/dashboard/mount/listMount') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                    }`}
-                      onClick={() => router.push('/dashboard/mount/listMount')}>
+                    <SidebarMenuSubButton
+                      className={`cursor-pointer ${
+                        isActive("/dashboard/mount/listMount")
+                          ? "bg-white text-[#1448E6]"
+                          : "text-white"
+                      }`}
+                      onClick={() => router.push("/dashboard/mount/listMount")}
+                    >
                       <span>Listar montas</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
@@ -463,44 +642,63 @@ export function AppSidebar() {
         </Collapsible>
 
         {/* Separador */}
-        <div className="my-2 border-t border-blue-600/30 mx-3" />
+        <div className="my-2 border-t border-white/30 mx-3" />
 
         {/* ================= SECCIÓN 5: MONITOREO ================= */}
         <div className="px-3 py-2 mt-2">
           <div className="flex items-center gap-2 text-xs font-bold text-blue-300 uppercase tracking-wider group-data-[collapsible=icon]:justify-center">
             <Activity size={14} />
-            <span className="group-data-[collapsible=icon]:hidden">Monitoreo</span>
+            <span className="group-data-[collapsible=icon]:hidden">
+              Monitoreo
+            </span>
           </div>
         </div>
 
         {/* Módulo Producción de leche */}
-        <Collapsible defaultOpen={isActive('/dashboard/milk')} className="group/collapsible">
+        <Collapsible
+          defaultOpen={isActive("/dashboard/milk")}
+          className="group/collapsible"
+        >
           <SidebarMenu>
             <SidebarMenuItem>
-              <CollapsibleTrigger asChild className="text-white hover:text-white hover:bg-blue-600">
-                <SidebarMenuButton className={`hover:bg-blue-600 cursor-pointer group-data-[collapsible=icon]:justify-center ${
-                  isActive('/dashboard/milk') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                }`}>
+              <CollapsibleTrigger asChild>
+                <SidebarMenuButton
+                  className={`cursor-pointer group-data-[collapsible=icon]:justify-center ${
+                    isActive("/dashboard/milk")
+                      ? "bg-white text-[#1448E6]"
+                      : "text-white"
+                  }`}
+                >
                   <Milk size={20} />
-                  <span className="group-data-[collapsible=icon]:hidden">Producción de leche</span>
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    Producción de leche
+                  </span>
                   <ChevronDown className="ml-auto transition-transform group-data-[collapsible=icon]:hidden group-data-[state=open]/collapsible:rotate-180" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent className="group-data-[collapsible=icon]:hidden">
                 <SidebarMenuSub>
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className={`hover:bg-blue-600 text-white hover:text-white cursor-pointer ${
-                      isActive('/dashboard/milk/createMilk') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                    }`}
-                      onClick={() => router.push('/dashboard/milk/createMilk')}>
+                    <SidebarMenuSubButton
+                      className={`cursor-pointer ${
+                        isActive("/dashboard/milk/createMilk")
+                          ? "bg-white text-[#1448E6]"
+                          : "text-white"
+                      }`}
+                      onClick={() => router.push("/dashboard/milk/createMilk")}
+                    >
                       <span>Crear producción</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className={`hover:bg-blue-600 text-white hover:text-white cursor-pointer ${
-                      isActive('/dashboard/milk/listMilk') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                    }`}
-                      onClick={() => router.push('/dashboard/milk/listMilk')}>
+                    <SidebarMenuSubButton
+                      className={`cursor-pointer ${
+                        isActive("/dashboard/milk/listMilk")
+                          ? "bg-white text-[#1448E6]"
+                          : "text-white"
+                      }`}
+                      onClick={() => router.push("/dashboard/milk/listMilk")}
+                    >
                       <span>Listar producciones</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
@@ -511,33 +709,54 @@ export function AppSidebar() {
         </Collapsible>
 
         {/* Módulo Potreros */}
-        <Collapsible defaultOpen={isActive('/dashboard/pasture')} className="group/collapsible">
+        <Collapsible
+          defaultOpen={isActive("/dashboard/pasture")}
+          className="group/collapsible"
+        >
           <SidebarMenu>
             <SidebarMenuItem>
-              <CollapsibleTrigger asChild className="text-white hover:text-white hover:bg-blue-600">
-                <SidebarMenuButton className={`hover:bg-blue-600 cursor-pointer group-data-[collapsible=icon]:justify-center ${
-                  isActive('/dashboard/pasture') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                }`}>
+              <CollapsibleTrigger asChild>
+                <SidebarMenuButton
+                  className={`cursor-pointer group-data-[collapsible=icon]:justify-center ${
+                    isActive("/dashboard/pasture")
+                      ? "bg-white text-[#1448E6]"
+                      : "text-white"
+                  }`}
+                >
                   <Map size={20} />
-                  <span className="group-data-[collapsible=icon]:hidden">Potrero</span>
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    Potrero
+                  </span>
                   <ChevronDown className="ml-auto transition-transform group-data-[collapsible=icon]:hidden group-data-[state=open]/collapsible:rotate-180" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent className="group-data-[collapsible=icon]:hidden">
                 <SidebarMenuSub>
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className={`hover:bg-blue-600 text-white hover:text-white cursor-pointer ${
-                      isActive('/dashboard/pasture/createPasture') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                    }`}
-                    onClick={() => router.push('/dashboard/pasture/createPasture')}>
+                    <SidebarMenuSubButton
+                      className={`cursor-pointer ${
+                        isActive("/dashboard/pasture/createPasture")
+                          ? "bg-white text-[#1448E6]"
+                          : "text-white"
+                      }`}
+                      onClick={() =>
+                        router.push("/dashboard/pasture/createPasture")
+                      }
+                    >
                       <span>Crear potrero</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className={`hover:bg-blue-600 text-white hover:text-white cursor-pointer ${
-                      isActive('/dashboard/pasture/listPasture') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                    }`}
-                    onClick={() => router.push('/dashboard/pasture/listPasture')}>
+                    <SidebarMenuSubButton
+                      className={`cursor-pointer ${
+                        isActive("/dashboard/pasture/listPasture")
+                          ? "bg-white text-[#1448E6]"
+                          : "text-white"
+                      }`}
+                      onClick={() =>
+                        router.push("/dashboard/pasture/listPasture")
+                      }
+                    >
                       <span>Listar potreros</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
@@ -548,33 +767,50 @@ export function AppSidebar() {
         </Collapsible>
 
         {/* Módulo Usuarios */}
-        <Collapsible defaultOpen={isActive('/dashboard/user')} className="group/collapsible">
+        <Collapsible
+          defaultOpen={isActive("/dashboard/user")}
+          className="group/collapsible"
+        >
           <SidebarMenu>
             <SidebarMenuItem>
-              <CollapsibleTrigger asChild className="text-white hover:text-white hover:bg-blue-600">
-                <SidebarMenuButton className={`hover:bg-blue-600 cursor-pointer group-data-[collapsible=icon]:justify-center ${
-                  isActive('/dashboard/user') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                }`}>
+              <CollapsibleTrigger asChild>
+                <SidebarMenuButton
+                  className={`cursor-pointer group-data-[collapsible=icon]:justify-center ${
+                    isActive("/dashboard/user")
+                      ? "bg-white text-[#1448E6]"
+                      : "text-white"
+                  }`}
+                >
                   <User size={20} />
-                  <span className="group-data-[collapsible=icon]:hidden">Usuario</span>
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    Usuario
+                  </span>
                   <ChevronDown className="ml-auto transition-transform group-data-[collapsible=icon]:hidden group-data-[state=open]/collapsible:rotate-180" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent className="group-data-[collapsible=icon]:hidden">
                 <SidebarMenuSub>
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className={`hover:bg-blue-600 text-white hover:text-white cursor-pointer ${
-                      isActive('/dashboard/user/createUser') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                    }`}
-                      onClick={() => router.push('/dashboard/user/createUser')}>
+                    <SidebarMenuSubButton
+                      className={`cursor-pointer ${
+                        isActive("/dashboard/user/createUser")
+                          ? "bg-white text-[#1448E6]"
+                          : "text-white"
+                      }`}
+                      onClick={() => router.push("/dashboard/user/createUser")}
+                    >
                       <span>Crear usuario</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className={`hover:bg-blue-600 text-white hover:text-white cursor-pointer ${
-                      isActive('/dashboard/user/listUser') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                    }`}
-                      onClick={() => router.push('/dashboard/user/listUser')}>
+                    <SidebarMenuSubButton
+                      className={`cursor-pointer ${
+                        isActive("/dashboard/user/listUser")
+                          ? "bg-white text-[#1448E6]"
+                          : "text-white"
+                      }`}
+                      onClick={() => router.push("/dashboard/user/listUser")}
+                    >
                       <span>Listar usuarios</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
@@ -585,33 +821,54 @@ export function AppSidebar() {
         </Collapsible>
 
         {/* Módulo Responsables */}
-        <Collapsible defaultOpen={isActive('/dashboard/responsible')} className="group/collapsible">
+        <Collapsible
+          defaultOpen={isActive("/dashboard/responsible")}
+          className="group/collapsible"
+        >
           <SidebarMenu>
             <SidebarMenuItem>
-              <CollapsibleTrigger asChild className="text-white hover:text-white hover:bg-blue-600">
-                <SidebarMenuButton className={`hover:bg-blue-600 cursor-pointer group-data-[collapsible=icon]:justify-center ${
-                  isActive('/dashboard/responsible') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                }`}>
+              <CollapsibleTrigger asChild>
+                <SidebarMenuButton
+                  className={`cursor-pointer group-data-[collapsible=icon]:justify-center ${
+                    isActive("/dashboard/responsible")
+                      ? "bg-white text-[#1448E6]"
+                      : "text-white"
+                  }`}
+                >
                   <Users size={20} />
-                  <span className="group-data-[collapsible=icon]:hidden">Responsable</span>
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    Responsable
+                  </span>
                   <ChevronDown className="ml-auto transition-transform group-data-[collapsible=icon]:hidden group-data-[state=open]/collapsible:rotate-180" />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
               <CollapsibleContent className="group-data-[collapsible=icon]:hidden">
                 <SidebarMenuSub>
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className={`hover:bg-blue-600 text-white hover:text-white cursor-pointer ${
-                      isActive('/dashboard/responsible/createResponsible') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                    }`}
-                      onClick={() => router.push('/dashboard/responsible/createResponsible')}>
+                    <SidebarMenuSubButton
+                      className={`cursor-pointer ${
+                        isActive("/dashboard/responsible/createResponsible")
+                          ? "bg-white text-[#1448E6]"
+                          : "text-white"
+                      }`}
+                      onClick={() =>
+                        router.push("/dashboard/responsible/createResponsible")
+                      }
+                    >
                       <span>Crear responsable</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
                   <SidebarMenuSubItem>
-                    <SidebarMenuSubButton className={`hover:bg-blue-600 text-white hover:text-white cursor-pointer ${
-                      isActive('/dashboard/responsible/listResponsible') ? 'bg-white text-blue2 hover:bg-white hover:text-blue2' : ''
-                    }`}
-                      onClick={() => router.push('/dashboard/responsible/listResponsible')}>
+                    <SidebarMenuSubButton
+                      className={`cursor-pointer ${
+                        isActive("/dashboard/responsible/listResponsible")
+                          ? "bg-white text-[#1448E6]"
+                          : "text-white"
+                      }`}
+                      onClick={() =>
+                        router.push("/dashboard/responsible/listResponsible")
+                      }
+                    >
                       <span>Listar responsables</span>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
@@ -620,8 +877,7 @@ export function AppSidebar() {
             </SidebarMenuItem>
           </SidebarMenu>
         </Collapsible>
-
       </SidebarContent>
     </Sidebar>
-  )
+  );
 }

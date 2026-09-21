@@ -30,26 +30,31 @@ export default function Login({ Textbutton = "", style = "" }: LoginProps) {
             <DialogTrigger asChild>
               <Button className={style}>{Textbutton}</Button>
             </DialogTrigger>
-            <DialogContent className="text-fond bg-gradient-nav hover:none sm:max-w-sm">
+            <DialogContent className="sm:max-w-sm bg-white text-black">
               <DialogHeader>
-                <DialogTitle className="font-bold text-center hover:none">Ingreso</DialogTitle>
-                <DialogDescription className="text-fond hover:none">
+                <DialogTitle className="font-bold text-center text-black">Ingreso</DialogTitle>
+                <DialogDescription className="text-gray-600">
                   Ingrese sus credenciales para acceder al sistema.
                 </DialogDescription>
               </DialogHeader>
             <FieldGroup>
             <Field>
-              <Label htmlFor="usuario" className="font-bold">Ususario</Label>
+              <Label htmlFor="usuario" className="font-bold text-black">Usuario</Label>
               <Input id="usuario" name="usuario" placeholder="*****@gmail.com" className="bg-white text-black placeholder:text-gray-400 focus:outline focus:outline-2 focus:outline-blue-500"/>
             </Field>
             <Field>
-              <Label htmlFor="contraseña" className="font-bold">Contraseña</Label>
+              <Label htmlFor="contraseña" className="font-bold text-black">Contraseña</Label>
               <Input id="contraseña" name="contraseña" placeholder="********" className="bg-white text-black placeholder:text-gray-400 focus:outline focus:outline-2 focus:outline-blue-500"/>
-              <ResetPassword onClick={() => setOpenDialog(true)} Textbutton="¿Olvidaste tu contraseña?" style="cursor-pointer text-sm text-gray-300 hover:text-blue-700 mt-2"/>
+              <ResetPassword onClick={() => setOpenDialog(true)} Textbutton="¿Olvidaste tu contraseña?" style="cursor-pointer text-sm text-gray-500 mt-2"/>
             </Field>
             </FieldGroup>
           <DialogFooter>
-            <Button type="submit" className="cursor-pointer w-full bg-blue-900 hover:bg-white hover:text-black">Iniciar sesión</Button>
+            <Button
+              type="submit"
+              className="cursor-pointer w-full bg-[#2B7FFF] text-white hover:bg-[#1E63CC] transition-colors duration-300"
+            >
+              Iniciar sesión
+            </Button>
           </DialogFooter>
         </DialogContent>
           </form>

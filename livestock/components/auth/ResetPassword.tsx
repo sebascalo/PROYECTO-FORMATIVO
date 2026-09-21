@@ -29,10 +29,10 @@ export default function ResetPassword(props:ResetPasswordProps) {
             <DialogTrigger asChild>
               <a onClick={props.onClick} className={props.style}>{props.Textbutton}</a>
             </DialogTrigger>
-            <DialogContent className="text-white bg-gradient-to-r from-blue-500 to-blue-700 sm:max-w-sm">
+            <DialogContent className="text-white bg-white sm:max-w-sm">
               <DialogHeader>
-                <DialogTitle className="font-bold text-center">Restablecer Contraseña</DialogTitle>
-                <DialogDescription className="text-white">
+                <DialogTitle className="font-bold text-center text-black">Restablecer Contraseña</DialogTitle>
+                <DialogDescription className="text-black">
                   Ingrese su correo electrónico para recuperar su contraseña.
                 </DialogDescription>
               </DialogHeader>

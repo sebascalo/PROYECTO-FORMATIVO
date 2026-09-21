@@ -60,7 +60,7 @@ const getAllUsersById = async (req, res) => {
 // crear usuario
 const createUser = async (req, res) => {
     try {
-        const { name, email, password, documentId, postJob } = req.body;
+        const { name, email, password, documentId, postJob, id_roll } = req.body;
         var errors = [];
         
         if (!name || name.trim() === "") errors.push("El nombre del usuario es obligatorio");
@@ -68,7 +68,6 @@ const createUser = async (req, res) => {
         if (!password || password.trim() === "") errors.push("La contraseña es obligatoria");
         if (!documentId || documentId.trim() === "") errors.push("El documento de identidad es obligatorio");
         if (!postJob || postJob.trim() === "") errors.push("El cargo del usuario es obligatorio");
-        
         if (errors.length > 0) {
             var response = new Response("Error al crear el usuario", null, errors); 
             res.status(400);
@@ -79,7 +78,7 @@ const createUser = async (req, res) => {
         const salt = bycript.genSaltSync(10);
         const hashed_password = bycript.hashSync(password, salt);
 
-        data = { name, email, password: hashed_password, salt, documentId, postJob };
+        data = { name, email, password: hashed_password, salt, documentId, postJob, id_roll };
         const user = await userCreate(data);
 
         // Leer JSON
@@ -136,7 +135,7 @@ const createUser = async (req, res) => {
 const updateUser = async (req, res) => {
     try {
         const { userId } = req.params;
-        const { name, email, password, documentId, postJob } = req.body;
+        const { name, email, password, documentId, postJob, id_roll } = req.body;
         var errors = [];
         
         if (!userId) errors.push("El ID del usuario es obligatorio");
@@ -145,6 +144,7 @@ const updateUser = async (req, res) => {
         if (!password || password.trim() === "") errors.push("La contraseña es obligatoria");
         if (!documentId || documentId.trim() === "") errors.push("El documento de identidad es obligatorio");
         if (!postJob || postJob.trim() === "") errors.push("El cargo del usuario es obligatorio");
+        if (!id_roll || id_roll.trim() === "") errors.push("El rol del usuario es obligatorio");
         
         if (errors.length > 0) {
             var response = new Response("Error al actualizar el usuario", null, errors); 
@@ -152,7 +152,7 @@ const updateUser = async (req, res) => {
             res.json(response.json);
             return;
         }
-        data = { name, email, password, documentId, postJob };
+        data = { name, email, password, documentId, postJob, id_roll };
         const user = await userUpdate(userId, data);
         var response = new Response(`Usuario ${userId} actualizado exitosamente`, user, null); 
         res.status(201);

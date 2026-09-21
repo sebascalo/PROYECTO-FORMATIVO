@@ -48,6 +48,10 @@ const user = db.define('user', {
         min: 7,
         allowNull: false
     },
+    id_roll: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
     verifyEmail: {
         type: DataTypes.BOOLEAN,
         defaultValue: false

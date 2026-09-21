@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const bcrypt = require("bcrypt");
 const { getUserByEmail } = require('../services/userService');
+const User = require("../models/userModel");
 
 const  Response = require("../functions/response");
 
@@ -121,42 +122,81 @@ const validateResetPassword = (req, res) => {
   return res.json(response.success);
 };
 
-//nueva contraseña
-const newPassword = (req, res) => {
-  const { password, confirmPassword } = req.body;
+// nueva contraseña
+const newPassword = async (req, res) => {
+  try {
+    const { email, password, confirmPassword } = req.body;
 
-  if (password == "" || confirmPassword == "") {
-    res.status(400);
+    // Validar campos
+    if (!email || !password || !confirmPassword) {
+      const response = new Response(
+        "Error cambiando contraseña",
+        null,
+        "El correo y las contraseñas son obligatorios",
+      );
+
+      return res.status(400).json(response);
+    }
+
+    // Validar contraseñas
+    if (password !== confirmPassword) {
+      const response = new Response(
+        "Error cambiando contraseña",
+        null,
+        "Las contraseñas no coinciden",
+      );
+
+      return res.status(400).json(response);
+    }
+
+    // Buscar usuario por correo
+    const user = await User.findOne({
+      where: {
+        email: email,
+      },
+    });
+
+    // Verificar que exista
+    if (!user) {
+      const response = new Response(
+        "Error cambiando contraseña",
+        null,
+        "Usuario no encontrado",
+      );
+
+      return res.status(404).json(response);
+    }
+
+    // Encriptar nueva contraseña
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Actualizar contraseña
+    user.password = hashedPassword;
+
+    // Ya no hay una solicitud pendiente de cambio
+    user.solNewPassword = false;
+
+    await user.save();
+
+    const response = new Response(
+      "Contraseña actualizada correctamente",
+      null,
+      null,
+    );
+
+    return res.json(response.success);
+
+  } catch (error) {
+    console.error("Error cambiando contraseña:", error);
 
     const response = new Response(
       "Error cambiando contraseña",
       null,
-      "Las contraseñas son obligatorias",
+      "Ocurrió un error al actualizar la contraseña",
     );
 
-    return res.json(response);
+    return res.status(500).json(response);
   }
-
-  if (password != confirmPassword) {
-    res.status(400);
-
-    const response = new Response(
-      "Error cambiando contraseña",
-      null,
-      "Las contraseñas no coinciden",
-    );
-
-    return res.json(response);
-  }
-
-  // Aquí puedes agregar la lógica para actualizar la contraseña en la base de datos
-  const response = new Response(
-    "Contraseña actualizada correctamente",
-    null,
-    null,
-  );
-
-  return res.json(response.success);
 };
 
 module.exports = {
