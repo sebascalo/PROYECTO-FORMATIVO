@@ -18,30 +18,57 @@ USE `livestock`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `approute`
+-- Table structure for table `app_routes`
 --
 
-DROP TABLE IF EXISTS `approute`;
+DROP TABLE IF EXISTS `app_routes`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `approute` (
-  `idapproute` int NOT NULL AUTO_INCREMENT,
-  `group` varchar(50) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `icon` varchar(50) DEFAULT NULL,
-  `route` varchar(100) NOT NULL,
-  `active` tinyint NOT NULL DEFAULT '1',
-  PRIMARY KEY (`idapproute`)
+CREATE TABLE `app_routes` (
+  `id_app_routes` int NOT NULL AUTO_INCREMENT,
+  `name_route` varchar(45) DEFAULT NULL,
+  `route` varchar(255) DEFAULT NULL,
+  `active` tinyint(1) DEFAULT NULL,
+  `icon` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id_app_routes`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `approute`
+-- Dumping data for table `app_routes`
 --
 
-LOCK TABLES `approute` WRITE;
-/*!40000 ALTER TABLE `approute` DISABLE KEYS */;
-/*!40000 ALTER TABLE `approute` ENABLE KEYS */;
+LOCK TABLES `app_routes` WRITE;
+/*!40000 ALTER TABLE `app_routes` DISABLE KEYS */;
+/*!40000 ALTER TABLE `app_routes` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `app_routes_roll`
+--
+
+DROP TABLE IF EXISTS `app_routes_roll`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `app_routes_roll` (
+  `id_app_routes_roll` int NOT NULL AUTO_INCREMENT,
+  `id_app_routes` int DEFAULT NULL,
+  `id_roll` int DEFAULT NULL,
+  PRIMARY KEY (`id_app_routes_roll`),
+  KEY `id_roll_idx` (`id_app_routes`),
+  KEY `fk_app_routes_roll_roll` (`id_roll`),
+  CONSTRAINT `fk_app_routes_roll_app_routes` FOREIGN KEY (`id_app_routes`) REFERENCES `app_routes` (`id_app_routes`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_app_routes_roll_roll` FOREIGN KEY (`id_roll`) REFERENCES `roll` (`id_roll`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `app_routes_roll`
+--
+
+LOCK TABLES `app_routes_roll` WRITE;
+/*!40000 ALTER TABLE `app_routes_roll` DISABLE KEYS */;
+/*!40000 ALTER TABLE `app_routes_roll` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -377,14 +404,10 @@ DROP TABLE IF EXISTS `roll`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `roll` (
-  `idroll` int NOT NULL,
-  `slug` varchar(45) NOT NULL,
-  `label` varchar(45) NOT NULL,
-  `idrollroute` int NOT NULL,
-  `active` tinyint DEFAULT '0',
-  PRIMARY KEY (`idroll`),
-  KEY `fk_roll_rollroute_idx` (`idrollroute`),
-  CONSTRAINT `fk_roll_rollroute` FOREIGN KEY (`idrollroute`) REFERENCES `rollroute` (`idrollroute`)
+  `id_roll` int NOT NULL AUTO_INCREMENT,
+  `slug` varchar(45) DEFAULT NULL,
+  `name_roll` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id_roll`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -395,35 +418,6 @@ CREATE TABLE `roll` (
 LOCK TABLES `roll` WRITE;
 /*!40000 ALTER TABLE `roll` DISABLE KEYS */;
 /*!40000 ALTER TABLE `roll` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `rollroute`
---
-
-DROP TABLE IF EXISTS `rollroute`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `rollroute` (
-  `idrollroute` int NOT NULL AUTO_INCREMENT,
-  `idapproute` int NOT NULL,
-  `is_admin` tinyint NOT NULL DEFAULT '0',
-  `is_instructor` tinyint NOT NULL DEFAULT '0',
-  `is_pasante` tinyint NOT NULL DEFAULT '0',
-  `active` tinyint NOT NULL DEFAULT '1',
-  PRIMARY KEY (`idrollroute`),
-  KEY `fk_rollroute_approute_idx` (`idapproute`),
-  CONSTRAINT `fk_rollroute_approute` FOREIGN KEY (`idapproute`) REFERENCES `approute` (`idapproute`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `rollroute`
---
-
-LOCK TABLES `rollroute` WRITE;
-/*!40000 ALTER TABLE `rollroute` DISABLE KEYS */;
-/*!40000 ALTER TABLE `rollroute` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -531,16 +525,16 @@ CREATE TABLE `users` (
   `salt` varchar(50) DEFAULT NULL,
   `documentId` varchar(30) NOT NULL,
   `postJob` varchar(50) NOT NULL,
-  `idroll` int DEFAULT NULL,
+  `id_roll` int DEFAULT NULL,
   `verifyEmail` tinyint DEFAULT '0',
   `active` tinyint DEFAULT '0',
   `solNewPassword` tinyint DEFAULT '0',
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`userId`),
-  KEY `idRoll_idx` (`idroll`),
-  CONSTRAINT `idRoll` FOREIGN KEY (`idroll`) REFERENCES `roll` (`idroll`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `fk_id_roll_idx` (`id_roll`),
+  CONSTRAINT `fk_users_roll` FOREIGN KEY (`id_roll`) REFERENCES `roll` (`id_roll`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -549,7 +543,6 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'sebastian','d4a98406-6457-41aa-a3c5-f1442eafd2d1','sebastiancalderon5204@gmail.com','$2b$10$FO0lNemkxv1pM0Iobwvg7.y2l6aZ5njPojN0KBYy3z13WS4dv9CzO','$2b$10$FO0lNemkxv1pM0Iobwvg7.','1313484','superadmin',NULL,0,1,0,'2026-09-01 03:05:47','2026-09-01 03:05:47');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -627,4 +620,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-09-01  7:46:53
+-- Dump completed on 2026-09-21 14:12:39
