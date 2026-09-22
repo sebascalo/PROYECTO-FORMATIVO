@@ -53,7 +53,7 @@ const getAllArtificialInseminationsById = async (req, res) => {
 
 const createArtificialInsemination = async (req, res) => {
     try {
-        const { idBovine, inseminationDate, semenID, donorBull, raze, observations, idResponsible } = req.body;
+        const { idBovine, inseminationDate, semenID, raze, observations, idResponsible } = req.body;
         var errors = [];
         
         // Validaciones
@@ -80,7 +80,7 @@ const createArtificialInsemination = async (req, res) => {
             return;
         }
         
-        data = { idBovine, inseminationDate, semenID, donorBull, raze, observations, idResponsible }
+        data = { idBovine, inseminationDate, semenID, raze, observations, idResponsible }
         const artificialInsemination = await artificialInseminationCreate(data)
         var response = new Response("Inseminación artificial creada exitosamente", artificialInsemination, null);
         res.status(201);
@@ -98,7 +98,7 @@ const createArtificialInsemination = async (req, res) => {
 const updateArtificialInsemination = async (req, res) => {
     try {
         const { id } = req.params;
-        const { idBovine, inseminationDate, semenID, donorBull, raze, observations, idResponsible } = req.body;
+        const { idBovine, inseminationDate, semenID, raze, observations, idResponsible } = req.body;
         var errors = [];
         
         // Validaciones
@@ -128,7 +128,7 @@ const updateArtificialInsemination = async (req, res) => {
             return;
         }
         
-        data = { idBovine, inseminationDate, semenID, donorBull, raze, observations, idResponsible }
+        data = { idBovine, inseminationDate, semenID, raze, observations, idResponsible }
         const artificialInsemination = await artificialInseminationUpdate(id, data)
         var response = new Response(`Inseminación artificial ${id} actualizada exitosamente`, artificialInsemination, null);
         res.status(200);

@@ -23,10 +23,6 @@ const artificialInsemination = db.define('artificialInsemination', {
         type: DataTypes.STRING(100),
         allowNull: false
     },
-    donorBull: { // Nombre o código del toro (opcional)
-        type: DataTypes.STRING(100),
-        allowNull: true
-    },
     raze: { // Raza de la pajilla
         type: DataTypes.STRING(100),
         allowNull: false

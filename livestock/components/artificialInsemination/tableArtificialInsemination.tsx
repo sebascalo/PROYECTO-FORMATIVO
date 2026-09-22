@@ -9,9 +9,17 @@ export default function tableArtificialInsemination() {
             try {
                 const response = await fetch('http://localhost:3000/api/artificialInsemination/ArtificialInseminationAll');
                 let resJson = await response.json();
-                setInseminations(resJson.info);
+            
+                // asignar el arreglo
+                const datos = Array.isArray(resJson) ? resJson : 
+                              Array.isArray(resJson.info) ? resJson.info : 
+                              Array.isArray(resJson.data) ? resJson.data : [];
+                
+                setInseminations(datos);
+                
             } catch (error) {
                 console.error('Error:', error);
+                setDebugInfo("Error en la petición: " + error);
                 setInseminations([]);
             }
         }
@@ -33,17 +41,25 @@ export default function tableArtificialInsemination() {
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                    {inseminations.map((insemination: any) => (
-                        <tr key={insemination.id}>
-                            <td className="px-6 py-4 whitespace-nowrap">{insemination.id}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{insemination.idBovine}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{insemination.inseminationDate}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{insemination.semenID}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{insemination.raze || '-'}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{insemination.idResponsible}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{insemination.observations || '-'}</td>
+                    {inseminations && inseminations.length > 0 ? (
+                        inseminations.map((insemination: any) => (
+                            <tr key={insemination.id}>
+                                <td className="px-6 py-4 whitespace-nowrap">{insemination.id}</td>
+                                <td className="px-6 py-4 whitespace-nowrap">{insemination.idBovine}</td>
+                                <td className="px-6 py-4 whitespace-nowrap">{insemination.inseminationDate}</td>
+                                <td className="px-6 py-4 whitespace-nowrap">{insemination.semenID}</td>
+                                <td className="px-6 py-4 whitespace-nowrap">{insemination.raze || '-'}</td>
+                                <td className="px-6 py-4 whitespace-nowrap">{insemination.idResponsible}</td>
+                                <td className="px-6 py-4 whitespace-nowrap">{insemination.observations || '-'}</td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
+                                No hay datos de inseminación disponibles.
+                            </td>
                         </tr>
-                    ))}
+                    )}
                 </tbody>
             </table>
         </div>

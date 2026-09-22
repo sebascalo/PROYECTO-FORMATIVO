@@ -1,4 +1,13 @@
 "use client";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogTrigger,
+  DialogTitle
+} from "../ui/dialog";
+import { CirclePlus } from "lucide-react";
 import { useState, useEffect } from "react";
 
 export default function FormCreationMilk() {
@@ -17,7 +26,7 @@ export default function FormCreationMilk() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const bovineRes = await fetch('http://localhost:3000/api/bovine/all');
+                const bovineRes = await fetch('http://localhost:3000/api/cattle/CattleAll');
                 const bovineResult = await bovineRes.json();
                 setBovinos(bovineResult.info || []);
 
@@ -78,11 +87,19 @@ export default function FormCreationMilk() {
     };
 
     return (
-        <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b border-gray-200 pb-2">
-                Crear Producción de Leche
-            </h2>
-
+        <Dialog>
+      <DialogTrigger asChild>
+        <button className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer">
+          <CirclePlus className="w-8 h-8 mr-2 text-green-600" /> Agregar Producción de Leche
+        </button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px] md:max-w-[800px]">
+        <DialogTitle className="font-bold text-2xl text-center">
+          Crear Producción de Leche
+        </DialogTitle>
+        <DialogDescription>
+          Complete los campos para crear una nueva producción de leche.
+        </DialogDescription>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -208,13 +225,16 @@ export default function FormCreationMilk() {
                     />
                 </div>
 
-                <button
-                    type="submit"
-                    className="w-full bg-blue-500 text-white font-medium py-2 px-4 rounded-md hover:bg-blue-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                    Guardar Producción
-                </button>
-            </form>
-        </div>
+                </form>
+        <DialogFooter>
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white font-medium py-2 px-4 rounded-md hover:bg-blue-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          >
+            Guardar Producción de Leche
+          </button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
     );
 }
