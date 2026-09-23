@@ -12,7 +12,7 @@ const birth = db.define("birth", {
     },
 
     // Identificación de la madre (vaca) del becerro
-    idbovine: {
+    motheridentification: {
         type: DataTypes.STRING,
         allowNull: true // Permite valores nulos
     },
@@ -48,12 +48,12 @@ const birth = db.define("birth", {
     },
 
     // CAMBIO: Se renombró 'conditionatbirth' por 'observation'
-    observation: { 
+    observations: { 
         type: DataTypes.STRING,
         allowNull: true
     },
     // Nombre de la persona responsable de atender el nacimiento
-    idResponsible: {
+    responsible: {
         type: DataTypes.STRING,
         allowNull: true
     },
