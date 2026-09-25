@@ -7,7 +7,7 @@ const getAllResponsibles = async (req, res) => {
         let queryLimit = req.query.limit;
         let queryOffset = req.query.offset;
         
-        const limit = queryLimit ? Number(queryLimit) : 10;
+        const limit = queryLimit ? Number(queryLimit) : 20;
         const offset = queryOffset ? Number(queryOffset) : 0; 
 
         const responsibles = await responsiblesGetAll(limit, offset);

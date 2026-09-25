@@ -12,7 +12,7 @@ const pasture = db.define('pasture', {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false
     },
-    // 🔄 CAMBIO: Capacidad máxima -> Aforo (capacidad real de carga animal)
+    // Capacidad máxima de animales que soporta el potrero
     forageCapacity: { 
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -23,12 +23,12 @@ const pasture = db.define('pasture', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    // 🆕 CAMBIO: Fecha de ingreso del ganado al potrero
+    // Fecha de ingreso del ganado al potrero
     cattleEntryDate: {
         type: DataTypes.DATE,
         allowNull: true
     },
-    // 🆕 CAMBIO: Fecha de salida del ganado del potrero
+    // Fecha de salida del ganado del potrero
     cattleExitDate: {
         type: DataTypes.DATE,
         allowNull: true
@@ -38,7 +38,7 @@ const pasture = db.define('pasture', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    // 🆕 CAMBIO: Aplicación de químicos/venenos (fertilizantes, herbicidas, etc)
+    // Última aplicación de fertilizante, herbicida o químico
     lastChemicalApplication: { 
         type: DataTypes.STRING,
         allowNull: true,

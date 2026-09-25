@@ -1,55 +1,61 @@
 "use client";
 import { useEffect, useState } from "react";
 
-export default function tableMilk() {
-    const [milks, setMilks] = useState([]);
+import { DataTable } from "@/components/ui/data-table";
+import { columns, type Milk } from "./columns";
 
-    useEffect(() => {
-        const fetchMilks = async () => {
-            try {
-                const response = await fetch('http://localhost:3000/api/milk/MilkAll');
-                let resJson = await response.json();
-                setMilks(resJson.info);
-            } catch (error) {
-                console.error('Error:', error);
-                setMilks([]);
-            }
-        }
-        fetchMilks();
-    }, []);
+interface TableMilkProps {
+  actions?: React.ReactNode;
+}
 
-    return (
-        <div className="overflow-x-auto shadow-lg rounded-lg">
-            <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gradient-to-r from-blue-500 to-blue-700">
-                    <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">ID</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Bovino</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Fecha</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Turno</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Litros</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Calidad</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Responsable</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Observaciones</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Activo</th>
-                    </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                    {milks.map((milk: any) => (
-                        <tr key={milk.id}>
-                            <td className="px-6 py-4 whitespace-nowrap">{milk.id}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{milk.Bovine ? `${milk.Bovine.earTag} - ${milk.Bovine.name}` : milk.idBovine}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{milk.milkingDate}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{milk.shift}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{milk.litersQuantity} L</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{milk.milkQuality || '-'}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{milk.Responsible ? milk.Responsible.name : milk.idResponsible}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{milk.observations || '-'}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{milk.active ? 'Activo' : 'Inactivo'}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+export default function TableMilk({ actions }: TableMilkProps) {
+  const [milks, setMilks] = useState<Milk[]>([]);
+
+  useEffect(() => {
+    const fetchMilks = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/api/milk/MilkAll");
+        const resJson = await response.json();
+        const datos = Array.isArray(resJson)
+          ? resJson
+          : Array.isArray(resJson.info)
+            ? resJson.info
+            : Array.isArray(resJson.data)
+              ? resJson.data
+              : [];
+        setMilks(datos);
+      } catch (error) {
+        console.error("Error:", error);
+        setMilks([]);
+      }
+    };
+    fetchMilks();
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-[#FAF9F6] px-6 py-8">
+      <div className="mx-auto max-w-6xl space-y-6">
+        <div>
+          <h1 className="text-2xl font-semibold text-[#2B2A26]">
+            Producción de Leche
+          </h1>
+          <p className="text-sm text-[#6B6459]">
+            {milks.length}{" "}
+            {milks.length === 1
+              ? "producción registrada"
+              : "producciones registradas"}
+            .
+          </p>
         </div>
-    );
+
+        <DataTable
+          columns={columns}
+          data={milks}
+          filterColumnId="idBovine"
+          filterPlaceholder="Filtrar por bovino..."
+          toolbar={actions}
+        />
+      </div>
+    </div>
+  );
 }

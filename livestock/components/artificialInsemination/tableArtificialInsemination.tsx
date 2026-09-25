@@ -1,67 +1,69 @@
 "use client";
 import { useEffect, useState } from "react";
 
-export default function tableArtificialInsemination() {
-    const [inseminations, setInseminations] = useState([]);
+import { DataTable } from "@/components/ui/data-table";
+import { columns, type ArtificialInsemination } from "./columns";
 
-    useEffect(() => {
-        const fetchInseminations = async () => {
-            try {
-                const response = await fetch('http://localhost:3000/api/artificialInsemination/ArtificialInseminationAll');
-                let resJson = await response.json();
-            
-                // asignar el arreglo
-                const datos = Array.isArray(resJson) ? resJson : 
-                              Array.isArray(resJson.info) ? resJson.info : 
-                              Array.isArray(resJson.data) ? resJson.data : [];
-                
-                setInseminations(datos);
-                
-            } catch (error) {
-                console.error('Error:', error);
-                setDebugInfo("Error en la petición: " + error);
-                setInseminations([]);
-            }
-        }
-        fetchInseminations();
-    }, []);
+interface TableArtificialInseminationProps {
+  actions?: React.ReactNode;
+}
 
-    return (
-        <div className="overflow-x-auto shadow-lg rounded-lg">
-            <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gradient-to-r from-blue-500 to-blue-700">
-                    <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">ID</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Bovino</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Fecha</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Código Semen</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Raza</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Responsable</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Observaciones</th>
-                    </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                    {inseminations && inseminations.length > 0 ? (
-                        inseminations.map((insemination: any) => (
-                            <tr key={insemination.id}>
-                                <td className="px-6 py-4 whitespace-nowrap">{insemination.id}</td>
-                                <td className="px-6 py-4 whitespace-nowrap">{insemination.idBovine}</td>
-                                <td className="px-6 py-4 whitespace-nowrap">{insemination.inseminationDate}</td>
-                                <td className="px-6 py-4 whitespace-nowrap">{insemination.semenID}</td>
-                                <td className="px-6 py-4 whitespace-nowrap">{insemination.raze || '-'}</td>
-                                <td className="px-6 py-4 whitespace-nowrap">{insemination.idResponsible}</td>
-                                <td className="px-6 py-4 whitespace-nowrap">{insemination.observations || '-'}</td>
-                            </tr>
-                        ))
-                    ) : (
-                        <tr>
-                            <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
-                                No hay datos de inseminación disponibles.
-                            </td>
-                        </tr>
-                    )}
-                </tbody>
-            </table>
+export default function TableArtificialInsemination({
+  actions,
+}: TableArtificialInseminationProps) {
+  const [inseminations, setInseminations] = useState<ArtificialInsemination[]>(
+    [],
+  );
+
+  useEffect(() => {
+    const fetchInseminations = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3000/api/artificialInsemination/ArtificialInseminationAll",
+        );
+        const resJson = await response.json();
+
+        const datos = Array.isArray(resJson)
+          ? resJson
+          : Array.isArray(resJson.info)
+            ? resJson.info
+            : Array.isArray(resJson.data)
+              ? resJson.data
+              : [];
+
+        setInseminations(datos);
+      } catch (error) {
+        console.error("Error:", error);
+        setInseminations([]);
+      }
+    };
+    fetchInseminations();
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-[#FAF9F6] px-6 py-8">
+      <div className="mx-auto max-w-6xl space-y-6">
+        <div>
+          <h1 className="text-2xl font-semibold text-[#2B2A26]">
+            Inseminaciones Artificiales
+          </h1>
+          <p className="text-sm text-[#6B6459]">
+            {inseminations.length}{" "}
+            {inseminations.length === 1
+              ? "inseminación registrada"
+              : "inseminaciones registradas"}
+            .
+          </p>
         </div>
-    );
+
+        <DataTable
+          columns={columns}
+          data={inseminations}
+          filterColumnId="idBovine"
+          filterPlaceholder="Filtrar por código de semen..."
+          toolbar={actions}
+        />
+      </div>
+    </div>
+  );
 }

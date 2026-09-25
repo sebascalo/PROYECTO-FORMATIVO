@@ -6,9 +6,9 @@ const getAllMounts = async (req, res) => {
     try {
         let queryLimit = req.query.limit;
         let queryOffset = req.query.offset;
-        
-        const limit = queryLimit ? Number(queryLimit) : 10;
-        const offset = queryOffset ? Number(queryOffset) : 0; 
+
+        const limit = queryLimit ? Number(queryLimit) : 20;
+        const offset = queryOffset ? Number(queryOffset) : 0;
 
         const mounts = await mountsGetAll(limit, offset);
         const response = new Response("Registros de montas naturales obtenidos exitosamente", mounts, null);
@@ -37,7 +37,7 @@ const getAllMountsById = async (req, res) => {
             res.json(response.json);
             return;
         }
-        const mount = await getMountById(id)
+        const mount = await getMountById(id);
         var response = new Response(`Monta natural ${id} obtenida exitosamente`, mount, null);
         res.status(201);
         res.json(response.json);
@@ -49,13 +49,14 @@ const getAllMountsById = async (req, res) => {
         res.status(500);
         res.json(errorResponse.json);
     }
-}
+};
 
 const createMount = async (req, res) => {
     try {
-        const { idBovine, bullId, breedingDate, serviceNumber, observations, idResponsible } = req.body;
+        // 🔧 bovineCondition agregado al destructuring
+        const { idBovine, bullId, breedingDate, serviceNumber, bovineCondition, observations, idResponsible } = req.body;
         var errors = [];
-        
+
         // Validaciones
         if (!idBovine || idBovine.toString().trim() === "" || isNaN(idBovine)) {
             errors.push("La identificación de la hembra es obligatoria y debe ser un número");
@@ -72,20 +73,21 @@ const createMount = async (req, res) => {
         if (!idResponsible || idResponsible.trim() === "") {
             errors.push("El responsable de la monta es obligatorio");
         }
-        // Validar que bovineCondition sea uno de los valores permitidos
+        // 🔧 Validación corregida (ahora bovineCondition sí existe)
         if (bovineCondition && !["Celo", "Quieta", "Rechaza"].includes(bovineCondition)) {
             errors.push("La condición de la vaca debe ser: Celo, Quieta o Rechaza");
         }
 
         if (errors.length > 0) {
-            var response = new Response("Error al crear la monta natural", null, errors)
-            res.status(400)
+            var response = new Response("Error al crear la monta natural", null, errors);
+            res.status(400);
             res.json(response.json);
             return;
         }
-        
-        data = { idBovine, bullId, breedingDate, serviceNumber, observations, idResponsible }
-        const mount = await mountCreate(data)
+
+        // 🔧 bovineCondition incluido en data
+        const data = { idBovine, bullId, breedingDate, serviceNumber, bovineCondition, observations, idResponsible };
+        const mount = await mountCreate(data);
         var response = new Response("Monta natural creada exitosamente", mount, null);
         res.status(201);
         res.json(response.json);
@@ -97,14 +99,15 @@ const createMount = async (req, res) => {
         res.status(500);
         res.json(errorResponse.json);
     }
-}
+};
 
 const updateMount = async (req, res) => {
     try {
         const { id } = req.params;
-        const { idBovine, bullId, breedingDate, serviceNumber, observations, idResponsible } = req.body;
+        // 🔧 bovineCondition agregado al destructuring
+        const { idBovine, bullId, breedingDate, serviceNumber, bovineCondition, observations, idResponsible } = req.body;
         var errors = [];
-        
+
         // Validaciones
         if (!id) {
             errors.push("El ID de la monta natural es obligatorio");
@@ -124,19 +127,21 @@ const updateMount = async (req, res) => {
         if (!idResponsible || idResponsible.trim() === "") {
             errors.push("El responsable de la monta es obligatorio");
         }
+        // 🔧 Validación corregida
         if (bovineCondition && !["Celo", "Quieta", "Rechaza"].includes(bovineCondition)) {
             errors.push("La condición de la vaca debe ser: Celo, Quieta o Rechaza");
         }
 
         if (errors.length > 0) {
-            var response = new Response("Error al actualizar la monta natural", null, errors)
-            res.status(400)
+            var response = new Response("Error al actualizar la monta natural", null, errors);
+            res.status(400);
             res.json(response.json);
             return;
         }
-        
-        data = { idBovine, bullId, breedingDate, serviceNumber, bovineCondition, observations, idResponsible }
-        const mount = await mountUpdate(id, data)
+
+        // 🔧 bovineCondition incluido en data
+        const data = { idBovine, bullId, breedingDate, serviceNumber, bovineCondition, observations, idResponsible };
+        const mount = await mountUpdate(id, data);
         var response = new Response(`Monta natural ${id} actualizada exitosamente`, mount, null);
         res.status(200);
         res.json(response.json);
@@ -148,7 +153,7 @@ const updateMount = async (req, res) => {
         res.status(500);
         res.json(errorResponse.json);
     }
-}
+};
 
 const deleteMount = async (req, res) => {
     try {
@@ -158,12 +163,12 @@ const deleteMount = async (req, res) => {
             errors.push("El ID de la monta natural es obligatorio");
         }
         if (errors.length > 0) {
-            var response = new Response("Error al eliminar la monta natural", null, errors)
-            res.status(400)
+            var response = new Response("Error al eliminar la monta natural", null, errors);
+            res.status(400);
             res.json(response.json);
             return;
         }
-        const mount = await mountDelete(id)
+        const mount = await mountDelete(id);
         var response = new Response(`Monta natural ${id} eliminada exitosamente`, { id }, null);
         res.status(201);
         res.json(response.json);
@@ -175,7 +180,7 @@ const deleteMount = async (req, res) => {
         res.status(500);
         res.json(errorResponse.json);
     }
-}
+};
 
 module.exports = {
     getAllMounts,

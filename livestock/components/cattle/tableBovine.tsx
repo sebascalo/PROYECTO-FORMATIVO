@@ -1,78 +1,50 @@
 "use client";
 import { useEffect, useState } from "react";
 
-export default function tableCattle() {
-    const [cattles, setCattles] = useState([]);
+import { DataTable } from "@/components/ui/data-table";
+import { columns, type Cattle } from "./columns";
 
-     // Función para formatear fecha
-    const formatDate = (dateString) => {
-        if (!dateString) return '-';
-        const date = new Date(dateString);
-        return date.toLocaleDateString('es-ES', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit'
-        });
+interface TableCattleProps {
+  actions?: React.ReactNode;
+}
+
+export default function TableCattle({ actions }: TableCattleProps) {
+  const [cattles, setCattles] = useState<Cattle[]>([]);
+
+  useEffect(() => {
+    const fetchCattles = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3000/api/cattle/CattleAll",
+        );
+        const resJson = await response.json();
+        setCattles(resJson.info ?? []);
+      } catch (error) {
+        console.error("Error:", error);
+        setCattles([]);
+      }
     };
+    fetchCattles();
+  }, []);
 
-    useEffect(() => {
-        const fetchCattles = async () => {
-            try {
-                const response = await fetch('http://localhost:3000/api/cattle/CattleAll');
-                let resJson = await response.json();
-                setCattles(resJson.info);
-            } catch (error) {
-                console.error('Error:', error);
-                setCattles([]);
-            }
-        }
-        fetchCattles();
-    }, []);
-
-    return (
-        <div className="overflow-x-auto shadow-lg rounded-lg">
-            <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gradient-to-r from-blue-500 to-blue-700">
-                    <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">ID</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Nombre</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Raza</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Sexo</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Fecha Ingreso</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Potrero</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Fecha Nac.</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Peso (kg)</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Clasificación</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Estado</th>
-                    </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                    {cattles.map((cattle: any) => (
-                        <tr key={cattle.id}>
-                            <td className="px-6 py-4 whitespace-nowrap">{cattle.id}</td>
-                            <td className="px-6 py-4 whitespace-nowrap font-medium">{cattle.name}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{cattle.raze}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{cattle.sex}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{formatDate(cattle.entrydate)}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{cattle.paddock}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{formatDate(cattle.birthdate)}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{cattle.currentweight} kg</td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                    cattle.classificationbytype === 'Lechero' ? 'bg-blue-100 text-blue-800' :
-                                    cattle.classificationbytype === 'Carne' ? 'bg-red-100 text-red-800' :
-                                    'bg-green-100 text-green-800'
-                                }`}>
-                                    {cattle.classificationbytype}
-                                </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                                {cattle.active ? 'Activo' : 'Inactivo'}
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+  return (
+    <div className="min-h-screen bg-[#FAF9F6] px-6 py-8">
+      <div className="mx-auto max-w-6xl space-y-6">
+        <div>
+          <h1 className="text-2xl font-semibold text-[#2B2A26]">Bovinos</h1>
+          <p className="text-sm text-[#6B6459]">
+            {cattles.length} {cattles.length === 1 ? "animal registrado" : "animales registrados"}.
+          </p>
         </div>
-    );
+
+        <DataTable
+          columns={columns}
+          data={cattles}
+          filterColumnId="name"
+          filterPlaceholder="Filtrar por nombre..."
+          toolbar={actions}
+        />
+      </div>
+    </div>
+  );
 }

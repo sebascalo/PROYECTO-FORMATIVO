@@ -11,12 +11,14 @@ import {
 import { CirclePlus } from "lucide-react";
 
 export default function FormCreationArtificialInsemination() {
+  const [open, setOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     idBovine: "",
     inseminationDate: new Date().toISOString().split("T")[0],
     semenID: "",
-    donorBull: "",
-    semenDose: "",
+    raze: "",                 // 🔧 nuevo (reemplaza a donorBull y semenDose)
     observations: "",
     idResponsible: "",
   });
@@ -35,8 +37,7 @@ export default function FormCreationArtificialInsemination() {
       idBovine: "",
       inseminationDate: new Date().toISOString().split("T")[0],
       semenID: "",
-      donorBull: "",
-      semenDose: "",
+      raze: "",
       observations: "",
       idResponsible: "",
     });
@@ -44,16 +45,17 @@ export default function FormCreationArtificialInsemination() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
 
     const datosEnviar = {
       ...formData,
-      idBovine: parseInt(formData.idBovine),
-      semenDose: formData.semenDose ? parseFloat(formData.semenDose) : null,
+      idBovine: formData.idBovine ? parseInt(formData.idBovine) : null,
     };
 
+    setIsSubmitting(true);
     try {
       const response = await fetch(
-        "http://localhost:3000/api/artificialInsemination/create",
+        "http://localhost:3000/api/artificialInsemination/CreateArtificialInsemination",
         {
           method: "POST",
           headers: {
@@ -63,19 +65,41 @@ export default function FormCreationArtificialInsemination() {
         },
       );
 
+      if (!response.ok) {
+        let backendMessage = "";
+        try {
+          const errorBody = await response.json();
+          backendMessage =
+            errorBody?.message || errorBody?.error || JSON.stringify(errorBody);
+        } catch {
+          backendMessage = await response.text();
+        }
+        console.error("Respuesta del servidor:", response.status, backendMessage);
+        throw new Error(
+          `El servidor respondió ${response.status}: ${backendMessage || "sin detalle"}`,
+        );
+      }
+
       limpiarFormulario();
+      setOpen(false);
+      window.location.reload();
     } catch (error) {
       console.error("Error:", error);
-      limpiarFormulario();
+      setError(
+        error instanceof Error
+          ? error.message
+          : "No se pudo guardar la inseminación. Intenta de nuevo.",
+      );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-200 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer">
-          <CirclePlus className="w-8 h-8 mr-2 text-green-600" /> Agregar
-          Inseminación Artificial
+        <button className="flex items-center px-4 py-2 bg-[#4B6043] text-white rounded-md hover:bg-[#405539] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#4B6043]/40 focus:ring-offset-2 cursor-pointer">
+          <CirclePlus className="w-5 h-5 mr-2" /> Agregar Inseminación
         </button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] md:max-w-[800px]">
@@ -86,7 +110,11 @@ export default function FormCreationArtificialInsemination() {
           Complete los campos para crear una nueva inseminación artificial.
         </DialogDescription>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form
+          id="insemination-create-form"
+          onSubmit={handleSubmit}
+          className="space-y-4"
+        >
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label
@@ -101,7 +129,7 @@ export default function FormCreationArtificialInsemination() {
                 name="idBovine"
                 value={formData.idBovine}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043]"
                 placeholder="ID del bovino"
               />
             </div>
@@ -119,7 +147,7 @@ export default function FormCreationArtificialInsemination() {
                 name="inseminationDate"
                 value={formData.inseminationDate}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043]"
               />
             </div>
 
@@ -128,7 +156,7 @@ export default function FormCreationArtificialInsemination() {
                 htmlFor="semenID"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Código del Semen:
+                Código o Lote de la Pajilla:
               </label>
               <input
                 type="text"
@@ -136,47 +164,35 @@ export default function FormCreationArtificialInsemination() {
                 name="semenID"
                 value={formData.semenID}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043]"
                 placeholder="Ej: T-001"
               />
             </div>
 
             <div>
               <label
-                htmlFor="donorBull"
+                htmlFor="raze"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Toro Donante:
+                Raza de la Pajilla:
               </label>
-              <input
-                type="text"
-                id="donorBull"
-                name="donorBull"
-                value={formData.donorBull}
+              <select
+                id="raze"
+                name="raze"
+                value={formData.raze}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Ej: Toro Negro"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="semenDose"
-                className="block text-sm font-medium text-gray-700 mb-1"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043] bg-white"
               >
-                Dosis:
-              </label>
-              <input
-                type="number"
-                id="semenDose"
-                name="semenDose"
-                value={formData.semenDose}
-                onChange={handleChange}
-                step="0.01"
-                min="0"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Ej: 0.5"
-              />
+                <option value="">Seleccione una raza</option>
+                <option value="Holstein">Holstein</option>
+                <option value="Jersey">Jersey</option>
+                <option value="Brahmán">Brahmán</option>
+                <option value="Hereford">Hereford</option>
+                <option value="Angus">Angus</option>
+                <option value="Cebú">Cebú</option>
+                <option value="Criolla">Criolla</option>
+                <option value="Otra">Otra</option>
+              </select>
             </div>
 
             <div>
@@ -192,7 +208,7 @@ export default function FormCreationArtificialInsemination() {
                 name="idResponsible"
                 value={formData.idResponsible}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043]"
                 placeholder="Ej: Dr. Juan Pérez"
               />
             </div>
@@ -211,17 +227,20 @@ export default function FormCreationArtificialInsemination() {
               value={formData.observations}
               onChange={handleChange}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043]"
               placeholder="Observaciones adicionales..."
             />
           </div>
         </form>
-        <DialogFooter>
+        <DialogFooter className="flex-col gap-2 sm:flex-col">
+          {error && <p className="text-sm text-red-600 text-center">{error}</p>}
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white font-medium py-2 px-4 rounded-md hover:bg-blue-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            form="insemination-create-form"
+            disabled={isSubmitting}
+            className="w-full bg-[#4B6043] text-white font-medium py-2 px-4 rounded-md hover:bg-[#405539] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#4B6043]/40 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            Guardar Inseminación Artificial
+            {isSubmitting ? "Guardando..." : "Guardar Inseminación"}
           </button>
         </DialogFooter>
       </DialogContent>

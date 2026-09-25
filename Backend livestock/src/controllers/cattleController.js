@@ -6,9 +6,9 @@ const getAllCattles = async (req, res) => {
     try {
         let queryLimit = req.query.limit;
         let queryOffset = req.query.offset;
-        
-        const limit = queryLimit ? Number(queryLimit) : 10;
-        const offset = queryOffset ? Number(queryOffset) : 0; 
+
+        const limit = queryLimit ? Number(queryLimit) : 20;
+        const offset = queryOffset ? Number(queryOffset) : 0;
 
         const cattles = await cattlesGetAll(limit, offset);
         const response = new Response("Registros de bovinos obtenidos exitosamente", cattles, null);
@@ -37,7 +37,7 @@ const getAllCattlesById = async (req, res) => {
             res.json(response.json);
             return;
         }
-        const cattle = await getCattleById(id)
+        const cattle = await getCattleById(id);
         var response = new Response(`Bovino ${id} obtenido exitosamente`, cattle, null);
         res.status(201);
         res.json(response.json);
@@ -49,13 +49,13 @@ const getAllCattlesById = async (req, res) => {
         res.status(500);
         res.json(errorResponse.json);
     }
-}
+};
 
 const createCattle = async (req, res) => {
     try {
         const { name, raze, sex, entrydate, paddock, birthdate, photo, currentweight, classificationbytype, active } = req.body;
         var errors = [];
-        
+
         // Validaciones
         if (!name || name.trim() === "") {
             errors.push("El nombre del bovino es obligatorio");
@@ -84,19 +84,21 @@ const createCattle = async (req, res) => {
         if (!classificationbytype || classificationbytype.trim() === "") {
             errors.push("La clasificación por tipo es obligatoria");
         }
-        if (!active || active.trim() === "") {
+        // 🔧 Validación simplificada
+        if (!active) {
             errors.push("El estado del bovino es obligatorio");
         }
 
         if (errors.length > 0) {
-            var response = new Response("Error al crear el bovino", null, errors)
-            res.status(400)
+            var response = new Response("Error al crear el bovino", null, errors);
+            res.status(400);
             res.json(response.json);
             return;
         }
-        
-        data = { name, raze, sex, entrydate, paddock, birthdate, photo, currentweight, classificationbytype, active }
-        const cattle = await cattleCreate(data)
+
+        // 🔧 Conversión: 'Activo' -> 1, cualquier otra cosa -> 0
+        data = { name, raze, sex, entrydate, paddock, birthdate, photo, currentweight, classificationbytype, active: active === 'Activo' ? 1 : 0 };
+        const cattle = await cattleCreate(data);
         var response = new Response("Bovino creado exitosamente", cattle, null);
         res.status(201);
         res.json(response.json);
@@ -108,14 +110,14 @@ const createCattle = async (req, res) => {
         res.status(500);
         res.json(errorResponse.json);
     }
-}
+};
 
 const updateCattle = async (req, res) => {
     try {
         const { id } = req.params;
         const { name, raze, sex, entrydate, paddock, birthdate, photo, currentweight, classificationbytype, state, active } = req.body;
         var errors = [];
-        
+
         // Validaciones
         if (!id) {
             errors.push("El ID del bovino es obligatorio");
@@ -147,19 +149,21 @@ const updateCattle = async (req, res) => {
         if (!classificationbytype || classificationbytype.trim() === "") {
             errors.push("La clasificación por tipo es obligatoria");
         }
-        if (!active || active.trim() === "") {
+        // 🔧 Validación simplificada
+        if (!active) {
             errors.push("El estado del bovino es obligatorio");
         }
 
         if (errors.length > 0) {
-            var response = new Response("Error al actualizar el bovino", null, errors)
-            res.status(400)
+            var response = new Response("Error al actualizar el bovino", null, errors);
+            res.status(400);
             res.json(response.json);
             return;
         }
-        
-        data = { name, raze, sex, entrydate, paddock, birthdate, photo, currentweight, classificationbytype, active }
-        const cattle = await cattleUpdate(id, data)
+
+        // 🔧 Conversión: 'Activo' -> 1, cualquier otra cosa -> 0
+        data = { name, raze, sex, entrydate, paddock, birthdate, photo, currentweight, classificationbytype, active: active === 'Activo' ? 1 : 0 };
+        const cattle = await cattleUpdate(id, data);
         var response = new Response(`Bovino ${id} actualizado exitosamente`, cattle, null);
         res.status(200);
         res.json(response.json);
@@ -171,7 +175,7 @@ const updateCattle = async (req, res) => {
         res.status(500);
         res.json(errorResponse.json);
     }
-}
+};
 
 const deleteCattle = async (req, res) => {
     try {
@@ -181,12 +185,12 @@ const deleteCattle = async (req, res) => {
             errors.push("El ID del bovino es obligatorio");
         }
         if (errors.length > 0) {
-            var response = new Response("Error al eliminar el bovino", null, errors)
-            res.status(400)
+            var response = new Response("Error al eliminar el bovino", null, errors);
+            res.status(400);
             res.json(response.json);
             return;
         }
-        const cattle = await cattleDelete(id)
+        const cattle = await cattleDelete(id);
         var response = new Response(`Bovino ${id} eliminado exitosamente`, { id }, null);
         res.status(201);
         res.json(response.json);
@@ -198,7 +202,7 @@ const deleteCattle = async (req, res) => {
         res.status(500);
         res.json(errorResponse.json);
     }
-}
+};
 
 module.exports = {
     getAllCattles,
