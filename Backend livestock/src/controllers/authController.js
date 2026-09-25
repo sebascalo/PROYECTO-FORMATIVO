@@ -16,7 +16,7 @@ const login = async (req, res) => {
     const { email, password } = req.body;
     if (email == "" || password == "") {
       const response = new Response(
-        "Error en login",
+        "Error correo o contraseña vacios",
         null,
         "Correo o contraseña vacíos"
       );
@@ -25,7 +25,7 @@ const login = async (req, res) => {
     const user = await getUserByEmail(email);
     if (!user) {
       const response = new Response(
-        "Error en login",
+        "Error correo o contraseña incorrectos",
         null,
         "Usuario y contraseña incorrectos"
       );
@@ -36,7 +36,7 @@ const login = async (req, res) => {
 
     if (!match) {
       const response = new Response(
-        "Error en login",
+        "Error correo o contraseña incorrectos",
         null,
         "Usuario y contraseña incorrectos"
       );

@@ -25,11 +25,24 @@ import {
   Activity,
 } from "lucide-react";
 import { Cow, Grains } from "@phosphor-icons/react";
-import {Collapsible} from "@/components/ui/collapsible";
-import { useRouter, usePathname } from "next/navigation";
+import { Collapsible } from "@/components/ui/collapsible";
+import { usePathname } from "next/navigation";
+
+const activeClasses =
+  " rounded-sm " +
+  "text-gray-700 hover:bg-gray-100 hover:text-gray-900 " +
+  "data-[active=true]:bg-gray-100 data-[active=true]:text-gray-900 data-[active=true]:font-semibold " +
+  "relative " +
+  "data-[active=true]:before:absolute " +
+  "data-[active=true]:before:left-0 " +
+  "data-[active=true]:before:top-1/2 " +
+  "data-[active=true]:before:-translate-y-1/2 " +
+  "data-[active=true]:before:h-5 " +
+  "data-[active=true]:before:w-[3px] " +
+  "data-[active=true]:before:rounded-full " +
+  "data-[active=true]:before:bg-blue-600";
 
 export function AppSidebar() {
-  const router = useRouter();
   const pathname = usePathname();
 
   const isActive = (path: string) => {
@@ -38,14 +51,13 @@ export function AppSidebar() {
 
   return (
     <Sidebar
-      variant="inset"
       collapsible="icon"
-      className="relative flex flex-col h-full w-64 border-r bg-gradient-to-r from-[#1448E6] to-[#2B7FFF] text-white"
+      className="relative flex flex-col h-full w-64 border-r bg-white text-gray-800"
     >
-      <SidebarContent className="bg-gradient-to-r from-[#1448E6] to-[#2B7FFF] text-white">
+      <SidebarContent className="text-gray-800 px-3">
         {/* ================= SECCIÓN 1: GESTIÓN DE BOVINOS ================= */}
         <div className="px-3 py-2 mt-2">
-          <div className="flex items-center gap-2 text-xs font-bold text-blue-300 uppercase tracking-wider group-data-[collapsible=icon]:justify-center">
+          <div className="flex items-center gap-2 text-xs font-bold text-gray-500 uppercase tracking-wider group-data-[collapsible=icon]:justify-center">
             <Cow size={14} />
             <span className="group-data-[collapsible=icon]:hidden">
               Gestión de Bovinos
@@ -60,7 +72,11 @@ export function AppSidebar() {
         >
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton
+                asChild
+                isActive={isActive("/dashboard/cattle")}
+                className={activeClasses}
+              >
                 <a href="/dashboard/cattle">
                   <Cow /> Bovino
                 </a>
@@ -76,7 +92,11 @@ export function AppSidebar() {
         >
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton
+                asChild
+                isActive={isActive("/dashboard/weighing")}
+                className={activeClasses}
+              >
                 <a href="/dashboard/weighing">
                   <Scale /> Pesaje
                 </a>
@@ -92,7 +112,11 @@ export function AppSidebar() {
         >
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton
+                asChild
+                isActive={isActive("/dashboard/birth")}
+                className={activeClasses}
+              >
                 <a href="/dashboard/birth">
                   <Baby /> Nacimiento
                 </a>
@@ -108,7 +132,11 @@ export function AppSidebar() {
         >
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton
+                asChild
+                isActive={isActive("/dashboard/mortality")}
+                className={activeClasses}
+              >
                 <a href="/dashboard/mortality">
                   <AlertTriangle /> Mortalidad
                 </a>
@@ -118,11 +146,11 @@ export function AppSidebar() {
         </Collapsible>
 
         {/* Separador */}
-        <div className="my-2 border-t border-white/30 mx-3" />
+        <div className="my-2 border-t border-gray-200 mx-3" />
 
         {/* ================= SECCIÓN 2: COMIDAS ================= */}
         <div className="px-3 py-2 mt-2">
-          <div className="flex items-center gap-2 text-xs font-bold text-blue-300 uppercase tracking-wider group-data-[collapsible=icon]:justify-center">
+          <div className="flex items-center gap-2 text-xs font-bold text-gray-500 uppercase tracking-wider group-data-[collapsible=icon]:justify-center">
             <Grains size={14} />
             <span className="group-data-[collapsible=icon]:hidden">
               Gestion de alimentacion
@@ -137,7 +165,11 @@ export function AppSidebar() {
         >
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton
+                asChild
+                isActive={isActive("/dashboard/nutrition")}
+                className={activeClasses}
+              >
                 <a href="/dashboard/nutrition">
                   <Sprout /> Nutricion
                 </a>
@@ -153,7 +185,11 @@ export function AppSidebar() {
         >
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton
+                asChild
+                isActive={isActive("/dashboard/food")}
+                className={activeClasses}
+              >
                 <a href="/dashboard/food">
                   <Wheat /> Alimento
                 </a>
@@ -163,11 +199,11 @@ export function AppSidebar() {
         </Collapsible>
 
         {/* Separador */}
-        <div className="my-2 border-t border-white/30 mx-3" />
+        <div className="my-2 border-t border-gray-200 mx-3" />
 
         {/* ================= SECCIÓN 3: SANIDAD ================= */}
         <div className="px-3 py-2 mt-2">
-          <div className="flex items-center gap-2 text-xs font-bold text-blue-300 uppercase tracking-wider group-data-[collapsible=icon]:justify-center">
+          <div className="flex items-center gap-2 text-xs font-bold text-gray-500 uppercase tracking-wider group-data-[collapsible=icon]:justify-center">
             <Stethoscope size={14} />
             <span className="group-data-[collapsible=icon]:hidden">
               Sanidad
@@ -182,7 +218,11 @@ export function AppSidebar() {
         >
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton
+                asChild
+                isActive={isActive("/dashboard/vacunation")}
+                className={activeClasses}
+              >
                 <a href="/dashboard/vacunation">
                   <Syringe /> Vacunación
                 </a>
@@ -198,7 +238,11 @@ export function AppSidebar() {
         >
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton
+                asChild
+                isActive={isActive("/dashboard/treatment")}
+                className={activeClasses}
+              >
                 <a href="/dashboard/treatment">
                   <Shield /> Tratamiento
                 </a>
@@ -208,11 +252,11 @@ export function AppSidebar() {
         </Collapsible>
 
         {/* Separador */}
-        <div className="my-2 border-t border-white/30 mx-3" />
+        <div className="my-2 border-t border-gray-200 mx-3" />
 
         {/* ================= SECCIÓN 4: REPRODUCCIÓN ================= */}
         <div className="px-3 py-2 mt-2">
-          <div className="flex items-center gap-2 text-xs font-bold text-blue-300 uppercase tracking-wider group-data-[collapsible=icon]:justify-center">
+          <div className="flex items-center gap-2 text-xs font-bold text-gray-500 uppercase tracking-wider group-data-[collapsible=icon]:justify-center">
             <Heart size={14} />
             <span className="group-data-[collapsible=icon]:hidden">
               Reproducción
@@ -227,7 +271,11 @@ export function AppSidebar() {
         >
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton
+                asChild
+                isActive={isActive("/dashboard/artificialInsemination")}
+                className={activeClasses}
+              >
                 <a href="/dashboard/artificialInsemination">
                   <Dna />
                   <span>Inseminación Artificial</span>
@@ -244,7 +292,11 @@ export function AppSidebar() {
         >
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton
+                asChild
+                isActive={isActive("/dashboard/mount")}
+                className={activeClasses}
+              >
                 <a href="/dashboard/mount">
                   <Calendar /> Monta Natural
                 </a>
@@ -254,11 +306,11 @@ export function AppSidebar() {
         </Collapsible>
 
         {/* Separador */}
-        <div className="my-2 border-t border-white/30 mx-3" />
+        <div className="my-2 border-t border-gray-200 mx-3" />
 
         {/* ================= SECCIÓN 5: MONITOREO ================= */}
         <div className="px-3 py-2 mt-2">
-          <div className="flex items-center gap-2 text-xs font-bold text-blue-300 uppercase tracking-wider group-data-[collapsible=icon]:justify-center">
+          <div className="flex items-center gap-2 text-xs font-bold text-gray-500 uppercase tracking-wider group-data-[collapsible=icon]:justify-center">
             <Activity size={14} />
             <span className="group-data-[collapsible=icon]:hidden">
               Monitoreo
@@ -273,7 +325,11 @@ export function AppSidebar() {
         >
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton
+                asChild
+                isActive={isActive("/dashboard/milk")}
+                className={activeClasses}
+              >
                 <a href="/dashboard/milk">
                   <Milk />
                   <span>Produccion de leche</span>
@@ -290,7 +346,11 @@ export function AppSidebar() {
         >
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton
+                asChild
+                isActive={isActive("/dashboard/pasture")}
+                className={activeClasses}
+              >
                 <a href="/dashboard/pasture">
                   <Map />
                   <span>Potrero</span>
@@ -307,7 +367,11 @@ export function AppSidebar() {
         >
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton
+                asChild
+                isActive={isActive("/dashboard/user")}
+                className={activeClasses}
+              >
                 <a href="/dashboard/user">
                   <User />
                   <span>Usuario</span>
@@ -324,7 +388,11 @@ export function AppSidebar() {
         >
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton
+                asChild
+                isActive={isActive("/dashboard/responsible")}
+                className={activeClasses}
+              >
                 <a href="/dashboard/responsible">
                   <Users /> Responsable
                 </a>

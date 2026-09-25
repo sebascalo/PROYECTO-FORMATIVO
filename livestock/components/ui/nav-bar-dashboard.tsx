@@ -1,6 +1,7 @@
 "use client";
 import logo from "@/public/LOGO-LIVESTOCK.png";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,6 +19,13 @@ import {
 } from "lucide-react"
 
 export default function NavBarDashboard() {
+  const router = useRouter();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    router.replace("/");
+  };
+
   return (
     <nav className="h-[60px] relative w-full px-2 md:px-6 lg:px-10 xl:px-16 flex items-center justify-between z-30 bg-gradient-to-r from-[#2B7FFF] to-[#1448E6]">
       {/* Logo - Izquierda */}
@@ -66,7 +74,7 @@ export default function NavBarDashboard() {
               <span>Notificaciones</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-red-600">
+            <DropdownMenuItem className="text-red-600" onSelect={handleLogout}>
               <LogOut className="mr-2 h-4 w-4" />
               <span>Cerrar sesión</span>
             </DropdownMenuItem>

@@ -8,7 +8,7 @@ import {
   DialogTrigger,
   DialogTitle,
 } from "../ui/dialog";
-import { CirclePlus } from "lucide-react";
+import ButtonCreate from "../ui/buttonCreate";
 
 export default function FormCreationTreatment() {
   const [open, setOpen] = useState(false);
@@ -99,9 +99,7 @@ export default function FormCreationTreatment() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="flex items-center px-4 py-2 bg-[#4B6043] text-white rounded-md hover:bg-[#405539] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#4B6043]/40 focus:ring-offset-2 cursor-pointer">
-          <CirclePlus className="w-5 h-5 mr-2" /> Agregar Tratamiento
-        </button>
+        <ButtonCreate>Agregar Tratamiento</ButtonCreate>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] md:max-w-[800px]">
         <DialogTitle className="font-bold text-2xl text-center">
@@ -290,7 +288,7 @@ export default function FormCreationTreatment() {
             type="submit"
             form="treatment-create-form"
             disabled={isSubmitting}
-            className="w-full bg-[#4B6043] text-white font-medium py-2 px-4 rounded-md hover:bg-[#405539] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#4B6043]/40 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full bg-green-600 text-white font-medium py-2 px-4 rounded-md hover:bg-green-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500/40 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {isSubmitting ? "Guardando..." : "Guardar Tratamiento"}
           </button>
