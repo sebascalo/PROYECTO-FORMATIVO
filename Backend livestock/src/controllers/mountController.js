@@ -26,9 +26,9 @@ const getAllMounts = async (req, res) => {
 
 const getAllMountsById = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id_mount } = req.params;
         var errors = [];
-        if (!id) {
+        if (!id_mount) {
             errors.push("El ID de la monta natural es obligatorio");
         }
         if (errors.length > 0) {
@@ -37,8 +37,8 @@ const getAllMountsById = async (req, res) => {
             res.json(response.json);
             return;
         }
-        const mount = await getMountById(id);
-        var response = new Response(`Monta natural ${id} obtenida exitosamente`, mount, null);
+        const mount = await getMountById(id_mount);
+        var response = new Response(`Monta natural ${id_mount} obtenida exitosamente`, mount, null);
         res.status(201);
         res.json(response.json);
     } catch (error) {
@@ -53,29 +53,25 @@ const getAllMountsById = async (req, res) => {
 
 const createMount = async (req, res) => {
     try {
-        // 🔧 bovineCondition agregado al destructuring
-        const { idBovine, bullId, breedingDate, serviceNumber, bovineCondition, observations, idResponsible } = req.body;
+        console.log("📥 [BACK] Body recibido:", req.body);
+        const { id_cow, id_bull, breedingDate, serviceNumber, observations, idResponsible } = req.body;
         var errors = [];
 
         // Validaciones
-        if (!idBovine || idBovine.toString().trim() === "" || isNaN(idBovine)) {
-            errors.push("La identificación de la hembra es obligatoria y debe ser un número");
+        if (!id_cow || String(id_cow).trim() === "" || isNaN(id_cow)) {
+            errors.push("La identificación de la vaca es obligatoria y debe ser un número");
         }
-        if (!bullId || bullId.toString().trim() === "" || isNaN(bullId)) {
+        if (!id_bull || String(id_bull).trim() === "" || isNaN(id_bull)) {
             errors.push("La identificación del toro es obligatoria y debe ser un número");
         }
-        if (!breedingDate || breedingDate.trim() === "") {
+        if (!breedingDate || String(breedingDate).trim() === "") {
             errors.push("La fecha de monta es obligatoria");
         }
-        if (!serviceNumber || serviceNumber.toString().trim() === "" || isNaN(serviceNumber)) {
+        if (!serviceNumber || String(serviceNumber).trim() === "" || isNaN(serviceNumber)) {
             errors.push("El número de servicio es obligatorio y debe ser un número");
         }
-        if (!idResponsible || idResponsible.trim() === "") {
+        if (!idResponsible || String(idResponsible).trim() === "") {
             errors.push("El responsable de la monta es obligatorio");
-        }
-        // 🔧 Validación corregida (ahora bovineCondition sí existe)
-        if (bovineCondition && !["Celo", "Quieta", "Rechaza"].includes(bovineCondition)) {
-            errors.push("La condición de la vaca debe ser: Celo, Quieta o Rechaza");
         }
 
         if (errors.length > 0) {
@@ -85,8 +81,15 @@ const createMount = async (req, res) => {
             return;
         }
 
-        // 🔧 bovineCondition incluido en data
-        const data = { idBovine, bullId, breedingDate, serviceNumber, bovineCondition, observations, idResponsible };
+        const data = {
+            id_cow,
+            id_bull,
+            breedingDate,
+            serviceNumber,
+            observations,
+            idResponsible
+        };
+        console.log("📥 [BACK] data a guardar:", data);
         const mount = await mountCreate(data);
         var response = new Response("Monta natural creada exitosamente", mount, null);
         res.status(201);
@@ -103,33 +106,28 @@ const createMount = async (req, res) => {
 
 const updateMount = async (req, res) => {
     try {
-        const { id } = req.params;
-        // 🔧 bovineCondition agregado al destructuring
-        const { idBovine, bullId, breedingDate, serviceNumber, bovineCondition, observations, idResponsible } = req.body;
+        const { id_mount } = req.params;
+        const { id_cow, id_bull, breedingDate, serviceNumber, observations, idResponsible } = req.body;
         var errors = [];
 
         // Validaciones
-        if (!id) {
+        if (!id_mount) {
             errors.push("El ID de la monta natural es obligatorio");
         }
-        if (!idBovine || idBovine.toString().trim() === "" || isNaN(idBovine)) {
-            errors.push("La identificación de la hembra es obligatoria y debe ser un número");
+        if (!id_cow || String(id_cow).trim() === "" || isNaN(id_cow)) {
+            errors.push("La identificación de la vaca es obligatoria y debe ser un número");
         }
-        if (!bullId || bullId.toString().trim() === "" || isNaN(bullId)) {
+        if (!id_bull || String(id_bull).trim() === "" || isNaN(id_bull)) {
             errors.push("La identificación del toro es obligatoria y debe ser un número");
         }
-        if (!breedingDate || breedingDate.trim() === "") {
+        if (!breedingDate || String(breedingDate).trim() === "") {
             errors.push("La fecha de monta es obligatoria");
         }
-        if (!serviceNumber || serviceNumber.toString().trim() === "" || isNaN(serviceNumber)) {
+        if (!serviceNumber || String(serviceNumber).trim() === "" || isNaN(serviceNumber)) {
             errors.push("El número de servicio es obligatorio y debe ser un número");
         }
-        if (!idResponsible || idResponsible.trim() === "") {
+        if (!idResponsible || String(idResponsible).trim() === "") {
             errors.push("El responsable de la monta es obligatorio");
-        }
-        // 🔧 Validación corregida
-        if (bovineCondition && !["Celo", "Quieta", "Rechaza"].includes(bovineCondition)) {
-            errors.push("La condición de la vaca debe ser: Celo, Quieta o Rechaza");
         }
 
         if (errors.length > 0) {
@@ -139,10 +137,16 @@ const updateMount = async (req, res) => {
             return;
         }
 
-        // 🔧 bovineCondition incluido en data
-        const data = { idBovine, bullId, breedingDate, serviceNumber, bovineCondition, observations, idResponsible };
-        const mount = await mountUpdate(id, data);
-        var response = new Response(`Monta natural ${id} actualizada exitosamente`, mount, null);
+        const data = {
+            id_cow,
+            id_bull,
+            breedingDate,
+            serviceNumber,
+            observations,
+            idResponsible
+        };
+        const mount = await mountUpdate(id_mount, data);
+        var response = new Response(`Monta natural ${id_mount} actualizada exitosamente`, mount, null);
         res.status(200);
         res.json(response.json);
     } catch (error) {
@@ -157,9 +161,9 @@ const updateMount = async (req, res) => {
 
 const deleteMount = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id_mount } = req.params;
         var errors = [];
-        if (!id) {
+        if (!id_mount) {
             errors.push("El ID de la monta natural es obligatorio");
         }
         if (errors.length > 0) {
@@ -168,8 +172,8 @@ const deleteMount = async (req, res) => {
             res.json(response.json);
             return;
         }
-        const mount = await mountDelete(id);
-        var response = new Response(`Monta natural ${id} eliminada exitosamente`, { id }, null);
+        const mount = await mountDelete(id_mount);
+        var response = new Response(`Monta natural ${id_mount} eliminada exitosamente`, { id_mount }, null);
         res.status(201);
         res.json(response.json);
     } catch (error) {

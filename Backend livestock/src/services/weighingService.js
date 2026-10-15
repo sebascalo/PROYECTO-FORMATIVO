@@ -23,9 +23,9 @@ const weighingsGetAll = async (limit, offset) => {
 }
 
 // Obtener pesaje por ID
-const getWeighingById = async (id) => {
+const getWeighingById = async (id_weighing) => {
     try {
-        const weighingid = await weighing.findOne({ where: { id } });
+        const weighingid = await weighing.findOne({ where: { id_weighing } });
         return weighingid;
     } catch (error) {
         console.log(error);
@@ -34,9 +34,9 @@ const getWeighingById = async (id) => {
 }
 
 // Inactivar pesaje
-const weighingDelete = async (id) => {
+const weighingDelete = async (id_weighing) => {
     try {
-        const weighingDelete = await weighing.destroy({ where: { id } });
+        const weighingDelete = await weighing.destroy({ where: { id_weighing } });
         return weighingDelete;
     } catch (error) {
         console.log(error);
@@ -45,9 +45,9 @@ const weighingDelete = async (id) => {
 }
 
 // Actualizar pesaje
-const weighingUpdate = async (id, data) => {
+const weighingUpdate = async (id_weighing, data) => {
     try {
-        const weighingToUpdate = await weighing.findOne({ where: { id } });
+        const weighingToUpdate = await weighing.findOne({ where: { id_weighing } });
         if (!weighingToUpdate) {
             return null;
         }

@@ -17,12 +17,12 @@ export default function FormCreationPasture() {
   const [formData, setFormData] = useState({
     name: "",
     extension: "",
-    forageCapacity: "",         // 🔧 antes: maxCapacity
+    forageCapacity: "",
     pastureType: "",
     currentStatus: "",
-    cattleEntryDate: "",        // 🔧 nuevo
-    cattleExitDate: "",         // 🔧 nuevo
-    lastChemicalApplication: "",// 🔧 nuevo
+    cattleEntryDate: "",
+    cattleExitDate: "",
+    lastChemicalApplication: "",
   });
 
   const handleChange = (
@@ -53,7 +53,6 @@ export default function FormCreationPasture() {
       ...formData,
       extension: parseFloat(formData.extension),
       forageCapacity: parseInt(formData.forageCapacity),
-      // Las fechas vacías se mandan como null
       cattleEntryDate: formData.cattleEntryDate || null,
       cattleExitDate: formData.cattleExitDate || null,
       lastChemicalApplication: formData.lastChemicalApplication || null,
@@ -61,24 +60,38 @@ export default function FormCreationPasture() {
 
     setIsSubmitting(true);
     try {
-      const response = await fetch("http://localhost:3000/api/pasture/CreatePasture", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        "http://localhost:3000/api/pasture/CreatePasture",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(datosEnviar),
         },
-        body: JSON.stringify(datosEnviar),
-      });
+      );
 
       if (!response.ok) {
         let backendMessage = "";
         try {
           const errorBody = await response.json();
-          backendMessage =
-            errorBody?.message || errorBody?.error || JSON.stringify(errorBody);
+          if (Array.isArray(errorBody?.errors)) {
+            backendMessage = errorBody.errors
+              .map((e: { message?: string } | string) =>
+                typeof e === "string" ? e : e.message ?? String(e),
+              )
+              .join(" | ");
+          } else {
+            backendMessage =
+              errorBody?.message ||
+              errorBody?.error ||
+              JSON.stringify(errorBody);
+          }
         } catch {
           backendMessage = await response.text();
         }
-        console.error("Respuesta del servidor:", response.status, backendMessage);
         throw new Error(
           `El servidor respondió ${response.status}: ${backendMessage || "sin detalle"}`,
         );
@@ -99,8 +112,13 @@ export default function FormCreationPasture() {
     }
   };
 
+  const handleOpenChange = (newOpen: boolean) => {
+    if (!newOpen) limpiarFormulario();
+    setOpen(newOpen);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <ButtonCreate>Agregar Potrero</ButtonCreate>
       </DialogTrigger>
@@ -108,18 +126,18 @@ export default function FormCreationPasture() {
         <DialogTitle className="font-bold text-2xl text-center">
           Crear Potrero
         </DialogTitle>
-        <DialogDescription>
-          Complete los campos para crear un nuevo potrero.
-        </DialogDescription>
-
         <form
           id="pasture-create-form"
           onSubmit={handleSubmit}
           className="space-y-4"
         >
           <div className="grid grid-cols-2 gap-4">
+            {/* NOMBRE */}
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Nombre:
               </label>
               <input
@@ -133,8 +151,12 @@ export default function FormCreationPasture() {
               />
             </div>
 
+            {/* EXTENSIÓN */}
             <div>
-              <label htmlFor="extension" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="extension"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Extensión (ha):
               </label>
               <input
@@ -150,8 +172,12 @@ export default function FormCreationPasture() {
               />
             </div>
 
+            {/* AFORO */}
             <div>
-              <label htmlFor="forageCapacity" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="forageCapacity"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Aforo (Cap. Máx):
               </label>
               <input
@@ -166,8 +192,12 @@ export default function FormCreationPasture() {
               />
             </div>
 
+            {/* TIPO */}
             <div>
-              <label htmlFor="pastureType" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="pastureType"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Tipo de Pastura:
               </label>
               <select
@@ -183,8 +213,12 @@ export default function FormCreationPasture() {
               </select>
             </div>
 
+            {/* ESTADO */}
             <div>
-              <label htmlFor="currentStatus" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="currentStatus"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Estado Actual:
               </label>
               <select
@@ -200,8 +234,12 @@ export default function FormCreationPasture() {
               </select>
             </div>
 
+            {/* INGRESO */}
             <div>
-              <label htmlFor="cattleEntryDate" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="cattleEntryDate"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Ingreso Ganado:
               </label>
               <input
@@ -214,8 +252,12 @@ export default function FormCreationPasture() {
               />
             </div>
 
+            {/* SALIDA */}
             <div>
-              <label htmlFor="cattleExitDate" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="cattleExitDate"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Salida Ganado:
               </label>
               <input
@@ -228,8 +270,12 @@ export default function FormCreationPasture() {
               />
             </div>
 
+            {/* QUÍMICO */}
             <div>
-              <label htmlFor="lastChemicalApplication" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="lastChemicalApplication"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Último Químico:
               </label>
               <input
@@ -244,16 +290,41 @@ export default function FormCreationPasture() {
             </div>
           </div>
         </form>
+
+        {/* 👇 Descripción arriba a la izquierda */}
+        <p className="text-sm text-gray-600 -mt-2">
+          Complete los campos para crear un nuevo potrero.
+        </p>
+
+        {/* 👇 Oculto para accesibilidad */}
+        <DialogDescription className="sr-only">
+          Complete los campos para crear un nuevo potrero.
+        </DialogDescription>
+
         <DialogFooter className="flex-col gap-2 sm:flex-col">
-          {error && <p className="text-sm text-red-600 text-center">{error}</p>}
-          <button
-            type="submit"
-            form="pasture-create-form"
-            disabled={isSubmitting}
-            className="w-full bg-green-600 text-white font-medium py-2 px-4 rounded-md hover:bg-green-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500/40 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
-          >
-            {isSubmitting ? "Guardando..." : "Guardar Potrero"}
-          </button>
+          {error && (
+            <p className="text-sm text-red-600 text-center font-medium">
+              ⚠️ {error}
+            </p>
+          )}
+          <div className="flex flex-row gap-2 w-full">
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              disabled={isSubmitting}
+              className="flex-1 cursor-pointer border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 font-medium py-2 px-4 rounded-md transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              form="pasture-create-form"
+              disabled={isSubmitting}
+              className="flex-1 bg-green-600 text-white font-medium py-2 px-4 rounded-md hover:bg-green-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500/40 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? "Guardando..." : "Guardar Potrero"}
+            </button>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>

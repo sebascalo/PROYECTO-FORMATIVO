@@ -8,24 +8,79 @@ interface TableMountProps {
   actions?: React.ReactNode;
 }
 
+interface Cattle {
+  id_Bovine: number;
+  name: string;
+}
+
+interface Responsible {
+  idResponsible: number;
+  fullName: string;
+  role: string;
+}
+
 export default function TableMount({ actions }: TableMountProps) {
   const [mounts, setMounts] = useState<Mount[]>([]);
 
   useEffect(() => {
     const fetchMounts = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:3000/api/mount/MountAll",
-        );
-        const resJson = await response.json();
-        const datos = Array.isArray(resJson)
-          ? resJson
-          : Array.isArray(resJson.info)
-            ? resJson.info
-            : Array.isArray(resJson.data)
-              ? resJson.data
-              : [];
-        setMounts(datos);
+        const token = localStorage.getItem("token");
+        const headers = { Authorization: `Bearer ${token}` };
+
+        const [mountRes, cattleRes, responsibleRes] = await Promise.all([
+          fetch("http://localhost:3000/api/mount/MountAll?limit=500", {
+            headers,
+          }),
+          fetch("http://localhost:3000/api/cattle/CattleAll?limit=500", {
+            headers,
+          }),
+          fetch(
+            "http://localhost:3000/api/responsible/ResponsibleAll?limit=500",
+            { headers },
+          ),
+        ]);
+
+        const [mountJson, cattleJson, responsibleJson] = await Promise.all([
+          mountRes.json(),
+          cattleRes.json(),
+          responsibleRes.json(),
+        ]);
+
+        const mountList: Mount[] = mountJson.info ?? [];
+        const cattles: Cattle[] = cattleJson.info ?? [];
+        const responsibles: Responsible[] = responsibleJson.info ?? [];
+
+        const mountsFormatted: Mount[] = mountList.map((m) => {
+          const cow = cattles.find(
+            (c) => String(c.id_Bovine) === String(m.id_cow),
+          );
+          const bull = cattles.find(
+            (c) => String(c.id_Bovine) === String(m.id_bull),
+          );
+          const responsible = responsibles.find(
+            (r) => String(r.idResponsible) === String(m.idResponsible),
+          );
+
+          return {
+            ...m,
+            cowData: cow
+              ? { id_Bovine: cow.id_Bovine, name: cow.name }
+              : null,
+            bullData: bull
+              ? { id_Bovine: bull.id_Bovine, name: bull.name }
+              : null,
+            responsibleData: responsible
+              ? {
+                  idResponsible: responsible.idResponsible,
+                  fullName: responsible.fullName,
+                  role: responsible.role,
+                }
+              : null,
+          };
+        });
+
+        setMounts(mountsFormatted);
       } catch (error) {
         console.error("Error:", error);
         setMounts([]);
@@ -43,17 +98,14 @@ export default function TableMount({ actions }: TableMountProps) {
           </h1>
           <p className="text-sm text-[#6B6459]">
             {mounts.length}{" "}
-            {mounts.length === 1
-              ? "monta registrada"
-              : "montas registradas"}
-            .
+            {mounts.length === 1 ? "monta registrada" : "montas registradas"}.
           </p>
         </div>
 
         <DataTable
           columns={columns}
           data={mounts}
-          filterColumnId="idBovine"
+          filterColumnId="id_cow"
           filterPlaceholder="Filtrar por vaca..."
           toolbar={actions}
         />

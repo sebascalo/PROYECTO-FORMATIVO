@@ -3,7 +3,6 @@ import { useState } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogTrigger,
   DialogTitle,
@@ -21,7 +20,6 @@ export default function FormCreationFood() {
     stock_quantity: "",
     cost_per_unit: "",
     supplier: "",
-    observations: "",
   });
 
   const handleChange = (
@@ -31,6 +29,7 @@ export default function FormCreationFood() {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    if (error) setError(null);
   };
 
   const limpiarFormulario = () => {
@@ -41,8 +40,8 @@ export default function FormCreationFood() {
       stock_quantity: "",
       cost_per_unit: "",
       supplier: "",
-      observations: "",
     });
+    setError(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -50,35 +49,52 @@ export default function FormCreationFood() {
     setError(null);
 
     const datosEnviar = {
-      ...formData,
+      food_name: formData.food_name,
+      food_type: formData.food_type,
+      unit_measure: formData.unit_measure,
       stock_quantity: formData.stock_quantity
         ? parseFloat(formData.stock_quantity)
         : null,
       cost_per_unit: formData.cost_per_unit
         ? parseFloat(formData.cost_per_unit)
         : null,
+      supplier: formData.supplier || null,
     };
 
     setIsSubmitting(true);
     try {
-      const response = await fetch("http://localhost:3000/api/food/CreateFood", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        "http://localhost:3000/api/food/CreateFood",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(datosEnviar),
         },
-        body: JSON.stringify(datosEnviar),
-      });
+      );
 
       if (!response.ok) {
         let backendMessage = "";
         try {
           const errorBody = await response.json();
-          backendMessage =
-            errorBody?.message || errorBody?.error || JSON.stringify(errorBody);
+          if (Array.isArray(errorBody?.errors)) {
+            backendMessage = errorBody.errors
+              .map((e: { message?: string } | string) =>
+                typeof e === "string" ? e : e.message ?? String(e),
+              )
+              .join(" | ");
+          } else {
+            backendMessage =
+              errorBody?.message ||
+              errorBody?.error ||
+              JSON.stringify(errorBody);
+          }
         } catch {
           backendMessage = await response.text();
         }
-        console.error("Respuesta del servidor:", response.status, backendMessage);
         throw new Error(
           `El servidor respondió ${response.status}: ${backendMessage || "sin detalle"}`,
         );
@@ -99,8 +115,13 @@ export default function FormCreationFood() {
     }
   };
 
+  const handleOpenChange = (newOpen: boolean) => {
+    if (!newOpen) limpiarFormulario();
+    setOpen(newOpen);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <ButtonCreate>Agregar Alimento</ButtonCreate>
       </DialogTrigger>
@@ -108,10 +129,6 @@ export default function FormCreationFood() {
         <DialogTitle className="font-bold text-2xl text-center">
           Crear Alimento
         </DialogTitle>
-        <DialogDescription>
-          Complete los campos para crear un nuevo alimento.
-        </DialogDescription>
-
         <form
           id="food-create-form"
           onSubmit={handleSubmit}
@@ -245,35 +262,37 @@ export default function FormCreationFood() {
               />
             </div>
           </div>
-
-          <div>
-            <label
-              htmlFor="observations"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Observaciones:
-            </label>
-            <textarea
-              id="observations"
-              name="observations"
-              value={formData.observations}
-              onChange={handleChange}
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043]"
-              placeholder="Observaciones adicionales..."
-            />
-          </div>
         </form>
+
+        {/* 👇 Descripción arriba a la izquierda */}
+        <p className="text-sm text-gray-600 -mt-2">
+          Complete los campos para crear un nuevo alimento.
+        </p>
+
         <DialogFooter className="flex-col gap-2 sm:flex-col">
-          {error && <p className="text-sm text-red-600 text-center">{error}</p>}
-          <button
-            type="submit"
-            form="food-create-form"
-            disabled={isSubmitting}
-            className="w-full bg-green-600 text-white font-medium py-2 px-4 rounded-md hover:bg-green-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500/40 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
-          >
-            {isSubmitting ? "Guardando..." : "Guardar Alimento"}
-          </button>
+          {error && (
+            <p className="text-sm text-red-600 text-center font-medium">
+              ⚠️ {error}
+            </p>
+          )}
+          <div className="flex flex-row gap-2 w-full">
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              disabled={isSubmitting}
+              className="flex-1 cursor-pointer border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 font-medium py-2 px-4 rounded-md transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              form="food-create-form"
+              disabled={isSubmitting}
+              className="flex-1 bg-green-600 text-white font-medium py-2 px-4 rounded-md hover:bg-green-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500/40 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? "Guardando..." : "Guardar Alimento"}
+            </button>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>

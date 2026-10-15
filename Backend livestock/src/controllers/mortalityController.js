@@ -26,9 +26,9 @@ const getAllMortalities = async (req, res) => {
 
 const getAllMortalitiesById = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id_mortality } = req.params;
         var errors = [];
-        if (!id) {
+        if (!id_mortality) {
             errors.push("El ID del registro de mortalidad es obligatorio");
         }
         if (errors.length > 0) {
@@ -37,8 +37,8 @@ const getAllMortalitiesById = async (req, res) => {
             res.json(response.json);
             return;
         }
-        const mortality = await getMortalityById(id)
-        var response = new Response(`Registro de mortalidad ${id} obtenido exitosamente`, mortality, null);
+        const mortality = await getMortalityById(id_mortality);
+        var response = new Response(`Registro de mortalidad ${id_mortality} obtenido exitosamente`, mortality, null);
         res.status(201);
         res.json(response.json);
     } catch (error) {
@@ -53,28 +53,25 @@ const getAllMortalitiesById = async (req, res) => {
 
 const createMortality = async (req, res) => {
     try {
-        const { idBovine, dateofdeath, causeofdeath, responsible, fateoftheanimal, observations } = req.body;
+        console.log("📥 [BACK] Body recibido:", req.body);
+        const { id_Bovine, dateofdeath, idResponsible, fateoftheanimal, observations } = req.body;
         var errors = [];
         
         // Validaciones
-        if (!idBovine || idBovine.trim() === "") {
+        if (!id_Bovine || String(id_Bovine).trim() === "") {
             errors.push("La identificación del bovino es obligatoria");
         }
-        if (!dateofdeath || dateofdeath.trim() === "") {
+        if (!dateofdeath || String(dateofdeath).trim() === "") {
             errors.push("La fecha de muerte es obligatoria");
         }
-        if (!causeofdeath || causeofdeath.trim() === "") {
-            errors.push("La causa de muerte es obligatoria");
-        }
-        if (!responsible || responsible.trim() === "") {
+        if (!idResponsible || String(idResponsible).trim() === "") {
             errors.push("El responsable del registro es obligatorio");
         }
-        if (!fateoftheanimal || fateoftheanimal.trim() === "") {
+        if (!fateoftheanimal || String(fateoftheanimal).trim() === "") {
             errors.push("El destino del animal es obligatorio");
         }
-        // Validar que fateoftheanimal sea uno de los valores permitidos
-        if (fateoftheanimal && !["Enterrado", "Incinerado", "Vendido para consumo"].includes(fateoftheanimal)) {
-            errors.push("El destino del animal debe ser: Enterrado, Incinerado o Vendido para consumo");
+        if (fateoftheanimal && !["Enterrado", "Incinerado", "Vendido para consumo", "Desechado", "Estudio"].includes(fateoftheanimal)) {
+            errors.push("El destino del animal no es válido");
         }
 
         if (errors.length > 0) {
@@ -84,8 +81,9 @@ const createMortality = async (req, res) => {
             return;
         }
         
-        data = { idBovine, dateofdeath, causeofdeath, responsible, fateoftheanimal, observations }
-        const mortality = await mortalityCreate(data)
+        const data = { id_Bovine, dateofdeath, idResponsible, fateoftheanimal, observations };
+        console.log("📥 [BACK] data a guardar:", data);
+        const mortality = await mortalityCreate(data);
         var response = new Response("Registro de mortalidad creado exitosamente", mortality, null);
         res.status(201);
         res.json(response.json);
@@ -101,31 +99,27 @@ const createMortality = async (req, res) => {
 
 const updateMortality = async (req, res) => {
     try {
-        const { id } = req.params;
-        const { idBovine, dateofdeath, causeofdeath, responsible, fateoftheanimal, observations } = req.body;
+        const { id_mortality } = req.params;
+        const { id_Bovine, dateofdeath, idResponsible, fateoftheanimal, observations } = req.body;
         var errors = [];
         
-        // Validaciones
-        if (!id) {
+        if (!id_mortality) {
             errors.push("El ID del registro de mortalidad es obligatorio");
         }
-        if (!idBovine || idBovine.trim() === "") {
+        if (!id_Bovine || String(id_Bovine).trim() === "") {
             errors.push("La identificación del bovino es obligatoria");
         }
-        if (!dateofdeath || dateofdeath.trim() === "") {
+        if (!dateofdeath || String(dateofdeath).trim() === "") {
             errors.push("La fecha de muerte es obligatoria");
         }
-        if (!causeofdeath || causeofdeath.trim() === "") {
-            errors.push("La causa de muerte es obligatoria");
-        }
-        if (!responsible || responsible.trim() === "") {
+        if (!idResponsible || String(idResponsible).trim() === "") {
             errors.push("El responsable del registro es obligatorio");
         }
-        if (!fateoftheanimal || fateoftheanimal.trim() === "") {
+        if (!fateoftheanimal || String(fateoftheanimal).trim() === "") {
             errors.push("El destino del animal es obligatorio");
         }
-        if (fateoftheanimal && !["Enterrado", "Incinerado", "Vendido para consumo"].includes(fateoftheanimal)) {
-            errors.push("El destino del animal debe ser: Enterrado, Incinerado o Vendido para consumo");
+        if (fateoftheanimal && !["Enterrado", "Incinerado", "Vendido para consumo", "Desechado", "Estudio"].includes(fateoftheanimal)) {
+            errors.push("El destino del animal no es válido");
         }
 
         if (errors.length > 0) {
@@ -135,9 +129,9 @@ const updateMortality = async (req, res) => {
             return;
         }
         
-        data = { idBovine, dateofdeath, causeofdeath, responsible, fateoftheanimal, observations }
-        const mortality = await mortalityUpdate(id, data)
-        var response = new Response(`Registro de mortalidad ${id} actualizado exitosamente`, mortality, null);
+        const data = { id_Bovine, dateofdeath, idResponsible, fateoftheanimal, observations };
+        const mortality = await mortalityUpdate(id_mortality, data);
+        var response = new Response(`Registro de mortalidad ${id_mortality} actualizado exitosamente`, mortality, null);
         res.status(200);
         res.json(response.json);
     } catch (error) {
@@ -152,9 +146,9 @@ const updateMortality = async (req, res) => {
 
 const deleteMortality = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id_mortality } = req.params;
         var errors = [];
-        if (!id) {
+        if (!id_mortality) {
             errors.push("El ID del registro de mortalidad es obligatorio");
         }
         if (errors.length > 0) {
@@ -163,8 +157,8 @@ const deleteMortality = async (req, res) => {
             res.json(response.json);
             return;
         }
-        const mortality = await mortalityDelete(id)
-        var response = new Response(`Registro de mortalidad ${id} eliminado exitosamente`, { id }, null);
+        const mortality = await mortalityDelete(id_mortality);
+        var response = new Response(`Registro de mortalidad ${id_mortality} eliminado exitosamente`, { id_mortality }, null);
         res.status(201);
         res.json(response.json);
     } catch (error) {

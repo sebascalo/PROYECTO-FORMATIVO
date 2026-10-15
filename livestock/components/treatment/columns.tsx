@@ -7,9 +7,20 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { type SharedTableFeatures } from "@/components/ui/data-table-features";
 
+export type CattleData = {
+  id_Bovine: number;
+  name: string;
+};
+
+export type ResponsibleData = {
+  idResponsible: number;
+  fullName: string;
+  role: string;
+};
+
 export type Treatment = {
-  id: number | string;
-  idBovine: string;
+  id_treatment: number | string;
+  id_Bovine: number;
   treatment_date: string;
   medication_used: string;
   applied_dose: string;
@@ -17,7 +28,9 @@ export type Treatment = {
   associated_diagnosis: string;
   treatment_duration: string;
   observations: string;
-  idResponsible: string;
+  idResponsible: number;
+  cattleData?: CattleData | null;
+  responsibleData?: ResponsibleData | null;
 };
 
 const formatDate = (dateString?: string | null) => {
@@ -41,13 +54,13 @@ const routeStyles: Record<string, string> = {
 const columnHelper = createColumnHelper<SharedTableFeatures, Treatment>();
 
 export const columns = columnHelper.columns([
-  columnHelper.accessor("id", {
+  columnHelper.accessor("id_treatment", {
     header: "ID",
     cell: ({ getValue }) => (
       <span className="text-[#6B6459]">{getValue()}</span>
     ),
   }),
-  columnHelper.accessor("idBovine", {
+  columnHelper.accessor("cattleData", {
     header: ({ column }) => (
       <Button
         variant="ghost"
@@ -58,9 +71,14 @@ export const columns = columnHelper.columns([
         <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
       </Button>
     ),
-    cell: ({ getValue }) => (
-      <span className="font-medium text-[#2B2A26]">{getValue() || "-"}</span>
-    ),
+    cell: ({ getValue }) => {
+      const cattle = getValue();
+      return (
+        <span className="font-medium text-[#2B2A26]">
+          {cattle?.name ?? "Sin bovino"}
+        </span>
+      );
+    },
   }),
   columnHelper.accessor("treatment_date", {
     header: "Fecha",
@@ -75,9 +93,7 @@ export const columns = columnHelper.columns([
   columnHelper.accessor("applied_dose", {
     header: "Dosis",
     cell: ({ getValue }) => (
-      <span className="text-[#2B2A26] tabular-nums">
-        {getValue() || "-"}
-      </span>
+      <span className="text-[#2B2A26] tabular-nums">{getValue() || "-"}</span>
     ),
   }),
   columnHelper.accessor("application_route", {
@@ -104,11 +120,20 @@ export const columns = columnHelper.columns([
       <span className="text-[#6B6459]">{getValue() || "-"}</span>
     ),
   }),
-  columnHelper.accessor("idResponsible", {
+  columnHelper.accessor("responsibleData", {
     header: "Responsable",
-    cell: ({ getValue }) => (
-      <span className="text-[#2B2A26]">{getValue() || "-"}</span>
-    ),
+    cell: ({ getValue }) => {
+      const responsible = getValue();
+      if (!responsible) return <span className="text-[#6B6459]">-</span>;
+      return (
+        <div className="flex flex-col">
+          <span className="text-[#2B2A26] font-medium">
+            {responsible.fullName}
+          </span>
+          <span className="text-xs text-[#6B6459]">{responsible.role}</span>
+        </div>
+      );
+    },
   }),
   columnHelper.accessor("observations", {
     header: "Observaciones",

@@ -23,9 +23,9 @@ const treatmentsGetAll = async (limit, offset) => {
 }
 
 // Obtener tratamiento por ID
-const getTreatmentById = async (id) => {
+const getTreatmentById = async (id_treatment) => {
     try {
-        const treatmentid = await treatment.findOne({ where: { id } });
+        const treatmentid = await treatment.findOne({ where: { id_treatment } });
         return treatmentid;
     } catch (error) {
         console.log(error);
@@ -34,9 +34,9 @@ const getTreatmentById = async (id) => {
 }
 
 // Eliminar tratamiento
-const treatmentDelete = async (id) => {
+const treatmentDelete = async (id_treatment) => {
     try {
-        const treatmentDelete = await treatment.destroy({ where: { id } });
+        const treatmentDelete = await treatment.destroy({ where: { id_treatment } });
         return treatmentDelete;
     } catch (error) {
         console.log(error);
@@ -45,9 +45,9 @@ const treatmentDelete = async (id) => {
 }
 
 // Actualizar tratamiento
-const treatmentUpdate = async (id, data) => {
+const treatmentUpdate = async (id_treatment, data) => {
     try {
-        const treatmentToUpdate = await treatment.findOne({ where: { id } });
+        const treatmentToUpdate = await treatment.findOne({ where: { id_treatment } });
         if (!treatmentToUpdate) {
             return null;
         }

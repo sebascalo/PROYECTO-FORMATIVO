@@ -19,13 +19,13 @@ router.get("/ArtificialInseminationAll", ValidateToken, getAllArtificialInsemina
 
 /**
  * @swagger
- * /api/ArtificialInseminationById/{id}:
+ * /api/ArtificialInseminationById/{id_artifInse}:
  *   get:
  *     summary: Obtener inseminación artificial por ID
  *     description: Retorna una inseminación artificial según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_artifInse
  *         required: true
  *         description: ID de la inseminación artificial
  *         schema:
@@ -36,7 +36,7 @@ router.get("/ArtificialInseminationAll", ValidateToken, getAllArtificialInsemina
  */
 
 // Rutas para inseminaciones artificiales con id
-router.get("/ArtificialInseminationById/:id", ValidateToken, getAllArtificialInseminationsById);
+router.get("/ArtificialInseminationById/:id_artifInse", ValidateToken, getAllArtificialInseminationsById);
 
 /**
  * @swagger
@@ -54,13 +54,13 @@ router.post("/CreateArtificialInsemination", ValidateToken, createArtificialInse
 
 /**
  * @swagger
- * /api/UpdateArtificialInsemination/{id}:
+ * /api/UpdateArtificialInsemination/{id_artifInse}:
  *   put:
  *     summary: Actualizar inseminación artificial
  *     description: Actualiza una inseminación artificial según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_artifInse
  *         required: true
  *         description: ID de la inseminación artificial
  *         schema:
@@ -71,17 +71,17 @@ router.post("/CreateArtificialInsemination", ValidateToken, createArtificialInse
  */
 
 // Rutas para actualizar una inseminación artificial existente
-router.put("/UpdateArtificialInsemination/:id", ValidateToken, updateArtificialInsemination);
+router.put("/UpdateArtificialInsemination/:id_artifInse", ValidateToken, updateArtificialInsemination);
 
 /**
  * @swagger
- * /api/DeleteArtificialInsemination/{id}:
+ * /api/DeleteArtificialInsemination/{id_artifInse}:
  *   delete:
  *     summary: Eliminar inseminación artificial
  *     description: Elimina una inseminación artificial según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_artifInse
  *         required: true
  *         description: ID de la inseminación artificial
  *         schema:
@@ -92,6 +92,6 @@ router.put("/UpdateArtificialInsemination/:id", ValidateToken, updateArtificialI
  */
 
 // Rutas para eliminar una inseminación artificial existente
-router.delete("/DeleteArtificialInsemination/:id", ValidateToken, deleteArtificialInsemination);
+router.delete("/DeleteArtificialInsemination/:id_artifInse", ValidateToken, deleteArtificialInsemination);
 
 module.exports = router;

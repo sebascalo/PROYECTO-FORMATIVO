@@ -4,18 +4,30 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { type SharedTableFeatures } from "@/components/ui/data-table-features";
 
-// Forma de los datos que devuelve tu API (/api/mortality/MortalityAll)
+// 👇 Tipos del JOIN
+export type CattleData = {
+  id_Bovine: number;
+  name: string;
+};
+
+export type ResponsibleData = {
+  idResponsible: number;
+  fullName: string;
+  role: string;
+};
+
 export type Mortality = {
-  id: number | string;
-  idBovine: string;
+  id_mortality: number;
+  id_Bovine: number | null;
   dateofdeath: string;
-  causeofdeath: string;
-  responsible: string;
+  idResponsible: number | null;
   fateoftheanimal: string;
   observations: string;
+  // 👇 Vienen del JOIN en el frontend
+  cattleData?: CattleData | null;
+  responsibleData?: ResponsibleData | null;
 };
 
 const formatDate = (dateString?: string | null) => {
@@ -28,30 +40,17 @@ const formatDate = (dateString?: string | null) => {
   });
 };
 
-// Colores por causa de muerte
-const causeStyles: Record<string, string> = {
-  Enfermedad: "bg-[#A9744F] text-white hover:bg-[#94623F]",
-  Accidente: "bg-[#8C8266] text-white hover:bg-[#77704F]",
-  Parto: "bg-[#A9744F] text-white hover:bg-[#94623F]",
-  Vejez: "bg-[#4B6043] text-white hover:bg-[#405539]",
-  Parásitos: "bg-[#8C8266] text-white hover:bg-[#77704F]",
-  Desnutrición: "bg-[#A9744F] text-white hover:bg-[#94623F]",
-  Intoxicación: "bg-[#A9744F] text-white hover:bg-[#94623F]",
-  Depredador: "bg-[#8C8266] text-white hover:bg-[#77704F]",
-  Desconocida: "bg-[#6B6459] text-white hover:bg-[#5A5449]",
-  Otra: "bg-[#6B6459] text-white hover:bg-[#5A5449]",
-};
-
 const columnHelper = createColumnHelper<SharedTableFeatures, Mortality>();
 
 export const columns = columnHelper.columns([
-  columnHelper.accessor("id", {
+  columnHelper.accessor("id_mortality", {
     header: "ID",
     cell: ({ getValue }) => (
       <span className="text-[#6B6459]">{getValue()}</span>
     ),
   }),
-  columnHelper.accessor("idBovine", {
+  // 👇 BOVINO con nombre
+  columnHelper.accessor("cattleData", {
     header: ({ column }) => (
       <Button
         variant="ghost"
@@ -62,31 +61,34 @@ export const columns = columnHelper.columns([
         <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
       </Button>
     ),
-    cell: ({ getValue }) => (
-      <span className="font-medium text-[#2B2A26]">{getValue() || "-"}</span>
-    ),
+    cell: ({ getValue }) => {
+      const cattle = getValue();
+      return (
+        <span className="font-medium text-[#2B2A26]">
+          {cattle?.name ?? "Sin bovino"}
+        </span>
+      );
+    },
   }),
   columnHelper.accessor("dateofdeath", {
     header: "Fecha de Muerte",
     cell: ({ getValue }) => formatDate(getValue()),
   }),
-  columnHelper.accessor("causeofdeath", {
-    header: "Causa",
+  // 👇 RESPONSABLE con nombre + rol
+  columnHelper.accessor("responsibleData", {
+    header: "Responsable",
     cell: ({ getValue }) => {
-      const value = getValue();
-      if (!value) return <span className="text-[#6B6459]">-</span>;
+      const responsible = getValue();
+      if (!responsible) return <span className="text-[#6B6459]">-</span>;
       return (
-        <Badge className={causeStyles[value] ?? "bg-[#8C8266] text-white"}>
-          {value}
-        </Badge>
+        <div className="flex flex-col">
+          <span className="text-[#2B2A26] font-medium">
+            {responsible.fullName}
+          </span>
+          <span className="text-xs text-[#6B6459]">{responsible.role}</span>
+        </div>
       );
     },
-  }),
-  columnHelper.accessor("responsible", {
-    header: "Responsable",
-    cell: ({ getValue }) => (
-      <span className="text-[#2B2A26]">{getValue() || "-"}</span>
-    ),
   }),
   columnHelper.accessor("fateoftheanimal", {
     header: "Destino",

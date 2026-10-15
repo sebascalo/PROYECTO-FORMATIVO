@@ -19,13 +19,13 @@ router.get("/BirthAll", ValidateToken, getAllBirths);
 
 /**
  * @swagger
- * /api/BirthById/{id}:
+ * /api/BirthById/{id_birth}:
  *   get:
  *     summary: Obtener nacimiento por ID
  *     description: Retorna un nacimiento según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_birth
  *         required: true
  *         description: ID del nacimiento
  *         schema:
@@ -36,7 +36,7 @@ router.get("/BirthAll", ValidateToken, getAllBirths);
  */
 
 // Rutas para nacimientos con id
-router.get("/BirthById/:id", ValidateToken, getAllBirthsById);
+router.get("/BirthById/:id_birth", ValidateToken, getAllBirthsById);
 
 /**
  * @swagger
@@ -54,13 +54,13 @@ router.post("/CreateBirth", ValidateToken, createBirth);
 
 /**
  * @swagger
- * /api/UpdateBirth/{id}:
+ * /api/UpdateBirth/{id_birth}:
  *   put:
  *     summary: Actualizar nacimiento
  *     description: Actualiza un nacimiento según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_birth
  *         required: true
  *         description: ID del nacimiento
  *         schema:
@@ -71,17 +71,17 @@ router.post("/CreateBirth", ValidateToken, createBirth);
  */
 
 // Rutas para actualizar un nacimiento existente
-router.put("/UpdateBirth/:id", ValidateToken, updateBirth);
+router.put("/UpdateBirth/:id_birth", ValidateToken, updateBirth);
 
 /**
  * @swagger
- * /api/DeleteBirth/{id}:
+ * /api/DeleteBirth/{id_birth}:
  *   delete:
  *     summary: Eliminar nacimiento
  *     description: Elimina un nacimiento según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_birth
  *         required: true
  *         description: ID del nacimiento
  *         schema:
@@ -92,6 +92,6 @@ router.put("/UpdateBirth/:id", ValidateToken, updateBirth);
  */
 
 // Rutas para eliminar un nacimiento existente
-router.delete("/DeleteBirth/:id", ValidateToken, deleteBirth);
+router.delete("/DeleteBirth/:id_birth", ValidateToken, deleteBirth);
 
 module.exports = router;

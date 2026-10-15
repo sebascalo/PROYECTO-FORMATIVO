@@ -23,9 +23,9 @@ const vacunationsGetAll = async (limit, offset) => {
 }
 
 // Obtener vacunación por ID
-const getVacunationById = async (id) => {
+const getVacunationById = async (id_vacunation) => {
     try {
-        const vacunationid = await vacunation.findOne({ where: { id } });
+        const vacunationid = await vacunation.findOne({ where: { id_vacunation } });
         return vacunationid;
     } catch (error) {
         console.log(error);
@@ -34,9 +34,9 @@ const getVacunationById = async (id) => {
 }
 
 // Inactivar vacunación
-const vacunationDelete = async (id) => {
+const vacunationDelete = async (id_vacunation) => {
     try {
-        const vacunationDelete = await vacunation.destroy({ where: { id } });
+        const vacunationDelete = await vacunation.destroy({ where: { id_vacunation } });
         return vacunationDelete;
     } catch (error) {
         console.log(error);
@@ -45,9 +45,9 @@ const vacunationDelete = async (id) => {
 }
 
 // Actualizar vacunación
-const vacunationUpdate = async (id, data) => {
+const vacunationUpdate = async (id_vacunation, data) => {
     try {
-        const vacunationToUpdate = await vacunation.findOne({ where: { id } });
+        const vacunationToUpdate = await vacunation.findOne({ where: { id_vacunation } });
         if (!vacunationToUpdate) {
             return null;
         }

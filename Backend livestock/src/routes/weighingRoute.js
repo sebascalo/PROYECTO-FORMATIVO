@@ -19,13 +19,13 @@ router.get("/WeighingAll", ValidateToken, getAllWeighings);
 
 /**
  * @swagger
- * /api/WeighingById/{id}:
+ * /api/WeighingById/{id_weighing}:
  *   get:
  *     summary: Obtener pesaje por ID
  *     description: Retorna un pesaje según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_weighing
  *         required: true
  *         description: ID del pesaje
  *         schema:
@@ -36,7 +36,7 @@ router.get("/WeighingAll", ValidateToken, getAllWeighings);
  */
 
 // Rutas para pesajes con id
-router.get("/WeighingById/:id", ValidateToken, getAllWeighingsById);
+router.get("/WeighingById/:id_weighing", ValidateToken, getAllWeighingsById);
 
 /**
  * @swagger
@@ -54,13 +54,13 @@ router.post("/CreateWeighing", ValidateToken, createWeighing);
 
 /**
  * @swagger
- * /api/UpdateWeighing/{id}:
+ * /api/UpdateWeighing/{id_weighing}:
  *   put:
  *     summary: Actualizar pesaje
  *     description: Actualiza un pesaje según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_weighing
  *         required: true
  *         description: ID del pesaje
  *         schema:
@@ -71,17 +71,17 @@ router.post("/CreateWeighing", ValidateToken, createWeighing);
  */
 
 // Rutas para actualizar un pesaje existente
-router.put("/UpdateWeighing/:id", ValidateToken, updateWeighing);
+router.put("/UpdateWeighing/:id_weighing", ValidateToken, updateWeighing);
 
 /**
  * @swagger
- * /api/DeleteWeighing/{id}:
+ * /api/DeleteWeighing/{id_weighing}:
  *   delete:
  *     summary: Inactivar pesaje
  *     description: Inactiva un pesaje según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_weighing
  *         required: true
  *         description: ID del pesaje
  *         schema:
@@ -92,6 +92,6 @@ router.put("/UpdateWeighing/:id", ValidateToken, updateWeighing);
  */
 
 // Rutas para eliminar un pesaje existente
-router.delete("/DeleteWeighing/:id", ValidateToken, deleteWeighing);
+router.delete("/DeleteWeighing/:id_weighing", ValidateToken, deleteWeighing);
 
 module.exports = router;

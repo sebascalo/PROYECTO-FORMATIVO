@@ -2,12 +2,12 @@ const { DataTypes } = require('sequelize');
 const db = require('../config/conectionDB');
 
 const weighing = db.define('weighing', {
-    id: {
+    id_weighing: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
-    idBovine: { // Identificación del bovino
+    id_Bovine: { // Identificación del bovino
         type: DataTypes.STRING,
         allowNull: true
     },
@@ -32,8 +32,12 @@ const weighing = db.define('weighing', {
         allowNull: true
     },
     idResponsible: { // Responsable del registro del pesaje del bovino
-        type: DataTypes.STRING,
-        allowNull: true
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: 'responsibles',
+            key: 'idResponsible'
+        }
     },
     createdAt: { // Fecha de creación del registro
         type: DataTypes.DATE,

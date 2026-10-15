@@ -19,13 +19,13 @@ router.get("/FoodAll", ValidateToken, getAllFoods);
 
 /**
  * @swagger
- * /api/FoodById/{id}:
+ * /api/FoodById/{id_food}:
  *   get:
  *     summary: Obtener alimento por ID
  *     description: Retorna un alimento según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_food
  *         required: true
  *         description: ID del alimento
  *         schema:
@@ -36,7 +36,7 @@ router.get("/FoodAll", ValidateToken, getAllFoods);
  */
 
 // Rutas para alimentos con id
-router.get("/FoodById/:id", ValidateToken, getAllFoodsById);
+router.get("/FoodById/:id_food", ValidateToken, getAllFoodsById);
 
 /**
  * @swagger
@@ -54,13 +54,13 @@ router.post("/CreateFood", ValidateToken, createFood);
 
 /**
  * @swagger
- * /api/UpdateFood/{id}:
+ * /api/UpdateFood/{id_food}:
  *   put:
  *     summary: Actualizar alimento
  *     description: Actualiza un alimento según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_food
  *         required: true
  *         description: ID del alimento
  *         schema:
@@ -71,17 +71,17 @@ router.post("/CreateFood", ValidateToken, createFood);
  */
 
 // Rutas para actualizar un alimento existente
-router.put("/UpdateFood/:id", ValidateToken, updateFood);
+router.put("/UpdateFood/:id_food", ValidateToken, updateFood);
 
 /**
  * @swagger
- * /api/DeleteFood/{id}:
+ * /api/DeleteFood/{id_food}:
  *   delete:
  *     summary: Eliminar alimento
  *     description: Elimina un alimento según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_food
  *         required: true
  *         description: ID del alimento
  *         schema:
@@ -92,6 +92,6 @@ router.put("/UpdateFood/:id", ValidateToken, updateFood);
  */
 
 // Rutas para eliminar un alimento existente
-router.delete("/DeleteFood/:id", ValidateToken, deleteFood);
+router.delete("/DeleteFood/:id_food", ValidateToken, deleteFood);
 
 module.exports = router;

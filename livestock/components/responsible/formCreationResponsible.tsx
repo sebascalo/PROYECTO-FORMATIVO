@@ -29,6 +29,7 @@ export default function FormCreationResponsible() {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    if (error) setError(null);
   };
 
   const limpiarFormulario = () => {
@@ -39,6 +40,7 @@ export default function FormCreationResponsible() {
       phoneNumber: "",
       status: "Active",
     });
+    setError(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -47,12 +49,14 @@ export default function FormCreationResponsible() {
 
     setIsSubmitting(true);
     try {
+      const token = localStorage.getItem("token");
       const response = await fetch(
         "http://localhost:3000/api/responsible/CreateResponsible",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(formData),
         },
@@ -62,12 +66,21 @@ export default function FormCreationResponsible() {
         let backendMessage = "";
         try {
           const errorBody = await response.json();
-          backendMessage =
-            errorBody?.message || errorBody?.error || JSON.stringify(errorBody);
+          if (Array.isArray(errorBody?.errors)) {
+            backendMessage = errorBody.errors
+              .map((e: { message?: string } | string) =>
+                typeof e === "string" ? e : e.message ?? String(e),
+              )
+              .join(" | ");
+          } else {
+            backendMessage =
+              errorBody?.message ||
+              errorBody?.error ||
+              JSON.stringify(errorBody);
+          }
         } catch {
           backendMessage = await response.text();
         }
-        console.error("Respuesta del servidor:", response.status, backendMessage);
         throw new Error(
           `El servidor respondió ${response.status}: ${backendMessage || "sin detalle"}`,
         );
@@ -88,8 +101,13 @@ export default function FormCreationResponsible() {
     }
   };
 
+  const handleOpenChange = (newOpen: boolean) => {
+    if (!newOpen) limpiarFormulario();
+    setOpen(newOpen);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <ButtonCreate>Agregar Responsable</ButtonCreate>
       </DialogTrigger>
@@ -97,16 +115,13 @@ export default function FormCreationResponsible() {
         <DialogTitle className="font-bold text-2xl text-center">
           Crear Responsable
         </DialogTitle>
-        <DialogDescription>
-          Complete los campos para crear un nuevo responsable.
-        </DialogDescription>
-
         <form
           id="responsible-create-form"
           onSubmit={handleSubmit}
           className="space-y-4"
         >
           <div className="grid grid-cols-2 gap-4">
+            {/* NOMBRE */}
             <div>
               <label
                 htmlFor="fullName"
@@ -125,6 +140,7 @@ export default function FormCreationResponsible() {
               />
             </div>
 
+            {/* ROL */}
             <div>
               <label
                 htmlFor="role"
@@ -149,6 +165,7 @@ export default function FormCreationResponsible() {
               </select>
             </div>
 
+            {/* EMAIL */}
             <div>
               <label
                 htmlFor="email"
@@ -167,6 +184,7 @@ export default function FormCreationResponsible() {
               />
             </div>
 
+            {/* TELÉFONO */}
             <div>
               <label
                 htmlFor="phoneNumber"
@@ -185,6 +203,7 @@ export default function FormCreationResponsible() {
               />
             </div>
 
+            {/* ESTADO */}
             <div className="col-span-2">
               <label
                 htmlFor="status"
@@ -205,16 +224,41 @@ export default function FormCreationResponsible() {
             </div>
           </div>
         </form>
+
+        {/* 👇 Descripción arriba a la izquierda */}
+        <p className="text-sm text-gray-600 -mt-2">
+          Complete los campos para crear un nuevo responsable.
+        </p>
+
+        {/* 👇 Oculto para accesibilidad */}
+        <DialogDescription className="sr-only">
+          Complete los campos para crear un nuevo responsable.
+        </DialogDescription>
+
         <DialogFooter className="flex-col gap-2 sm:flex-col">
-          {error && <p className="text-sm text-red-600 text-center">{error}</p>}
-          <button
-            type="submit"
-            form="responsible-create-form"
-            disabled={isSubmitting}
-            className="w-full bg-green-600 text-white font-medium py-2 px-4 rounded-md hover:bg-green-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500/40 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
-          >
-            {isSubmitting ? "Guardando..." : "Guardar Responsable"}
-          </button>
+          {error && (
+            <p className="text-sm text-red-600 text-center font-medium">
+              ⚠️ {error}
+            </p>
+          )}
+          <div className="flex flex-row gap-2 w-full">
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              disabled={isSubmitting}
+              className="flex-1 cursor-pointer border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 font-medium py-2 px-4 rounded-md transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              form="responsible-create-form"
+              disabled={isSubmitting}
+              className="flex-1 bg-green-600 text-white font-medium py-2 px-4 rounded-md hover:bg-green-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500/40 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? "Guardando..." : "Guardar Responsable"}
+            </button>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>

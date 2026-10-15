@@ -26,9 +26,9 @@ const getAllFoods = async (req, res) => {
 
 const getAllFoodsById = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id_food } = req.params;
         var errors = [];
-        if (!id) {
+        if (!id_food) {
             errors.push("El ID del alimento es obligatorio");
         }
         if (errors.length > 0) {
@@ -37,8 +37,8 @@ const getAllFoodsById = async (req, res) => {
             res.json(response.json);
             return;
         }
-        const food = await getFoodById(id)
-        var response = new Response(`Alimento ${id} obtenido exitosamente`, food, null);
+        const food = await getFoodById(id_food)
+        var response = new Response(`Alimento ${id_food} obtenido exitosamente`, food, null);
         res.status(201);
         res.json(response.json);
     } catch (error) {
@@ -103,12 +103,12 @@ const createFood = async (req, res) => {
 
 const updateFood = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id_food } = req.params;
         const { food_name, food_type, unit_measure, stock_quantity, cost_per_unit, supplier, observations, active } = req.body;
         var errors = [];
         
         // Validaciones
-        if (!id) {
+        if (!id_food) {
             errors.push("El ID del alimento es obligatorio");
         }
         if (!food_name || food_name.trim() === "") {
@@ -141,8 +141,8 @@ const updateFood = async (req, res) => {
         }
         
         data = { food_name, food_type, unit_measure, stock_quantity, cost_per_unit, supplier, observations, active }
-        const food = await foodUpdate(id, data)
-        var response = new Response(`Alimento ${id} actualizado exitosamente`, food, null);
+        const food = await foodUpdate(id_food, data)
+        var response = new Response(`Alimento ${id_food} actualizado exitosamente`, food, null);
         res.status(200);
         res.json(response.json);
     } catch (error) {
@@ -157,9 +157,9 @@ const updateFood = async (req, res) => {
 
 const deleteFood = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id_food } = req.params;
         var errors = [];
-        if (!id) {
+        if (!id_food) {
             errors.push("El ID del alimento es obligatorio");
         }
         if (errors.length > 0) {
@@ -168,8 +168,8 @@ const deleteFood = async (req, res) => {
             res.json(response.json);
             return;
         }
-        const food = await foodDelete(id)
-        var response = new Response(`Alimento ${id} eliminado exitosamente`, { id }, null);
+        const food = await foodDelete(id_food)
+        var response = new Response(`Alimento ${id_food} eliminado exitosamente`, { id_food }, null);
         res.status(201);
         res.json(response.json);
     } catch (error) {

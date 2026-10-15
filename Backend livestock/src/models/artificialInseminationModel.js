@@ -1,48 +1,56 @@
-const { DataTypes } = require('sequelize');
-const db = require('../config/conectionDB');
+const { DataTypes } = require("sequelize");
+const db = require("../config/conectionDB");
 
-const artificialInsemination = db.define('artificialInsemination', {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
+const artificialInsemination = db.define("artificialInsemination", {
+  id_artifInse: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  id_Bovine: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: "cattles",       // 👈 antes decía "bovinos"
+      key: "id_Bovine",       // 👈 antes decía "id"
     },
-    idBovine: { // Vaca a inseminar
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: 'bovinos',
-            key: 'id'
-        }
+  },
+  inseminationDate: {
+    type: DataTypes.DATEONLY,
+    allowNull: false,
+  },
+  semenID: {
+    type: DataTypes.STRING(100),
+    allowNull: false,
+  },
+  id_race: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: "races",
+      key: "id_race",
     },
-    inseminationDate: { // Día del procedimiento
-        type: DataTypes.DATEONLY,
-        allowNull: false
+  },
+  observations: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
+  idResponsible: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: "responsibles",
+      key: "idResponsible",
     },
-    semenID: { // Código o lote de la pajilla
-        type: DataTypes.STRING(100),
-        allowNull: false
-    },
-    raze: { // Raza de la pajilla
-        type: DataTypes.STRING(100),
-        allowNull: false
-    },
-    observations: { // Comentarios adicionales
-        type: DataTypes.TEXT,
-        allowNull: true
-    },
-    idResponsible: { // Quién realizó la inseminación
-        type: DataTypes.STRING(100),
-        allowNull: false
-    },
-    createdAt: { // Fecha de creación del registro
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW
-    },
-    updatedAt: { // Fecha de última actualización del registro
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW
-    }
+  },
+  createdAt: {
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW,
+  },
+  updatedAt: {
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW,
+  },
 });
 
 module.exports = artificialInsemination;

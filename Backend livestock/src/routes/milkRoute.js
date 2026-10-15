@@ -19,13 +19,13 @@ router.get("/MilkAll", ValidateToken, getAllMilks);
 
 /**
  * @swagger
- * /api/MilkById/{id}:
+ * /api/MilkById/{id_milk}:
  *   get:
  *     summary: Obtener producción de leche por ID
  *     description: Retorna una producción de leche según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_milk
  *         required: true
  *         description: ID de la producción de leche
  *         schema:
@@ -36,7 +36,7 @@ router.get("/MilkAll", ValidateToken, getAllMilks);
  */
 
 //Rutas para produccion de leche con id
-router.get("/MilkById/:id", ValidateToken, getAllMilksById);
+router.get("/MilkById/:id_milk", ValidateToken, getAllMilksById);
 
 /**
  * @swagger
@@ -54,13 +54,13 @@ router.post("/CreateMilk", ValidateToken, createMilk);
 
 /**
  * @swagger
- * /api/UpdateMilk/{id}:
+ * /api/UpdateMilk/{id_milk}:
  *   put:
  *     summary: Actualizar producción de leche
  *     description: Actualiza una producción de leche según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_milk
  *         required: true
  *         description: ID de la producción de leche
  *         schema:
@@ -71,17 +71,17 @@ router.post("/CreateMilk", ValidateToken, createMilk);
  */
 
 //Rutas para actualizar una produccion de leche existente
-router.put("/UpdateMilk/:id", ValidateToken, updateMilk);
+router.put("/UpdateMilk/:id_milk", ValidateToken, updateMilk);
 
 /**
  * @swagger
- * /api/DeleteMilk/{id}:
+ * /api/DeleteMilk/{id_milk}:
  *   delete:
  *     summary: Inactivar producción de leche
  *     description: Inactiva una producción de leche según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_milk
  *         required: true
  *         description: ID de la producción de leche
  *         schema:
@@ -92,6 +92,6 @@ router.put("/UpdateMilk/:id", ValidateToken, updateMilk);
  */
 
 //Rutas para inactivar una produccion de leche existente
-router.delete("/DeleteMilk/:id", ValidateToken, deleteMilk);
+router.delete("/DeleteMilk/:id_milk", ValidateToken, deleteMilk);
 
 module.exports= router;

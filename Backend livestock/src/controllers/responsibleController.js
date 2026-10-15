@@ -26,9 +26,9 @@ const getAllResponsibles = async (req, res) => {
 
 const getAllResponsiblesById = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { idResponsible } = req.params;
         var errors = [];
-        if (!id) {
+        if (!idResponsible) {
             errors.push("El ID del responsable es obligatorio");
         }
         if (errors.length > 0) {
@@ -37,8 +37,8 @@ const getAllResponsiblesById = async (req, res) => {
             res.json(response.json);
             return;
         }
-        const responsible = await getResponsibleById(id)
-        var response = new Response(`Responsable ${id} obtenido exitosamente`, responsible, null);
+        const responsible = await getResponsibleById(idResponsible)
+        var response = new Response(`Responsable ${idResponsible} obtenido exitosamente`, responsible, null);
         res.status(201);
         res.json(response.json);
     } catch (error) {
@@ -103,12 +103,12 @@ const createResponsible = async (req, res) => {
 
 const updateResponsible = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { idResponsible } = req.params;
         const { fullName, role, email, phoneNumber, status } = req.body;
         var errors = [];
         
         // Validaciones
-        if (!id) {
+        if (!idResponsible) {
             errors.push("El ID del responsable es obligatorio");
         }
         if (!fullName || fullName.trim() === "") {
@@ -141,8 +141,8 @@ const updateResponsible = async (req, res) => {
         }
         
         data = { fullName, role, email, phoneNumber, status }
-        const responsible = await responsibleUpdate(id, data)
-        var response = new Response(`Responsable ${id} actualizado exitosamente`, responsible, null);
+        const responsible = await responsibleUpdate(idResponsible, data)
+        var response = new Response(`Responsable ${idResponsible} actualizado exitosamente`, responsible, null);
         res.status(200);
         res.json(response.json);
     } catch (error) {
@@ -157,9 +157,9 @@ const updateResponsible = async (req, res) => {
 
 const deleteResponsible = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { idResponsible } = req.params;
         var errors = [];
-        if (!id) {
+        if (!idResponsible) {
             errors.push("El ID del responsable es obligatorio");
         }
         if (errors.length > 0) {
@@ -168,8 +168,8 @@ const deleteResponsible = async (req, res) => {
             res.json(response.json);
             return;
         }
-        const responsible = await responsibleDelete(id)
-        var response = new Response(`Responsable ${id} eliminado exitosamente`, { id }, null);
+        const responsible = await responsibleDelete(idResponsible)
+        var response = new Response(`Responsable ${idResponsible} eliminado exitosamente`, { idResponsible }, null);
         res.status(201);
         res.json(response.json);
     } catch (error) {

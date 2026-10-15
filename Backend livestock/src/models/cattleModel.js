@@ -2,7 +2,7 @@ const { DataTypes } = require("sequelize");
 const db = require("../config/conectionDB");
 
 const cattle = db.define("cattle", {
-    id: {
+    id_Bovine: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
@@ -11,7 +11,7 @@ const cattle = db.define("cattle", {
         type: DataTypes.STRING,
         allowNull: false
     },
-    raze: { // Raza del bovino
+    id_race: { // ID de la raza del bovino
         type: DataTypes.STRING,
         allowNull: false
     },
@@ -23,7 +23,7 @@ const cattle = db.define("cattle", {
         type: DataTypes.DATE,
         allowNull: false
     },
-    paddock: { // Potrero donde se encuentra el bovino
+    id_pasture: { // Potrero donde se encuentra el bovino
         type: DataTypes.STRING,
         allowNull: false
     },

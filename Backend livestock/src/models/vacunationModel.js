@@ -2,50 +2,56 @@ const { DataTypes } = require("sequelize");
 const db = require("../config/ConectionDB");
 
 const vacunation = db.define("vacunation", {
-  // campos de la tabla de vacunacion
-  id: {
+  id_vacunation: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
-  idBovine: {
-    type: DataTypes.STRING, //Bovino vacunado
+  id_Bovine: {
+    type: DataTypes.INTEGER,
     allowNull: false,
-    unique: true,
+    // ❌ quitado unique: true (un bovino puede tener varias vacunaciones)
+    references: {
+      model: "cattles",
+      key: "id_Bovine",
+    },
   },
   vaccination_date: {
-    type: DataTypes.DATE, //fecha de vacunacion
+    type: DataTypes.DATE,
     allowNull: false,
   },
   applied_dose: {
-    type: DataTypes.STRING, //dosis aplicada
+    type: DataTypes.STRING,
     allowNull: false,
   },
-  // CAMBIO: application_site → vaccine_lot
   vaccine_lot: {
-    type: DataTypes.STRING, //lote de la vacuna
+    type: DataTypes.STRING,
     allowNull: false,
   },
-  // NUEVO CAMPO: nombre del medicamento
   medicine_name: {
-    type: DataTypes.STRING, //nombre del medicamento
+    type: DataTypes.STRING,
     allowNull: false,
   },
   idResponsible: {
-    type: DataTypes.STRING, //nombre del responsable de la vacunacion
+    type: DataTypes.INTEGER,
     allowNull: false,
+    references: {
+      model: "responsibles",
+      key: "idResponsible",
+    },
   },
   observations: {
-    type: DataTypes.STRING, //observaciones adicionales sobre la vacunacion
+    type: DataTypes.STRING,
     allowNull: true,
   },
-  createdAt: { // Fecha de creación del registro
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW
+  createdAt: {
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW,
   },
-  updatedAt: { // Fecha de última actualización del registro
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW
-  }
+  updatedAt: {
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW,
+  },
 });
+
 module.exports = vacunation;

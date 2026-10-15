@@ -19,13 +19,13 @@ router.get("/CattleAll", ValidateToken, getAllCattles);
 
 /**
  * @swagger
- * /api/CattleById/{id}:
+ * /api/CattleById/{id_Bovine}:
  *   get:
  *     summary: Obtener bovino por ID
  *     description: Retorna un bovino según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_Bovine
  *         required: true
  *         description: ID del bovino
  *         schema:
@@ -36,7 +36,7 @@ router.get("/CattleAll", ValidateToken, getAllCattles);
  */
 
 // Rutas para bovinos con id
-router.get("/CattleById/:id", ValidateToken, getAllCattlesById);
+router.get("/CattleById/:id_Bovine", ValidateToken, getAllCattlesById);
 
 /**
  * @swagger
@@ -54,13 +54,13 @@ router.post("/CreateCattle", ValidateToken, createCattle);
 
 /**
  * @swagger
- * /api/UpdateCattle/{id}:
+ * /api/UpdateCattle/{id_Bovine}:
  *   put:
  *     summary: Actualizar bovino
  *     description: Actualiza un bovino según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_Bovine
  *         required: true
  *         description: ID del bovino
  *         schema:
@@ -71,17 +71,17 @@ router.post("/CreateCattle", ValidateToken, createCattle);
  */
 
 // Rutas para actualizar un bovino existente
-router.put("/UpdateCattle/:id", ValidateToken, updateCattle);
+router.put("/UpdateCattle/:id_Bovine", ValidateToken, updateCattle);
 
 /**
  * @swagger
- * /api/DeleteCattle/{id}:
+ * /api/DeleteCattle/{id_Bovine}:
  *   delete:
  *     summary: Eliminar bovino
  *     description: Elimina un bovino según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_Bovine
  *         required: true
  *         description: ID del bovino
  *         schema:
@@ -92,6 +92,6 @@ router.put("/UpdateCattle/:id", ValidateToken, updateCattle);
  */
 
 // Rutas para eliminar un bovino existente
-router.delete("/DeleteCattle/:id", ValidateToken, deleteCattle);
+router.delete("/DeleteCattle/:id_Bovine", ValidateToken, deleteCattle);
 
 module.exports = router;

@@ -9,7 +9,7 @@ import { type SharedTableFeatures } from "@/components/ui/data-table-features";
 
 // Forma de los datos que devuelve tu API (/api/responsible/ResponsibleAll)
 export type Responsible = {
-  id: number | string;
+  idResponsible: number | string;
   fullName: string;
   role: string;
   email: string;
@@ -30,7 +30,7 @@ const roleStyles: Record<string, string> = {
 const columnHelper = createColumnHelper<SharedTableFeatures, Responsible>();
 
 export const columns = columnHelper.columns([
-  columnHelper.accessor("id", {
+  columnHelper.accessor("idResponsible", {
     header: "ID",
     cell: ({ getValue }) => (
       <span className="text-[#6B6459]">{getValue()}</span>

@@ -19,13 +19,13 @@ router.get("/NutritionAll", ValidateToken, getAllNutritions);
 
 /**
  * @swagger
- * /api/NutritionById/{id}:
+ * /api/NutritionById/{id_nutrition}:
  *   get:
  *     summary: Obtener registro de nutrición por ID
  *     description: Retorna un registro de nutrición según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_nutrition
  *         required: true
  *         description: ID del registro de nutrición
  *         schema:
@@ -36,7 +36,7 @@ router.get("/NutritionAll", ValidateToken, getAllNutritions);
  */
 
 // Rutas para nutrición con id
-router.get("/NutritionById/:id", ValidateToken, getAllNutritionsById);
+router.get("/NutritionById/:id_nutrition", ValidateToken, getAllNutritionsById);
 
 /**
  * @swagger
@@ -54,13 +54,13 @@ router.post("/CreateNutrition", ValidateToken, createNutrition);
 
 /**
  * @swagger
- * /api/UpdateNutrition/{id}:
+ * /api/UpdateNutrition/{id_nutrition}:
  *   put:
  *     summary: Actualizar registro de nutrición
  *     description: Actualiza un registro de nutrición según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_nutrition
  *         required: true
  *         description: ID del registro de nutrición
  *         schema:
@@ -71,17 +71,17 @@ router.post("/CreateNutrition", ValidateToken, createNutrition);
  */
 
 // Rutas para actualizar un registro de nutrición existente
-router.put("/UpdateNutrition/:id", ValidateToken, updateNutrition);
+router.put("/UpdateNutrition/:id_nutrition", ValidateToken, updateNutrition);
 
 /**
  * @swagger
- * /api/DeleteNutrition/{id}:
+ * /api/DeleteNutrition/{id_nutrition}:
  *   delete:
  *     summary: Eliminar registro de nutrición
  *     description: Elimina un registro de nutrición según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_nutrition
  *         required: true
  *         description: ID del registro de nutrición
  *         schema:
@@ -92,6 +92,6 @@ router.put("/UpdateNutrition/:id", ValidateToken, updateNutrition);
  */
 
 // Rutas para eliminar un registro de nutrición existente
-router.delete("/DeleteNutrition/:id", ValidateToken, deleteNutrition);
+router.delete("/DeleteNutrition/:id_nutrition", ValidateToken, deleteNutrition);
 
 module.exports = router;

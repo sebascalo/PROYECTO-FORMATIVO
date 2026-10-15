@@ -16,20 +16,23 @@ import { Label } from "@/components/ui/label";
 interface ResetPasswordProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  onCancel?: () => void;
 }
 
-export default function ResetPassword({ open, onOpenChange }: ResetPasswordProps) {
+export default function ResetPassword({
+  open,
+  onOpenChange,
+  onCancel,
+}: ResetPasswordProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="bg-white text-black sm:max-w-sm p-6">
-        {/* ❌ Botón de cerrar en la esquina superior derecha */}
         <button
           type="button"
           onClick={() => onOpenChange?.(false)}
           className="absolute top-3 right-3 rounded-sm text-gray-500 hover:text-black focus:outline-none"
           aria-label="Cerrar"
-        >
-        </button>
+        ></button>
 
         <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
           <DialogHeader>
@@ -54,11 +57,19 @@ export default function ResetPassword({ open, onOpenChange }: ResetPasswordProps
               />
             </Field>
           </FieldGroup>
-
-          <DialogFooter className="pt-4">
+          <DialogFooter className="pt-4 flex flex-row gap-2 sm:flex-row">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onCancel}
+              className="cursor-pointer flex-1 border border-gray-300 text-gray-700 hover:bg-gray-100"
+            >
+              Cancelar
+            </Button>
+            
             <Button
               type="submit"
-              className="cursor-pointer w-full bg-green-500 hover:bg-green-600 hover:text-white"
+              className="cursor-pointer flex-1 bg-green-500 hover:bg-green-600 hover:text-white"
             >
               Restablecer Contraseña
             </Button>

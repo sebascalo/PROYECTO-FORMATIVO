@@ -23,9 +23,9 @@ const responsiblesGetAll = async (limit, offset) => {
 }
 
 // Obtener responsable por ID
-const getResponsibleById = async (id) => {
+const getResponsibleById = async (idResponsible) => {
     try {
-        const responsibleid = await responsible.findOne({ where: { id } });
+        const responsibleid = await responsible.findOne({ where: { idResponsible } });
         return responsibleid;
     } catch (error) {
         console.log(error);
@@ -34,9 +34,9 @@ const getResponsibleById = async (id) => {
 }
 
 // Eliminar responsable
-const responsibleDelete = async (id) => {
+const responsibleDelete = async (idResponsible) => {
     try {
-        const responsibleDelete = await responsible.destroy({ where: { id } });
+        const responsibleDelete = await responsible.destroy({ where: { idResponsible } });
         return responsibleDelete;
     } catch (error) {
         console.log(error);
@@ -45,9 +45,9 @@ const responsibleDelete = async (id) => {
 }
 
 // Actualizar responsable
-const responsibleUpdate = async (id, data) => {
+const responsibleUpdate = async (idResponsible, data) => {
     try {
-        const responsibleToUpdate = await responsible.findOne({ where: { id } });
+        const responsibleToUpdate = await responsible.findOne({ where: { idResponsible } });
         if (!responsibleToUpdate) {
             return null;
         }

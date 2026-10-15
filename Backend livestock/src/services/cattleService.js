@@ -23,9 +23,9 @@ const cattlesGetAll = async (limit, offset) => {
 }
 
 // Obtener bovino por ID
-const getCattleById = async (id) => {
+const getCattleById = async (id_Bovine) => {
     try {
-        const cattleid = await cattle.findOne({ where: { id } });
+        const cattleid = await cattle.findOne({ where: { id_Bovine } });
         return cattleid;
     } catch (error) {
         console.log(error);
@@ -34,9 +34,9 @@ const getCattleById = async (id) => {
 }
 
 // Eliminar bovino
-const cattleDelete = async (id) => {
+const cattleDelete = async (id_Bovine) => {
     try {
-        const cattleDelete = await cattle.destroy({ where: { id } });
+        const cattleDelete = await cattle.destroy({ where: { id_Bovine } });
         return cattleDelete;
     } catch (error) {
         console.log(error);
@@ -45,9 +45,9 @@ const cattleDelete = async (id) => {
 }
 
 // Actualizar bovino
-const cattleUpdate = async (id, data) => {
+const cattleUpdate = async (id_Bovine, data) => {
     try {
-        const cattleToUpdate = await cattle.findOne({ where: { id } });
+        const cattleToUpdate = await cattle.findOne({ where: { id_Bovine } });
         if (!cattleToUpdate) {
             return null;
         }

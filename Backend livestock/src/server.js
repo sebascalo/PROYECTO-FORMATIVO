@@ -29,6 +29,7 @@ const treatment = require("./routes/treatmentRoute");
 const responsibleRoute = require("./routes/responsibleRoute");
 const mountRoute = require("./routes/mountRoute");
 const artificialInseminationRoute = require("./routes/artificialInseminationRoute");
+const raceRoute = require("./routes/raceRoute");
 
 const authRoute = require("./routes/authRoute");
 
@@ -77,6 +78,7 @@ app.use("/api/treatment", treatment);
 app.use("/api/mount", mountRoute);
 app.use("/api/responsible", responsibleRoute);
 app.use("/api/artificialInsemination", artificialInseminationRoute);
+app.use("/api/race", raceRoute);
 
 app.use("/api/auth", authRoute);
 

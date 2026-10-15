@@ -2,7 +2,7 @@
     const sequelize = require('../config/conectionDB');
 
     const responsible = sequelize.define('responsible', {
-        id: {
+        idResponsible: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true

@@ -23,9 +23,9 @@ const artificialInseminationsGetAll = async (limit, offset) => {
 }
 
 // Obtener inseminación artificial por ID
-const getArtificialInseminationById = async (id) => {
+const getArtificialInseminationById = async (id_artifInse) => {
     try {
-        const artificialInseminationid = await artificialInsemination.findOne({ where: { id } });
+        const artificialInseminationid = await artificialInsemination.findOne({ where: { id_artifInse } });
         return artificialInseminationid;
     } catch (error) {
         console.log(error);
@@ -34,9 +34,9 @@ const getArtificialInseminationById = async (id) => {
 }
 
 // Eliminar inseminación artificial
-const artificialInseminationDelete = async (id) => {
+const artificialInseminationDelete = async (id_artifInse) => {
     try {
-        const artificialInseminationDelete = await artificialInsemination.destroy({ where: { id } });
+        const artificialInseminationDelete = await artificialInsemination.destroy({ where: { id_artifInse } });
         return artificialInseminationDelete;
     } catch (error) {
         console.log(error);
@@ -45,9 +45,9 @@ const artificialInseminationDelete = async (id) => {
 }
 
 // Actualizar inseminación artificial
-const artificialInseminationUpdate = async (id, data) => {
+const artificialInseminationUpdate = async (id_artifInse, data) => {
     try {
-        const artificialInseminationToUpdate = await artificialInsemination.findOne({ where: { id } });
+        const artificialInseminationToUpdate = await artificialInsemination.findOne({ where: { id_artifInse } });
         if (!artificialInseminationToUpdate) {
             return null;
         }

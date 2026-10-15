@@ -18,13 +18,13 @@ router.get("/VacunationAll", ValidateToken, getAllVacunations);
 
 /**
  * @swagger
- * /api/VacunationById/{id}:
+ * /api/VacunationById/{id_vacunation}:
  *   get:
  *     summary: Obtener vacunación por ID
  *     description: Retorna una vacunación según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_vacunation
  *         required: true
  *         description: ID de la vacunación
  *         schema:
@@ -35,7 +35,7 @@ router.get("/VacunationAll", ValidateToken, getAllVacunations);
  */
 
 // Rutas para vacunaciones con id
-router.get("/VacunationById/:id", ValidateToken, getAllVacunationsById);
+router.get("/VacunationById/:id_vacunation", ValidateToken, getAllVacunationsById);
 
 /**
  * @swagger
@@ -53,13 +53,13 @@ router.post("/CreateVacunation", ValidateToken, createVacunation);
 
 /**
  * @swagger
- * /api/UpdateVacunation/{id}:
+ * /api/UpdateVacunation/{id_vacunation}:
  *   put:
  *     summary: Actualizar vacunación
  *     description: Actualiza una vacunación según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_vacunation
  *         required: true
  *         description: ID de la vacunación
  *         schema:
@@ -70,17 +70,17 @@ router.post("/CreateVacunation", ValidateToken, createVacunation);
  */
 
 // Rutas para actualizar una vacunación existente
-router.put("/UpdateVacunation/:id", ValidateToken, updateVacunation);
+router.put("/UpdateVacunation/:id_vacunation", ValidateToken, updateVacunation);
 
 /**
  * @swagger
- * /api/DeleteVacunation/{id}:
+ * /api/DeleteVacunation/{id_vacunation}:
  *   delete:
  *     summary: Inactivar vacunación
  *     description: Inactiva una vacunación según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_vacunation
  *         required: true
  *         description: ID de la vacunación
  *         schema:
@@ -91,6 +91,6 @@ router.put("/UpdateVacunation/:id", ValidateToken, updateVacunation);
  */
 
 // Rutas para eliminar una vacunación existente
-router.delete("/DeleteVacunation/:id", ValidateToken, deleteVacunation);
+router.delete("/DeleteVacunation/:id_vacunation", ValidateToken, deleteVacunation);
 
 module.exports = router;

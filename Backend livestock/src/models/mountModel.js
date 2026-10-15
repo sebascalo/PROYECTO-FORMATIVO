@@ -1,60 +1,58 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/conectionDB');
+const { DataTypes } = require("sequelize");
+const db = require("../config/conectionDB");
 
-const mount = sequelize.define('mount', {
-    // Campos específicos para Monta Natural (RF08)
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-        comment: 'Identificador único de la monta'
+const mount = db.define("mount", {
+  id_mount: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  id_cow: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: "cattles",
+      key: "id_Bovine",
     },
-    idBovine: { //id de la vaca
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: 'bovinos',
-            key: 'id'
-        },
-        comment: 'Hembra que recibe el servicio'
+    comment: "Vaca que recibe el servicio",
+  },
+  id_bull: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: "cattles",
+      key: "id_Bovine",
     },
-    bullId: {//id del toro
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: 'bovinos',
-            key: 'id'
-        },
-        comment: 'Macho reproductor utilizado'
+    comment: "Toro que realiza el servicio",
+  },
+  breedingDate: {
+    type: DataTypes.DATEONLY,
+    allowNull: false,
+  },
+  serviceNumber: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  observations: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
+  idResponsible: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: "responsibles",
+      key: "idResponsible",
     },
-     breedingDate: {//fecha de la monta
-        type: DataTypes.DATEONLY,
-        allowNull: false,
-        comment: 'Día del servicio'
-    },
-    serviceNumber: {//número de servicio
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        comment: '1º, 2º, 3º, etc.'
-    },
-    observations: {//observaciones
-        type: DataTypes.TEXT,
-        allowNull: true,
-        comment: 'Comentarios adicionales'
-    },
-    idResponsible: {//responsable
-        type: DataTypes.STRING(100),
-        allowNull: false,
-        comment: 'Quién supervisó la monta'
-    },
-    createdAt: { // Fecha de creación del registro
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW
-    },
-    updatedAt: { // Fecha de última actualización del registro
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW
-    }
+  },
+  createdAt: {
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW,
+  },
+  updatedAt: {
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW,
+  },
 });
 
 module.exports = mount;

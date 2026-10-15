@@ -19,13 +19,13 @@ router.get("/MountAll", ValidateToken, getAllMounts);
 
 /**
  * @swagger
- * /api/MountById/{id}:
+ * /api/MountById/{id_mount}:
  *   get:
  *     summary: Obtener monta natural por ID
  *     description: Retorna una monta natural según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_mount
  *         required: true
  *         description: ID de la monta natural
  *         schema:
@@ -36,7 +36,7 @@ router.get("/MountAll", ValidateToken, getAllMounts);
  */
 
 // Rutas para montas naturales con id
-router.get("/MountById/:id", ValidateToken, getAllMountsById);
+router.get("/MountById/:id_mount", ValidateToken, getAllMountsById);
 
 /**
  * @swagger
@@ -54,13 +54,13 @@ router.post("/CreateMount", ValidateToken, createMount);
 
 /**
  * @swagger
- * /api/UpdateMount/{id}:
+ * /api/UpdateMount/{id_mount}:
  *   put:
  *     summary: Actualizar monta natural
  *     description: Actualiza una monta natural según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_mount
  *         required: true
  *         description: ID de la monta natural
  *         schema:
@@ -71,17 +71,17 @@ router.post("/CreateMount", ValidateToken, createMount);
  */
 
 // Rutas para actualizar una monta natural existente
-router.put("/UpdateMount/:id", ValidateToken, updateMount);
+router.put("/UpdateMount/:id_mount", ValidateToken, updateMount);
 
 /**
  * @swagger
- * /api/DeleteMount/{id}:
+ * /api/DeleteMount/{id_mount}:
  *   delete:
  *     summary: Eliminar monta natural
  *     description: Elimina una monta natural según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_mount
  *         required: true
  *         description: ID de la monta natural
  *         schema:
@@ -92,6 +92,6 @@ router.put("/UpdateMount/:id", ValidateToken, updateMount);
  */
 
 // Rutas para eliminar una monta natural existente
-router.delete("/DeleteMount/:id", ValidateToken, deleteMount);
+router.delete("/DeleteMount/:id_mount", ValidateToken, deleteMount);
 
 module.exports = router;

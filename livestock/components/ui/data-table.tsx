@@ -95,7 +95,7 @@ export function DataTable<TData extends RowData>({
                   .getColumn(filterColumnId)
                   ?.setFilterValue(event.target.value)
               }
-              className="max-w-sm bg-white border-[#E7E2D6] focus-visible:ring-[#4B6043]/30 focus-visible:border-[#4B6043]"
+              className="max-w-sm rounded-md bg-white border-[#E7E2D6] focus-visible:ring-[#4B6043]/30 focus-visible:border-[#4B6043]"
             />
           ) : (
             <div />

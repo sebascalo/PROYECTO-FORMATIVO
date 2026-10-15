@@ -8,22 +8,71 @@ interface TableMilkProps {
   actions?: React.ReactNode;
 }
 
+interface Cattle {
+  id_Bovine: number;
+  name: string;
+}
+
+interface Responsible {
+  idResponsible: number;
+  fullName: string;
+  role: string;
+}
+
 export default function TableMilk({ actions }: TableMilkProps) {
   const [milks, setMilks] = useState<Milk[]>([]);
 
   useEffect(() => {
     const fetchMilks = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/milk/MilkAll");
-        const resJson = await response.json();
-        const datos = Array.isArray(resJson)
-          ? resJson
-          : Array.isArray(resJson.info)
-            ? resJson.info
-            : Array.isArray(resJson.data)
-              ? resJson.data
-              : [];
-        setMilks(datos);
+        const token = localStorage.getItem("token");
+        const headers = { Authorization: `Bearer ${token}` };
+
+        const [milkRes, cattleRes, responsibleRes] = await Promise.all([
+          fetch("http://localhost:3000/api/milk/MilkAll?limit=500", { headers }),
+          fetch("http://localhost:3000/api/cattle/CattleAll?limit=500", {
+            headers,
+          }),
+          fetch(
+            "http://localhost:3000/api/responsible/ResponsibleAll?limit=500",
+            { headers },
+          ),
+        ]);
+
+        const [milkJson, cattleJson, responsibleJson] = await Promise.all([
+          milkRes.json(),
+          cattleRes.json(),
+          responsibleRes.json(),
+        ]);
+
+        const milkList: Milk[] = milkJson.info ?? [];
+        const cattles: Cattle[] = cattleJson.info ?? [];
+        const responsibles: Responsible[] = responsibleJson.info ?? [];
+
+        const milksFormatted: Milk[] = milkList.map((m) => {
+          const cattle = cattles.find(
+            (c) => String(c.id_Bovine) === String(m.id_Bovine),
+          );
+          const responsible = responsibles.find(
+            (r) => String(r.idResponsible) === String(m.idResponsible),
+          );
+
+          return {
+            ...m,
+            cattleData: cattle
+              ? { id_Bovine: cattle.id_Bovine, name: cattle.name }
+              : null,
+            responsibleData: responsible
+              ? {
+                  idResponsible: responsible.idResponsible,
+                  fullName: responsible.fullName,
+                  role: responsible.role,
+                }
+              : null,
+          };
+        });
+
+        setMilks(milksFormatted);
       } catch (error) {
         console.error("Error:", error);
         setMilks([]);
@@ -51,7 +100,7 @@ export default function TableMilk({ actions }: TableMilkProps) {
         <DataTable
           columns={columns}
           data={milks}
-          filterColumnId="idBovine"
+          filterColumnId="id_Bovine"
           filterPlaceholder="Filtrar por bovino..."
           toolbar={actions}
         />

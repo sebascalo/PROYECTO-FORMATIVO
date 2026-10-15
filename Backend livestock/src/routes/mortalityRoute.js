@@ -19,13 +19,13 @@ router.get("/MortalityAll", ValidateToken, getAllMortalities);
 
 /**
  * @swagger
- * /api/MortalityById/{id}:
+ * /api/MortalityById/{id_mortality}:
  *   get:
  *     summary: Obtener registro de mortalidad por ID
  *     description: Retorna un registro de mortalidad según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_mortality
  *         required: true
  *         description: ID del registro de mortalidad
  *         schema:
@@ -36,7 +36,7 @@ router.get("/MortalityAll", ValidateToken, getAllMortalities);
  */
 
 // Rutas para mortalidad con id
-router.get("/MortalityById/:id", ValidateToken, getAllMortalitiesById);
+router.get("/MortalityById/:id_mortality", ValidateToken, getAllMortalitiesById);
 
 /**
  * @swagger
@@ -54,13 +54,13 @@ router.post("/CreateMortality", ValidateToken, createMortality);
 
 /**
  * @swagger
- * /api/UpdateMortality/{id}:
+ * /api/UpdateMortality/{id_mortality}:
  *   put:
  *     summary: Actualizar registro de mortalidad
  *     description: Actualiza un registro de mortalidad según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_mortality
  *         required: true
  *         description: ID del registro de mortalidad
  *         schema:
@@ -71,17 +71,17 @@ router.post("/CreateMortality", ValidateToken, createMortality);
  */
 
 // Rutas para actualizar un registro de mortalidad existente
-router.put("/UpdateMortality/:id", ValidateToken, updateMortality);
+router.put("/UpdateMortality/:id_mortality", ValidateToken, updateMortality);
 
 /**
  * @swagger
- * /api/DeleteMortality/{id}:
+ * /api/DeleteMortality/{id_mortality}:
  *   delete:
  *     summary: Eliminar registro de mortalidad
  *     description: Elimina un registro de mortalidad según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_mortality
  *         required: true
  *         description: ID del registro de mortalidad
  *         schema:
@@ -92,6 +92,6 @@ router.put("/UpdateMortality/:id", ValidateToken, updateMortality);
  */
 
 // Rutas para eliminar un registro de mortalidad existente
-router.delete("/DeleteMortality/:id", ValidateToken, deleteMortality);
+router.delete("/DeleteMortality/:id_mortality", ValidateToken, deleteMortality);
 
 module.exports = router;

@@ -19,13 +19,13 @@ router.get("/TreatmentAll", ValidateToken, getAllTreatments);
 
 /**
  * @swagger
- * /api/TreatmentById/{id}:
+ * /api/TreatmentById/{id_treatment}:
  *   get:
  *     summary: Obtener tratamiento por ID
  *     description: Retorna un tratamiento según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_treatment
  *         required: true
  *         description: ID del tratamiento
  *         schema:
@@ -36,7 +36,7 @@ router.get("/TreatmentAll", ValidateToken, getAllTreatments);
  */
 
 // Rutas para tratamientos con id
-router.get("/TreatmentById/:id", ValidateToken, getAllTreatmentsById);
+router.get("/TreatmentById/:id_treatment", ValidateToken, getAllTreatmentsById);
 
 /**
  * @swagger
@@ -54,13 +54,13 @@ router.post("/CreateTreatment", ValidateToken, createTreatment);
 
 /**
  * @swagger
- * /api/UpdateTreatment/{id}:
+ * /api/UpdateTreatment/{id_treatment}:
  *   put:
  *     summary: Actualizar tratamiento
  *     description: Actualiza un tratamiento según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_treatment
  *         required: true
  *         description: ID del tratamiento
  *         schema:
@@ -71,17 +71,17 @@ router.post("/CreateTreatment", ValidateToken, createTreatment);
  */
 
 // Rutas para actualizar un tratamiento existente
-router.put("/UpdateTreatment/:id", ValidateToken, updateTreatment);
+router.put("/UpdateTreatment/:id_treatment", ValidateToken, updateTreatment);
 
 /**
  * @swagger
- * /api/DeleteTreatment/{id}:
+ * /api/DeleteTreatment/{id_treatment}:
  *   delete:
  *     summary: Eliminar tratamiento
  *     description: Elimina un tratamiento según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_treatment
  *         required: true
  *         description: ID del tratamiento
  *         schema:
@@ -92,6 +92,6 @@ router.put("/UpdateTreatment/:id", ValidateToken, updateTreatment);
  */
 
 // Rutas para eliminar un tratamiento existente
-router.delete("/DeleteTreatment/:id", ValidateToken, deleteTreatment);
+router.delete("/DeleteTreatment/:id_treatment", ValidateToken, deleteTreatment);
 
 module.exports = router;

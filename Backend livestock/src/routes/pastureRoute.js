@@ -19,13 +19,13 @@ router.get("/PastureAll", ValidateToken, getAllPastures);
 
 /**
  * @swagger
- * /api/PastureById/{id}:
+ * /api/PastureById/{id_pasture}:
  *   get:
  *     summary: Obtener potrero por ID
  *     description: Retorna un potrero según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_pasture
  *         required: true
  *         description: ID del potrero
  *         schema:
@@ -36,7 +36,7 @@ router.get("/PastureAll", ValidateToken, getAllPastures);
  */
 
 //Rutas para potreros con id
-router.get("/PastureById/:id", ValidateToken, getAllPasturesById);
+router.get("/PastureById/:id_pasture", ValidateToken, getAllPasturesById);
 
 /**
  * @swagger
@@ -54,13 +54,13 @@ router.post("/CreatePasture", ValidateToken, createPasture);
 
 /**
  * @swagger
- * /api/UpdatePasture/{id}:
+ * /api/UpdatePasture/{id_pasture}:
  *   put:
  *     summary: Actualizar potrero
  *     description: Actualiza un potrero según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_pasture
  *         required: true
  *         description: ID del potrero
  *         schema:
@@ -71,17 +71,17 @@ router.post("/CreatePasture", ValidateToken, createPasture);
  */
 
 //Rutas para actualizar un potrero existente
-router.put("/UpdatePasture/:id", ValidateToken, updatePasture);
+router.put("/UpdatePasture/:id_pasture", ValidateToken, updatePasture);
 
 /**
  * @swagger
- * /api/DeletePasture/{id}:
+ * /api/DeletePasture/{id_pasture}:
  *   delete:
  *     summary: Inactivar potrero
  *     description: Inactiva un potrero según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: id_pasture
  *         required: true
  *         description: ID del potrero
  *         schema:
@@ -92,6 +92,6 @@ router.put("/UpdatePasture/:id", ValidateToken, updatePasture);
  */
 
 //Rutas para eliminar un potrero existente
-router.delete("/DeletePasture/:id", ValidateToken, deletePasture);
+router.delete("/DeletePasture/:id_pasture", ValidateToken, deletePasture);
 
 module.exports= router;

@@ -4,22 +4,47 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { type SharedTableFeatures } from "@/components/ui/data-table-features";
 
-// Forma de los datos que devuelve tu API (/api/birth/BirthAll)
+// 👇 Tipos del JOIN
+export type CattleData = {
+  id_Bovine: number;
+  name: string;
+};
+
+export type PastureData = {
+  id_pasture: number;
+  name: string;
+};
+
+export type RaceData = {
+  id_race: number;
+  name_race: string;
+};
+
+export type ResponsibleData = {
+  idResponsible: number;
+  fullName: string;
+  role: string;
+};
+
+// 👇 Forma real que devuelve tu API (/api/birth/BirthAll)
 export type Birth = {
-  id: number | string;
-  motheridentification: string;
-  landidentification: string;
+  id_birth: number;
+  id_Bovine: number | null;
+  id_pasture: number | null;
   birthdate: string;
   sex: string;
-  race: string;
+  id_race: number | null;
   birthweight: number;
-  conditionatbirth: string;
   observations: string;
-  responsible: string;
+  idResponsible: number | null;
   active: boolean;
+  // 👇 Agregados por el JOIN en el frontend
+  cattleData?: CattleData | null;
+  pastureData?: PastureData | null;
+  raceData?: RaceData | null;
+  responsibleData?: ResponsibleData | null;
 };
 
 const formatDate = (dateString?: string | null) => {
@@ -32,25 +57,17 @@ const formatDate = (dateString?: string | null) => {
   });
 };
 
-// Colores por condición al nacer
-const conditionStyles: Record<string, string> = {
-  Sano: "bg-[#4B6043] text-white hover:bg-[#405539]",
-  Debil: "bg-[#A9744F] text-white hover:bg-[#94623F]",
-  Prematuro: "bg-[#8C8266] text-white hover:bg-[#77704F]",
-  "Con complicaciones": "bg-[#A9744F] text-white hover:bg-[#94623F]",
-  Fallecido: "bg-[#6B6459] text-white hover:bg-[#5A5449]",
-};
-
 const columnHelper = createColumnHelper<SharedTableFeatures, Birth>();
 
 export const columns = columnHelper.columns([
-  columnHelper.accessor("id", {
+  columnHelper.accessor("id_birth", {
     header: "ID",
     cell: ({ getValue }) => (
       <span className="text-[#6B6459]">{getValue()}</span>
     ),
   }),
-  columnHelper.accessor("motheridentification", {
+  // 👇 MADRE (nombre del JOIN)
+  columnHelper.accessor("cattleData", {
     header: ({ column }) => (
       <Button
         variant="ghost"
@@ -61,15 +78,26 @@ export const columns = columnHelper.columns([
         <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
       </Button>
     ),
-    cell: ({ getValue }) => (
-      <span className="font-medium text-[#2B2A26]">{getValue() || "-"}</span>
-    ),
+    cell: ({ getValue }) => {
+      const cattle = getValue();
+      return (
+        <span className="font-medium text-[#2B2A26]">
+          {cattle?.name ?? "Sin madre"}
+        </span>
+      );
+    },
   }),
-  columnHelper.accessor("landidentification", {
+  // 👇 POTRERO (nombre del JOIN)
+  columnHelper.accessor("pastureData", {
     header: "Potrero",
-    cell: ({ getValue }) => (
-      <span className="text-[#6B6459]">{getValue() || "-"}</span>
-    ),
+    cell: ({ getValue }) => {
+      const pasture = getValue();
+      return (
+        <span className="text-[#6B6459]">
+          {pasture?.name ?? "Sin potrero"}
+        </span>
+      );
+    },
   }),
   columnHelper.accessor("birthdate", {
     header: "Fecha",
@@ -93,8 +121,17 @@ export const columns = columnHelper.columns([
       );
     },
   }),
-  columnHelper.accessor("race", {
+  // 👇 RAZA (nombre del JOIN)
+  columnHelper.accessor("raceData", {
     header: "Raza",
+    cell: ({ getValue }) => {
+      const race = getValue();
+      return (
+        <span className="text-[#2B2A26]">
+          {race?.name_race ?? "Sin raza"}
+        </span>
+      );
+    },
   }),
   columnHelper.accessor("birthweight", {
     header: () => <div className="text-right">Peso (kg)</div>,
@@ -107,23 +144,27 @@ export const columns = columnHelper.columns([
       );
     },
   }),
-  columnHelper.accessor("conditionatbirth", {
-    header: "Condición",
+  columnHelper.accessor("observations", {
+    header: "Observaciones",
+    cell: ({ getValue }) => (
+      <span className="text-[#6B6459] text-sm">{getValue() || "-"}</span>
+    ),
+  }),
+  // 👇 RESPONSABLE (nombre + rol del JOIN)
+  columnHelper.accessor("responsibleData", {
+    header: "Responsable",
     cell: ({ getValue }) => {
-      const value = getValue();
-      if (!value) return <span className="text-[#6B6459]">-</span>;
+      const responsible = getValue();
+      if (!responsible) return <span className="text-[#6B6459]">-</span>;
       return (
-        <Badge className={conditionStyles[value] ?? "bg-[#8C8266] text-white"}>
-          {value}
-        </Badge>
+        <div className="flex flex-col">
+          <span className="text-[#2B2A26] font-medium">
+            {responsible.fullName}
+          </span>
+          <span className="text-xs text-[#6B6459]">{responsible.role}</span>
+        </div>
       );
     },
-  }),
-  columnHelper.accessor("responsible", {
-    header: "Responsable",
-    cell: ({ getValue }) => (
-      <span className="text-[#2B2A26]">{getValue() || "-"}</span>
-    ),
   }),
   columnHelper.accessor("active", {
     header: "Estado",

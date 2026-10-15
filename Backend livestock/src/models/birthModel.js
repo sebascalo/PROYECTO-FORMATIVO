@@ -3,23 +3,22 @@ const db = require("../config/conectionDB");
 
 // Modelo: Nacimientos (birth)
 const birth = db.define("birth", {
-
     // Identificador único y autoincremental del registro de nacimiento
-    id: {
+    id_birth: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
 
     // Identificación de la madre (vaca) del becerro
-    motheridentification: {
-        type: DataTypes.STRING,
+    id_Bovine: {
+        type: DataTypes.INTEGER,
         allowNull: true // Permite valores nulos
     },
 
     // Identificación del lote o terreno donde nació el animal
-    landidentification: {
-        type: DataTypes.STRING,
+    id_pasture: {
+        type: DataTypes.INTEGER,
         allowNull: true
     },
 
@@ -36,8 +35,8 @@ const birth = db.define("birth", {
     },
 
     // Raza del animal nacido
-    race: {
-        type: DataTypes.STRING,
+    id_race: {
+        type: DataTypes.INTEGER,
         allowNull: true
     },
 
@@ -52,10 +51,14 @@ const birth = db.define("birth", {
         type: DataTypes.STRING,
         allowNull: true
     },
-    // Nombre de la persona responsable de atender el nacimiento
-    responsible: {
-        type: DataTypes.STRING,
-        allowNull: true
+    // Identificador de la persona responsable de atender el nacimiento
+    idResponsible: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: 'responsibles',
+            key: 'idResponsible'
+        }
     },
 
     // Estado del registro (activo o inactivo)

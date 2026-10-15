@@ -7,16 +7,29 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { type SharedTableFeatures } from "@/components/ui/data-table-features";
 
-// Forma de los datos que devuelve tu API (/api/weighing/WeighingAll)
+// 👇 Tipos del JOIN
+export type CattleData = {
+  id_Bovine: number;
+  name: string;
+};
+
+export type ResponsibleData = {
+  idResponsible: number;
+  fullName: string;
+  role: string;
+};
+
 export type Weighing = {
-  id: number | string;
-  idBovine: string;
+  id_weighing: number | string;
+  id_Bovine: string;
   weighingdate: string;
   currentweight: number;
   profitorloss: number;
   bodycondition: string;
   observations: string;
-  idResponsible: string;
+  idResponsible: number | null;
+  cattleData?: CattleData | null;
+  responsibleData?: ResponsibleData | null;
 };
 
 const formatDate = (dateString?: string | null) => {
@@ -29,7 +42,6 @@ const formatDate = (dateString?: string | null) => {
   });
 };
 
-// Colores por condición corporal
 const bodyConditionStyles: Record<string, string> = {
   Delgado: "bg-[#A9744F] text-white hover:bg-[#94623F]",
   Normal: "bg-[#4B6043] text-white hover:bg-[#405539]",
@@ -39,13 +51,14 @@ const bodyConditionStyles: Record<string, string> = {
 const columnHelper = createColumnHelper<SharedTableFeatures, Weighing>();
 
 export const columns = columnHelper.columns([
-  columnHelper.accessor("id", {
+  columnHelper.accessor("id_weighing", {
     header: "ID",
     cell: ({ getValue }) => (
       <span className="text-[#6B6459]">{getValue()}</span>
     ),
   }),
-  columnHelper.accessor("idBovine", {
+  // 👇 BOVINO con nombre
+  columnHelper.accessor("cattleData", {
     header: ({ column }) => (
       <Button
         variant="ghost"
@@ -56,9 +69,14 @@ export const columns = columnHelper.columns([
         <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
       </Button>
     ),
-    cell: ({ getValue }) => (
-      <span className="font-medium text-[#2B2A26]">{getValue()}</span>
-    ),
+    cell: ({ getValue }) => {
+      const cattle = getValue();
+      return (
+        <span className="font-medium text-[#2B2A26]">
+          {cattle?.name ?? "Sin bovino"}
+        </span>
+      );
+    },
   }),
   columnHelper.accessor("weighingdate", {
     header: "Fecha",
@@ -111,10 +129,20 @@ export const columns = columnHelper.columns([
       <span className="text-[#6B6459] text-sm">{getValue() || "-"}</span>
     ),
   }),
-  columnHelper.accessor("idResponsible", {
+  // 👇 RESPONSABLE (nombre + rol en dos líneas, como nacimientos)
+  columnHelper.accessor("responsibleData", {
     header: "Responsable",
-    cell: ({ getValue }) => (
-      <span className="text-[#2B2A26]">{getValue()}</span>
-    ),
+    cell: ({ getValue }) => {
+      const responsible = getValue();
+      if (!responsible) return <span className="text-[#6B6459]">-</span>;
+      return (
+        <div className="flex flex-col">
+          <span className="text-[#2B2A26] font-medium">
+            {responsible.fullName}
+          </span>
+          <span className="text-xs text-[#6B6459]">{responsible.role}</span>
+        </div>
+      );
+    },
   }),
 ]);

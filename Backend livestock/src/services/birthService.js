@@ -23,9 +23,9 @@ const birthsGetAll = async (limit, offset) => {
 }
 
 // Obtener nacimiento por ID
-const getBirthById = async (id) => {
+const getBirthById = async (id_birth) => {
     try {
-        const birthid = await birth.findOne({ where: { id } });
+        const birthid = await birth.findOne({ where: { id_birth } });
         return birthid;
     } catch (error) {
         console.log(error);
@@ -34,9 +34,9 @@ const getBirthById = async (id) => {
 }
 
 // Eliminar nacimiento
-const birthDelete = async (id) => {
+const birthDelete = async (id_birth) => {
     try {
-        const birthDelete = await birth.destroy({ where: { id } });
+        const birthDelete = await birth.destroy({ where: { id_birth } });
         return birthDelete;
     } catch (error) {
         console.log(error);
@@ -45,9 +45,9 @@ const birthDelete = async (id) => {
 }
 
 // Actualizar nacimiento
-const birthUpdate = async (id, data) => {
+const birthUpdate = async (id_birth, data) => {
     try {
-        const birthToUpdate = await birth.findOne({ where: { id } });
+        const birthToUpdate = await birth.findOne({ where: { id_birth } });
         if (!birthToUpdate) {
             return null;
         }

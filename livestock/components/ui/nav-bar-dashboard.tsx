@@ -9,14 +9,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Button } from "@/components/ui/button"
-import { 
-  User, 
-  Bell, 
-  LogOut,
-  ChevronDown
-} from "lucide-react"
+} from "@/components/ui/dropdown-menu";
+import { User, LogOut, ChevronDown, UserCog, UserCircle } from "lucide-react";
 
 export default function NavBarDashboard() {
   const router = useRouter();
@@ -27,38 +21,43 @@ export default function NavBarDashboard() {
   };
 
   return (
-    <nav className="h-[60px] relative w-full px-2 md:px-6 lg:px-10 xl:px-16 flex items-center justify-between z-30 bg-gradient-to-r from-[#2B7FFF] to-[#1448E6]">
+    <nav className="h-[60px] relative w-full px-2 md:px-6 lg:px-10 xl:px-2 flex items-center justify-between z-30 bg-slate-50 border-b border-slate-200 shadow-sm">
       {/* Logo - Izquierda */}
       <div className="flex items-center gap-1">
         <Image src={logo} alt="Logo" width={50} height={50} />
-        <span className="text-white font-bold text-3xl tracking-wide">
+        <span className="text-[#2B7FFF] font-bold text-3xl tracking-wide">
           Livestock
         </span>
       </div>
 
       {/* Menú de usuario - Derecha */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-end">
         {/* Dropdown de usuario */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button 
-              variant="ghost" 
-              className="text-white gap-2"
+            <button
+              type="button"
+              className="flex items-center gap-2 px-3 py-2 rounded-md text-slate-800 hover:bg-slate-100 transition-colors duration-200 outline-none focus:outline-none focus-visible:outline-none"
             >
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-                  <User size={16} className="text-white" />
-                </div>
-                <div className="hidden md:flex flex-col items-start">
-                  <span className="text-sm font-medium">sebastian</span>
-                  <span className="text-xs text-white/60">livestocklagranja@gmail.com</span>
-                </div>
-                <ChevronDown size={16} className="hidden md:block" />
+              <div className="w-8 h-8 rounded-full flex items-center justify-center">
+                <UserCircle size={20} className="text-[#2B7FFF]" />
               </div>
-            </Button>
+              <div className="hidden md:flex flex-col items-start">
+                <span className="text-sm font-medium text-slate-800">
+                  sebastian
+                </span>
+                <span className="text-xs text-slate-500">
+                  livestocklagranja@gmail.com
+                </span>
+              </div>
+              <ChevronDown
+                size={16}
+                className="hidden md:block text-slate-600"
+              />
+            </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent 
-            className="w-56" 
+          <DropdownMenuContent
+            className="w-56"
             align="end"
             side="bottom"
             sideOffset={8}
@@ -70,8 +69,8 @@ export default function NavBarDashboard() {
               <span>Perfil</span>
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <Bell className="mr-2 h-4 w-4" />
-              <span>Notificaciones</span>
+              <UserCog className="mr-2 h-4 w-4" />
+              <span>Cambiar Contraseña</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="text-red-600" onSelect={handleLogout}>

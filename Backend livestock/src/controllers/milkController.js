@@ -27,9 +27,9 @@ const getAllMilks = async (req, res) => {
 // Obtener un registro por id
 const getAllMilksById = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id_milk } = req.params;
         var errors = [];
-        if (!id) {
+        if (!id_milk) {
             errors.push("El ID de la produccion de leche es obligatorio");
         }
         if (errors.length > 0) {
@@ -38,9 +38,8 @@ const getAllMilksById = async (req, res) => {
             res.json(response.json);
             return;
         }
-        data = { id }
-        const milk = await getMilkById(id)
-        var response = new Response(`Produccion de leche ${id} obtenida exitosamente`, milk, null);
+        const milk = await getMilkById(id_milk);
+        var response = new Response(`Produccion de leche ${id_milk} obtenida exitosamente`, milk, null);
         res.status(201);
         res.json(response.json);
     } catch (error) {
@@ -56,29 +55,29 @@ const getAllMilksById = async (req, res) => {
 // Crear registro de leche
 const createMilk = async (req, res) => {
     try {
-        // ID de la vaca
-        // fecha de ordeño
-        // turno
-        // cantidad de litros
-        // calidad de la leche
-        // observaciones
-        // responsable
-        const { idBovine, milkingDate, shift, litersQuantity, milkQuality, observations, idResponsible } = req.body;
+        console.log("📥 [BACK] Body recibido:", req.body);
+        const { id_Bovine, milkingDate, shift, litersQuantity, milkQuality, observations, idResponsible } = req.body;
         var errors = [];
         // Validaciones
-        if (!idBovine || idBovine.toString().trim() === "") {
+        if (!id_Bovine || String(id_Bovine).trim() === "") {
             errors.push("El ID de la vaca es obligatorio");
         }
-        if (!milkingDate || milkingDate.trim() === "") {
+        if (!milkingDate || String(milkingDate).trim() === "") {
             errors.push("La fecha de ordeño es obligatoria");
         }
-        if (!shift || shift.trim() === "") {
+        if (!shift || String(shift).trim() === "") {
             errors.push("El turno es obligatorio");
         }
-        if (!litersQuantity || litersQuantity.toString().trim() === "" || isNaN(litersQuantity)) {
+        if (!["Mañana", "Tarde", "Noche"].includes(shift)) {
+            errors.push("El turno debe ser: Mañana, Tarde o Noche");
+        }
+        if (!litersQuantity || String(litersQuantity).trim() === "" || isNaN(litersQuantity)) {
             errors.push("La cantidad de litros es obligatoria y debe ser un número");
         }
-        if (!idResponsible || idResponsible.toString().trim() === "") {
+        if (litersQuantity && litersQuantity <= 0) {
+            errors.push("La cantidad de litros debe ser mayor a 0");
+        }
+        if (!idResponsible || String(idResponsible).trim() === "") {
             errors.push("El responsable es obligatorio");
         }
         if (errors.length > 0) {
@@ -87,8 +86,9 @@ const createMilk = async (req, res) => {
             res.json(response.json);
             return;
         }
-        data = { idBovine, milkingDate, shift, litersQuantity, milkQuality, observations, idResponsible }
-        const milk = await milkCreate(data)
+        const data = { id_Bovine, milkingDate, shift, litersQuantity, milkQuality, observations, idResponsible };
+        console.log("📥 [BACK] data a guardar:", data);
+        const milk = await milkCreate(data);
         var response = new Response("Produccion de leche creada exitosamente", milk, null);
         res.status(201);
         res.json(response.json);
@@ -104,26 +104,29 @@ const createMilk = async (req, res) => {
 
 const updateMilk = async (req, res) => {
     try {
-        const { id } = req.params;
-        const { idBovine, milkingDate, shift, litersQuantity, milkQuality, observations, idResponsible } = req.body;
+        const { id_milk } = req.params;
+        const { id_Bovine, milkingDate, shift, litersQuantity, milkQuality, observations, idResponsible } = req.body;
         var errors = [];
         // Validaciones
-        if (!id) {
+        if (!id_milk) {
             errors.push("El ID de la produccion de leche es obligatorio");
         }
-        if (!idBovine || idBovine.toString().trim() === "") {
+        if (!id_Bovine || String(id_Bovine).trim() === "") {
             errors.push("El ID de la vaca es obligatorio");
         }
-        if (!milkingDate || milkingDate.trim() === "") {
+        if (!milkingDate || String(milkingDate).trim() === "") {
             errors.push("La fecha de ordeño es obligatoria");
         }
-        if (!shift || shift.trim() === "") {
+        if (!shift || String(shift).trim() === "") {
             errors.push("El turno es obligatorio");
         }
-        if (!litersQuantity || litersQuantity.toString().trim() === "" || isNaN(litersQuantity)) {
+        if (!["Mañana", "Tarde", "Noche"].includes(shift)) {
+            errors.push("El turno debe ser: Mañana, Tarde o Noche");
+        }
+        if (!litersQuantity || String(litersQuantity).trim() === "" || isNaN(litersQuantity)) {
             errors.push("La cantidad de litros es obligatoria y debe ser un número");
         }
-        if (!idResponsible || idResponsible.toString().trim() === "") {
+        if (!idResponsible || String(idResponsible).trim() === "") {
             errors.push("El responsable es obligatorio");
         }
         if (errors.length > 0) {
@@ -132,9 +135,9 @@ const updateMilk = async (req, res) => {
             res.json(response.json);
             return;
         }
-        data = { id, idBovine, milkingDate, shift, litersQuantity, milkQuality, observations, idResponsible }
-        const milk = await milkUpdate(id, data)
-        var response = new Response(`Produccion de leche ${id} actualizada exitosamente`, milk, null);
+        const data = { id_Bovine, milkingDate, shift, litersQuantity, milkQuality, observations, idResponsible };
+        const milk = await milkUpdate(id_milk, data);
+        var response = new Response(`Produccion de leche ${id_milk} actualizada exitosamente`, milk, null);
         res.status(201);
         res.json(response.json);
     } catch (error) {
@@ -149,9 +152,9 @@ const updateMilk = async (req, res) => {
 
 const deleteMilk = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id_milk } = req.params;
         var errors = [];
-        if (!id) {
+        if (!id_milk) {
             errors.push("El ID de la produccion de leche es obligatorio");
         }
         if (errors.length > 0) {
@@ -160,8 +163,8 @@ const deleteMilk = async (req, res) => {
             res.json(response.json);
             return;
         }
-        const milk = await milkDelete(id)
-        var response = new Response(`Produccion de leche ${id} eliminada exitosamente`, {id}, null);
+        const milk = await milkDelete(id_milk);
+        var response = new Response(`Produccion de leche ${id_milk} eliminada exitosamente`, { id_milk }, null);
         res.status(201);
         res.json(response.json);
     } catch (error) {

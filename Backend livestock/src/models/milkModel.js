@@ -2,17 +2,17 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../config/conectionDB');
 
 const milk = sequelize.define('milk', {
-    id: {
+    id_milk: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
     },
-    idBovine: {
+    id_Bovine: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'bovinos',
-            key: 'id'
+            model: 'cattles',
+            key: 'id_Bovine'
         },
     },
     milkingDate: { // fechaOrdeño
@@ -38,6 +38,10 @@ const milk = sequelize.define('milk', {
     idResponsible: { // responsable
         type: DataTypes.INTEGER,
         allowNull: false,
+        references: {
+            model: 'responsibles',
+            key: 'idResponsible'
+        },
     },
     active:{
         type: DataTypes.BOOLEAN,

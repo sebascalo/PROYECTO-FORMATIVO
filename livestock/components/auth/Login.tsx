@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import ResetPassword from "@/components/auth/ResetPassword";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Eye, EyeClosed } from "lucide-react";
 
 interface LoginProps {
   Textbutton?: string;
@@ -30,6 +31,19 @@ export default function Login({ Textbutton = "", style = "" }: LoginProps) {
   // agregadas para gregar el objeto de login
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const [eye, setEye] = useState(<EyeClosed />);
+  const [typePassword, setTypePassword] = useState("password");
+
+  const showPassword = () => {
+    if (typePassword == "password") {
+      setTypePassword("text");
+      setEye(<Eye />);
+    } else {
+      setTypePassword("password");
+      setEye(<EyeClosed />);
+    }
+  };
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,7 +62,7 @@ export default function Login({ Textbutton = "", style = "" }: LoginProps) {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data)
+        console.log(data);
         if (data.success) {
           const token = data.info.token;
           localStorage.setItem("token", token);
@@ -87,6 +101,7 @@ export default function Login({ Textbutton = "", style = "" }: LoginProps) {
                   name="usuario"
                   placeholder="*****@gmail.com"
                   value={email}
+                  type="email"
                   onChange={(e) => setEmail(e.target.value)}
                   className="bg-white text-black placeholder:text-gray-400 focus:outline focus:outline-2 focus:outline-blue-500"
                 />
@@ -95,24 +110,38 @@ export default function Login({ Textbutton = "", style = "" }: LoginProps) {
                 <Label htmlFor="contraseña" className="font-bold text-black">
                   Contraseña
                 </Label>
-                <Input
-                  id="contraseña"
-                  name="contraseña"
-                  placeholder="********"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="bg-white text-black placeholder:text-gray-400 focus:outline focus:outline-2 focus:outline-blue-500"
-                />
-                <button
-                type="button"
-                onClick={() => {
-                  setOpenDialog(false);
-                  setOpenReset(true);
-                }}
-                className="cursor-pointer text-sm text-gray-500 mt-2 text-left"
-              >
-                ¿Olvidaste tu contraseña?
-              </button>
+                {/* Contenedor con el ojito dentro del input */}
+                <div className="relative">
+                  <Input
+                    id="contraseña"
+                    name="contraseña"
+                    placeholder="********"
+                    value={password}
+                    type={typePassword}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="bg-white text-black placeholder:text-gray-400 focus:outline focus:outline-2 focus:outline-blue-500 pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={showPassword}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 cursor-pointer"
+                    aria-label="Mostrar u ocultar contraseña"
+                  >
+                    {eye}
+                  </button>
+                </div>
+                <div className="w-fit">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOpenDialog(false);
+                      setOpenReset(true);
+                    }}
+                    className="cursor-pointer text-sm text-blue-400 hover:text-blue-600 hover:underline mt-2 transition-colors duration-200"
+                  >
+                    ¿Olvidaste tu contraseña?
+                  </button>
+                </div>
               </Field>
             </FieldGroup>
             <DialogFooter>
@@ -127,7 +156,14 @@ export default function Login({ Textbutton = "", style = "" }: LoginProps) {
           </DialogContent>
         </form>
       </Dialog>
-      <ResetPassword open={openReset} onOpenChange={setOpenReset} />
+      <ResetPassword
+        open={openReset}
+        onOpenChange={setOpenReset}
+        onCancel={() => {
+          setOpenReset(false);
+          setOpenDialog(true);
+        }}
+      />
     </div>
   );
 }

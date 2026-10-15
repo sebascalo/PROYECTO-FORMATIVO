@@ -7,17 +7,29 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { type SharedTableFeatures } from "@/components/ui/data-table-features";
 
-// Forma de los datos que devuelve tu API (/api/milk/MilkAll)
+export type CattleData = {
+  id_Bovine: number;
+  name: string;
+};
+
+export type ResponsibleData = {
+  idResponsible: number;
+  fullName: string;
+  role: string;
+};
+
 export type Milk = {
-  id: number | string;
-  idBovine: number | string;
+  id_milk: number | string;
+  id_Bovine: number;
   milkingDate: string;
   shift: string;
   litersQuantity: number;
   milkQuality: string;
   observations: string;
-  idResponsible: number | string;
+  idResponsible: number;
   active: boolean;
+  cattleData?: CattleData | null;
+  responsibleData?: ResponsibleData | null;
 };
 
 const formatDate = (dateString?: string | null) => {
@@ -30,14 +42,12 @@ const formatDate = (dateString?: string | null) => {
   });
 };
 
-// Colores por turno
 const shiftStyles: Record<string, string> = {
   Mañana: "bg-[#A9744F] text-white hover:bg-[#94623F]",
   Tarde: "bg-[#8C8266] text-white hover:bg-[#77704F]",
   Noche: "bg-[#6B6459] text-white hover:bg-[#5A5449]",
 };
 
-// Colores por calidad
 const qualityStyles: Record<string, string> = {
   Excelente: "bg-[#4B6043] text-white hover:bg-[#405539]",
   Buena: "bg-[#4B6043] text-white hover:bg-[#405539]",
@@ -48,13 +58,14 @@ const qualityStyles: Record<string, string> = {
 const columnHelper = createColumnHelper<SharedTableFeatures, Milk>();
 
 export const columns = columnHelper.columns([
-  columnHelper.accessor("id", {
+  columnHelper.accessor("id_milk", {
     header: "ID",
     cell: ({ getValue }) => (
       <span className="text-[#6B6459]">{getValue()}</span>
     ),
   }),
-  columnHelper.accessor("idBovine", {
+  // 👇 BOVINO con nombre
+  columnHelper.accessor("cattleData", {
     header: ({ column }) => (
       <Button
         variant="ghost"
@@ -65,9 +76,14 @@ export const columns = columnHelper.columns([
         <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
       </Button>
     ),
-    cell: ({ getValue }) => (
-      <span className="font-medium text-[#2B2A26]">{getValue() || "-"}</span>
-    ),
+    cell: ({ getValue }) => {
+      const cattle = getValue();
+      return (
+        <span className="font-medium text-[#2B2A26]">
+          {cattle?.name ?? "Sin bovino"}
+        </span>
+      );
+    },
   }),
   columnHelper.accessor("milkingDate", {
     header: "Fecha",
@@ -108,11 +124,21 @@ export const columns = columnHelper.columns([
       );
     },
   }),
-  columnHelper.accessor("idResponsible", {
+  // 👇 RESPONSABLE con nombre + rol
+  columnHelper.accessor("responsibleData", {
     header: "Responsable",
-    cell: ({ getValue }) => (
-      <span className="text-[#2B2A26]">{getValue() || "-"}</span>
-    ),
+    cell: ({ getValue }) => {
+      const responsible = getValue();
+      if (!responsible) return <span className="text-[#6B6459]">-</span>;
+      return (
+        <div className="flex flex-col">
+          <span className="text-[#2B2A26] font-medium">
+            {responsible.fullName}
+          </span>
+          <span className="text-xs text-[#6B6459]">{responsible.role}</span>
+        </div>
+      );
+    },
   }),
   columnHelper.accessor("observations", {
     header: "Observaciones",

@@ -2,13 +2,13 @@
     const db = require('../config/conectionDB');
 
     const treatment = db.define('treatment', {
-        id: {
+        id_treatment: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true
         },
-        idBovine: { // Bovino tratado
-            type: DataTypes.STRING,
+        id_Bovine: { // Bovino tratado
+            type: DataTypes.INTEGER,
             allowNull: false
         },
         treatment_date: { // Fecha del tratamiento
@@ -40,8 +40,12 @@
             allowNull: true
         },
         idResponsible: { // Nombre del responsable del tratamiento aplicado
-            type: DataTypes.STRING,
-            allowNull: false
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'responsibles',
+                key: 'idResponsible'
+            }
         },
         createdAt: { // Fecha de creación del registro
             type: DataTypes.DATE,

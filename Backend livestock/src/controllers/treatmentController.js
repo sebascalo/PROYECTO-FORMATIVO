@@ -26,9 +26,9 @@ const getAllTreatments = async (req, res) => {
 
 const getAllTreatmentsById = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id_treatment } = req.params;
         var errors = [];
-        if (!id) {
+        if (!id_treatment) {
             errors.push("El ID del tratamiento es obligatorio");
         }
         if (errors.length > 0) {
@@ -37,8 +37,8 @@ const getAllTreatmentsById = async (req, res) => {
             res.json(response.json);
             return;
         }
-        const treatment = await getTreatmentById(id)
-        var response = new Response(`Tratamiento ${id} obtenido exitosamente`, treatment, null);
+        const treatment = await getTreatmentById(id_treatment);
+        var response = new Response(`Tratamiento ${id_treatment} obtenido exitosamente`, treatment, null);
         res.status(201);
         res.json(response.json);
     } catch (error) {
@@ -53,32 +53,33 @@ const getAllTreatmentsById = async (req, res) => {
 
 const createTreatment = async (req, res) => {
     try {
-        const { idBovine, treatment_date, medication_used, applied_dose, application_route, associated_diagnosis, treatment_duration, observations, idResponsible } = req.body;
+        console.log("📥 [BACK] Body recibido:", req.body);
+        const { id_Bovine, treatment_date, medication_used, applied_dose, application_route, associated_diagnosis, treatment_duration, observations, idResponsible } = req.body;
         var errors = [];
         
         // Validaciones
-        if (!idBovine || idBovine.trim() === "") {
+        if (!id_Bovine || String(id_Bovine).trim() === "") {
             errors.push("La identificación del bovino es obligatoria");
         }
-        if (!treatment_date || treatment_date.trim() === "") {
+        if (!treatment_date || String(treatment_date).trim() === "") {
             errors.push("La fecha del tratamiento es obligatoria");
         }
-        if (!medication_used || medication_used.trim() === "") {
+        if (!medication_used || String(medication_used).trim() === "") {
             errors.push("El medicamento utilizado es obligatorio");
         }
-        if (!applied_dose || applied_dose.trim() === "") {
+        if (!applied_dose || String(applied_dose).trim() === "") {
             errors.push("La dosis aplicada es obligatoria");
         }
-        if (!application_route || application_route.trim() === "") {
+        if (!application_route || String(application_route).trim() === "") {
             errors.push("La vía de administración es obligatoria");
         }
-        if (!associated_diagnosis || associated_diagnosis.trim() === "") {
+        if (!associated_diagnosis || String(associated_diagnosis).trim() === "") {
             errors.push("El diagnóstico asociado es obligatorio");
         }
-        if (!treatment_duration || treatment_duration.trim() === "") {
+        if (!treatment_duration || String(treatment_duration).trim() === "") {
             errors.push("La duración del tratamiento es obligatoria");
         }
-        if (!idResponsible || idResponsible.trim() === "") {
+        if (!idResponsible || String(idResponsible).trim() === "") {
             errors.push("El responsable del tratamiento es obligatorio");
         }
 
@@ -89,8 +90,9 @@ const createTreatment = async (req, res) => {
             return;
         }
         
-        data = { idBovine, treatment_date, medication_used, applied_dose, application_route, associated_diagnosis, treatment_duration, observations, idResponsible }
-        const treatment = await treatmentCreate(data)
+        const data = { id_Bovine, treatment_date, medication_used, applied_dose, application_route, associated_diagnosis, treatment_duration, observations, idResponsible };
+        console.log("📥 [BACK] data a guardar:", data);
+        const treatment = await treatmentCreate(data);
         var response = new Response("Tratamiento creado exitosamente", treatment, null);
         res.status(201);
         res.json(response.json);
@@ -106,36 +108,35 @@ const createTreatment = async (req, res) => {
 
 const updateTreatment = async (req, res) => {
     try {
-        const { id } = req.params;
-        const { idBovine, treatment_date, medication_used, applied_dose, application_route, associated_diagnosis, treatment_duration, observations, idResponsible } = req.body;
+        const { id_treatment } = req.params;
+        const { id_Bovine, treatment_date, medication_used, applied_dose, application_route, associated_diagnosis, treatment_duration, observations, idResponsible } = req.body;
         var errors = [];
         
-        // Validaciones
-        if (!id) {
+        if (!id_treatment) {
             errors.push("El ID del tratamiento es obligatorio");
         }
-        if (!idBovine || idBovine.trim() === "") {
+        if (!id_Bovine || String(id_Bovine).trim() === "") {
             errors.push("La identificación del bovino es obligatoria");
         }
-        if (!treatment_date || treatment_date.trim() === "") {
+        if (!treatment_date || String(treatment_date).trim() === "") {
             errors.push("La fecha del tratamiento es obligatoria");
         }
-        if (!medication_used || medication_used.trim() === "") {
+        if (!medication_used || String(medication_used).trim() === "") {
             errors.push("El medicamento utilizado es obligatorio");
         }
-        if (!applied_dose || applied_dose.trim() === "") {
+        if (!applied_dose || String(applied_dose).trim() === "") {
             errors.push("La dosis aplicada es obligatoria");
         }
-        if (!application_route || application_route.trim() === "") {
+        if (!application_route || String(application_route).trim() === "") {
             errors.push("La vía de administración es obligatoria");
         }
-        if (!associated_diagnosis || associated_diagnosis.trim() === "") {
+        if (!associated_diagnosis || String(associated_diagnosis).trim() === "") {
             errors.push("El diagnóstico asociado es obligatorio");
         }
-        if (!treatment_duration || treatment_duration.trim() === "") {
+        if (!treatment_duration || String(treatment_duration).trim() === "") {
             errors.push("La duración del tratamiento es obligatoria");
         }
-        if (!idResponsible || idResponsible.trim() === "") {
+        if (!idResponsible || String(idResponsible).trim() === "") {
             errors.push("El responsable del tratamiento es obligatorio");
         }
 
@@ -146,9 +147,9 @@ const updateTreatment = async (req, res) => {
             return;
         }
         
-        data = { idBovine, treatment_date, medication_used, applied_dose, application_route, associated_diagnosis, treatment_duration, observations, idResponsible }
-        const treatment = await treatmentUpdate(id, data)
-        var response = new Response(`Tratamiento ${id} actualizado exitosamente`, treatment, null);
+        const data = { id_Bovine, treatment_date, medication_used, applied_dose, application_route, associated_diagnosis, treatment_duration, observations, idResponsible };
+        const treatment = await treatmentUpdate(id_treatment, data);
+        var response = new Response(`Tratamiento ${id_treatment} actualizado exitosamente`, treatment, null);
         res.status(200);
         res.json(response.json);
     } catch (error) {
@@ -163,9 +164,9 @@ const updateTreatment = async (req, res) => {
 
 const deleteTreatment = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id_treatment } = req.params;
         var errors = [];
-        if (!id) {
+        if (!id_treatment) {
             errors.push("El ID del tratamiento es obligatorio");
         }
         if (errors.length > 0) {
@@ -174,8 +175,8 @@ const deleteTreatment = async (req, res) => {
             res.json(response.json);
             return;
         }
-        const treatment = await treatmentDelete(id)
-        var response = new Response(`Tratamiento ${id} eliminado exitosamente`, { id }, null);
+        const treatment = await treatmentDelete(id_treatment);
+        var response = new Response(`Tratamiento ${id_treatment} eliminado exitosamente`, { id_treatment }, null);
         res.status(201);
         res.json(response.json);
     } catch (error) {

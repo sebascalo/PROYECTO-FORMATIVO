@@ -26,9 +26,9 @@ const getAllPastures = async (req, res) => {
 
 const getAllPasturesById = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id_pasture } = req.params;
         var errors = [];
-        if (!id) {
+        if (!id_pasture) {
             errors.push("El ID del potrero es obligatorio");
         }
         if (errors.length > 0) {
@@ -37,8 +37,8 @@ const getAllPasturesById = async (req, res) => {
             res.json(response.json);
             return;
         }
-        const pasture = await getPastureById(id)
-        var response = new Response(`Potrero ${id} obtenido exitosamente`, pasture, null);
+        const pasture = await getPastureById(id_pasture);
+        var response = new Response(`Potrero ${id_pasture} obtenido exitosamente`, pasture, null);
         res.status(201);
         res.json(response.json);
     } catch (error) {
@@ -109,12 +109,12 @@ const createPasture = async (req, res) => {
 
 const updatePasture = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id_pasture } = req.params;
         const { name, extension, forageCapacity, pastureType, cattleEntryDate, cattleExitDate, currentStatus, lastChemicalApplication } = req.body;
         
         var errors = [];
         // Validaciones
-        if (!id) {
+        if (!id_pasture) {
             errors.push("El ID del potrero es obligatorio");
         }
         if (!name || name.trim() === "") {
@@ -151,8 +151,8 @@ const updatePasture = async (req, res) => {
             lastChemicalApplication 
         };
 
-        const pasture = await pastureUpdate(id, data)
-        var response = new Response(`Potrero ${id} actualizado exitosamente`, pasture, null);
+        const pasture = await pastureUpdate(id_pasture, data)
+        var response = new Response(`Potrero ${id_pasture} actualizado exitosamente`, pasture, null);
         res.status(200);
         res.json(response.json);
     } catch (error) {
@@ -167,9 +167,9 @@ const updatePasture = async (req, res) => {
 
 const deletePasture = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id_pasture } = req.params;
         var errors = [];
-        if (!id) {
+        if (!id_pasture) {
             errors.push("El ID del potrero es obligatorio");
         }
         if (errors.length > 0) {
@@ -178,9 +178,9 @@ const deletePasture = async (req, res) => {
             res.json(response.json);
             return;
         }
-        data = { id }
-        const pasture = await pastureDelete(id)
-        var response = new Response(`Potrero ${id} eliminado exitosamente`, { id }, null);
+        data = { id_pasture }
+        const pasture = await pastureDelete(id_pasture)
+        var response = new Response(`Potrero ${id_pasture} eliminado exitosamente`, { id_pasture }, null);
         res.status(201);
         res.json(response.json);
     } catch (error) {

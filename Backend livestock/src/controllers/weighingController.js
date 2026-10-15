@@ -10,7 +10,6 @@ const getAllWeighings = async (req, res) => {
         const limit = queryLimit ? Number(queryLimit) : 20;
         const offset = queryOffset ? Number(queryOffset) : 0; 
 
-
         const weighings = await weighingsGetAll(limit, offset);
         const response = new Response("Registros de pesajes obtenidos exitosamente", weighings, null);
         res.status(200);
@@ -27,9 +26,9 @@ const getAllWeighings = async (req, res) => {
 
 const getAllWeighingsById = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id_weighing } = req.params;
         var errors = [];
-        if (!id) {
+        if (!id_weighing) {
             errors.push("El ID del pesaje es obligatorio");
         }
         if (errors.length > 0) {
@@ -38,8 +37,8 @@ const getAllWeighingsById = async (req, res) => {
             res.json(response.json);
             return;
         }
-        const weighing = await getWeighingById(id)
-        var response = new Response(`Pesaje ${id} obtenido exitosamente`, weighing, null);
+        const weighing = await getWeighingById(id_weighing);
+        var response = new Response(`Pesaje ${id_weighing} obtenido exitosamente`, weighing, null);
         res.status(201);
         res.json(response.json);
     } catch (error) {
@@ -54,29 +53,30 @@ const getAllWeighingsById = async (req, res) => {
 
 const createWeighing = async (req, res) => {
     try {
-        const { idBovine, weighingdate, currentweight, profitorloss, bodycondition, observations, responsible } = req.body;
+        console.log("📥 [BACK] Body recibido:", req.body);
+        const { id_Bovine, weighingdate, currentweight, profitorloss, bodycondition, observations, idResponsible } = req.body;
         var errors = [];
         
         // Validaciones
-        if (!idBovine || idBovine.trim() === "") {
+        if (!id_Bovine || String(id_Bovine).trim() === "") {
             errors.push("El identificador del bovino es obligatoria");
         }
-        if (!weighingdate || weighingdate.trim() === "") {
+        if (!weighingdate || String(weighingdate).trim() === "") {
             errors.push("La fecha del pesaje es obligatoria");
         }
-        if (!currentweight || currentweight.toString().trim() === "" || isNaN(currentweight)) {
+        if (!currentweight || String(currentweight).trim() === "" || isNaN(currentweight)) {
             errors.push("El peso actual es obligatorio y debe ser un número");
         }
-        if (profitorloss && profitorloss.toString().trim() !== "" && isNaN(profitorloss)) {
+        if (profitorloss && String(profitorloss).trim() !== "" && isNaN(profitorloss)) {
             errors.push("La ganancia/pérdida debe ser un número");
         }
-        if (bodycondition && bodycondition.trim() !== "" && !["Delgado", "Normal", "Gordo"].includes(bodycondition)) {
+        if (bodycondition && String(bodycondition).trim() !== "" && !["Delgado", "Normal", "Gordo"].includes(bodycondition)) {
             errors.push("La condición corporal debe ser: Delgado, Normal o Gordo");
         }
         if (observations && observations.length > 255) {
             errors.push("Las observaciones no pueden exceder los 255 caracteres");
         }
-        if (responsible && responsible.trim() === "") {
+        if (idResponsible && String(idResponsible).trim() === "") {
             errors.push("El responsable no puede estar vacío");
         }
 
@@ -87,7 +87,8 @@ const createWeighing = async (req, res) => {
             return;
         }
         
-        data = { idBovine, weighingdate, currentweight, profitorloss, bodycondition, observations, responsible }
+        const data = { id_Bovine, weighingdate, currentweight, profitorloss, bodycondition, observations, idResponsible }
+        console.log("📥 [BACK] data a guardar:", data);
         const weighing = await weighingCreate(data)
         var response = new Response("Pesaje creado exitosamente", weighing, null);
         res.status(201);
@@ -104,33 +105,32 @@ const createWeighing = async (req, res) => {
 
 const updateWeighing = async (req, res) => {
     try {
-        const { id } = req.params;
-        const { idBovine, weighingdate, currentweight, profitorloss, bodycondition, observations, responsible } = req.body;
+        const { id_weighing } = req.params;
+        const { id_Bovine, weighingdate, currentweight, profitorloss, bodycondition, observations, idResponsible } = req.body;
         var errors = [];
         
-        // Validaciones
-        if (!id) {
+        if (!id_weighing) {
             errors.push("El ID del pesaje es obligatorio");
         }
-        if (!idBovine || idBovine.trim() === "") {
+        if (!id_Bovine || String(id_Bovine).trim() === "") {
             errors.push("La identificación del bovino es obligatoria");
         }
-        if (!weighingdate || weighingdate.trim() === "") {
+        if (!weighingdate || String(weighingdate).trim() === "") {
             errors.push("La fecha del pesaje es obligatoria");
         }
-        if (!currentweight || currentweight.toString().trim() === "" || isNaN(currentweight)) {
+        if (!currentweight || String(currentweight).trim() === "" || isNaN(currentweight)) {
             errors.push("El peso actual es obligatorio y debe ser un número");
         }
-        if (profitorloss && profitorloss.toString().trim() !== "" && isNaN(profitorloss)) {
+        if (profitorloss && String(profitorloss).trim() !== "" && isNaN(profitorloss)) {
             errors.push("La ganancia/pérdida debe ser un número");
         }
-        if (bodycondition && bodycondition.trim() !== "" && !["Delgado", "Normal", "Gordo"].includes(bodycondition)) {
+        if (bodycondition && String(bodycondition).trim() !== "" && !["Delgado", "Normal", "Gordo"].includes(bodycondition)) {
             errors.push("La condición corporal debe ser: Delgado, Normal o Gordo");
         }
         if (observations && observations.length > 255) {
             errors.push("Las observaciones no pueden exceder los 255 caracteres");
         }
-        if (responsible && responsible.trim() === "") {
+        if (idResponsible && String(idResponsible).trim() === "") {
             errors.push("El responsable no puede estar vacío");
         }
 
@@ -141,9 +141,9 @@ const updateWeighing = async (req, res) => {
             return;
         }
         
-        data = { idBovine, weighingdate, currentweight, profitorloss, bodycondition, observations, responsible }
-        const weighing = await weighingUpdate(id, data)
-        var response = new Response(`Pesaje ${id} actualizado exitosamente`, weighing, null);
+        const data = { id_Bovine, weighingdate, currentweight, profitorloss, bodycondition, observations, idResponsible }
+        const weighing = await weighingUpdate(id_weighing, data)
+        var response = new Response(`Pesaje ${id_weighing} actualizado exitosamente`, weighing, null);
         res.status(200);
         res.json(response.json);
     } catch (error) {
@@ -158,9 +158,9 @@ const updateWeighing = async (req, res) => {
 
 const deleteWeighing = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id_weighing } = req.params;
         var errors = [];
-        if (!id) {
+        if (!id_weighing) {
             errors.push("El ID del pesaje es obligatorio");
         }
         if (errors.length > 0) {
@@ -169,8 +169,8 @@ const deleteWeighing = async (req, res) => {
             res.json(response.json);
             return;
         }
-        const weighing = await weighingDelete(id)
-        var response = new Response(`Pesaje ${id} eliminado exitosamente`, { id }, null);
+        const weighing = await weighingDelete(id_weighing)
+        var response = new Response(`Pesaje ${id_weighing} eliminado exitosamente`, { id_weighing }, null);
         res.status(201);
         res.json(response.json);
     } catch (error) {

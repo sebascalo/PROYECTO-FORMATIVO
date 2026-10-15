@@ -23,9 +23,9 @@ const nutritionsGetAll = async (limit, offset) => {
 }
 
 // Obtener registro de nutrición por ID
-const getNutritionById = async (id) => {
+const getNutritionById = async (id_nutrition) => {
     try {
-        const nutritionid = await nutrition.findOne({ where: { id } });
+        const nutritionid = await nutrition.findOne({ where: { id_nutrition } });
         return nutritionid;
     } catch (error) {
         console.log(error);
@@ -34,9 +34,9 @@ const getNutritionById = async (id) => {
 }
 
 // Eliminar registro de nutrición
-const nutritionDelete = async (id) => {
+const nutritionDelete = async (id_nutrition) => {
     try {
-        const nutritionDelete = await nutrition.destroy({ where: { id } });
+        const nutritionDelete = await nutrition.destroy({ where: { id_nutrition } });
         return nutritionDelete;
     } catch (error) {
         console.log(error);
@@ -45,9 +45,9 @@ const nutritionDelete = async (id) => {
 }
 
 // Actualizar registro de nutrición
-const nutritionUpdate = async (id, data) => {
+const nutritionUpdate = async (id_nutrition, data) => {
     try {
-        const nutritionToUpdate = await nutrition.findOne({ where: { id } });
+        const nutritionToUpdate = await nutrition.findOne({ where: { id_nutrition } });
         if (!nutritionToUpdate) {
             return null;
         }

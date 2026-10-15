@@ -7,14 +7,33 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { type SharedTableFeatures } from "@/components/ui/data-table-features";
 
+export type CattleData = {
+  id_Bovine: number;
+  name: string;
+};
+
+export type RaceData = {
+  id_race: number;
+  name_race: string;
+};
+
+export type ResponsibleData = {
+  idResponsible: number;
+  fullName: string;
+  role: string;
+};
+
 export type ArtificialInsemination = {
-  id: number | string;
-  idBovine: number | string;
+  id_artifInse: number | string;
+  id_Bovine: number;
   inseminationDate: string;
   semenID: string;
-  raze: string;
+  id_race: number;
   observations: string;
-  idResponsible: string;
+  idResponsible: number;
+  cattleData?: CattleData | null;
+  raceData?: RaceData | null;
+  responsibleData?: ResponsibleData | null;
 };
 
 const formatDate = (dateString?: string | null) => {
@@ -33,13 +52,14 @@ const columnHelper = createColumnHelper<
 >();
 
 export const columns = columnHelper.columns([
-  columnHelper.accessor("id", {
+  columnHelper.accessor("id_artifInse", {
     header: "ID",
     cell: ({ getValue }) => (
       <span className="text-[#6B6459]">{getValue()}</span>
     ),
   }),
-  columnHelper.accessor("idBovine", {
+  // 👇 BOVINO
+  columnHelper.accessor("cattleData", {
     header: ({ column }) => (
       <Button
         variant="ghost"
@@ -50,15 +70,14 @@ export const columns = columnHelper.columns([
         <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
       </Button>
     ),
-    // 🔧 Filtro que convierte a texto para que funcione con números
-    filterFn: (row, columnId, filterValue) => {
-      const value = row.getValue(columnId);
-      if (value === null || value === undefined) return false;
-      return String(value).toLowerCase().includes(String(filterValue).toLowerCase());
+    cell: ({ getValue }) => {
+      const cattle = getValue();
+      return (
+        <span className="font-medium text-[#2B2A26]">
+          {cattle?.name ?? "Sin bovino"}
+        </span>
+      );
     },
-    cell: ({ getValue }) => (
-      <span className="font-medium text-[#2B2A26]">{getValue() || "-"}</span>
-    ),
   }),
   columnHelper.accessor("inseminationDate", {
     header: "Fecha",
@@ -76,17 +95,33 @@ export const columns = columnHelper.columns([
       );
     },
   }),
-  columnHelper.accessor("raze", {
+  // 👇 RAZA
+  columnHelper.accessor("raceData", {
     header: "Raza",
-    cell: ({ getValue }) => (
-      <span className="text-[#2B2A26]">{getValue() || "-"}</span>
-    ),
+    cell: ({ getValue }) => {
+      const race = getValue();
+      return (
+        <span className="text-[#2B2A26]">
+          {race?.name_race ?? "Sin raza"}
+        </span>
+      );
+    },
   }),
-  columnHelper.accessor("idResponsible", {
+  // 👇 RESPONSABLE
+  columnHelper.accessor("responsibleData", {
     header: "Responsable",
-    cell: ({ getValue }) => (
-      <span className="text-[#2B2A26]">{getValue() || "-"}</span>
-    ),
+    cell: ({ getValue }) => {
+      const responsible = getValue();
+      if (!responsible) return <span className="text-[#6B6459]">-</span>;
+      return (
+        <div className="flex flex-col">
+          <span className="text-[#2B2A26] font-medium">
+            {responsible.fullName}
+          </span>
+          <span className="text-xs text-[#6B6459]">{responsible.role}</span>
+        </div>
+      );
+    },
   }),
   columnHelper.accessor("observations", {
     header: "Observaciones",

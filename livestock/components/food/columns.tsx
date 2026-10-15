@@ -9,7 +9,7 @@ import { type SharedTableFeatures } from "@/components/ui/data-table-features";
 
 // Forma de los datos que devuelve tu API (/api/food/FoodAll)
 export type Food = {
-  id: number | string;
+  id_food: number | string;
   food_name: string;
   food_type: string;
   unit_measure: string;
@@ -44,7 +44,7 @@ const formatCurrency = (value?: number | null) => {
 const columnHelper = createColumnHelper<SharedTableFeatures, Food>();
 
 export const columns = columnHelper.columns([
-  columnHelper.accessor("id", {
+  columnHelper.accessor("id_food", {
     header: "ID",
     cell: ({ getValue }) => (
       <span className="text-[#6B6459]">{getValue()}</span>

@@ -19,13 +19,13 @@ router.get("/ResponsibleAll", ValidateToken, getAllResponsibles);
 
 /**
  * @swagger
- * /api/ResponsibleById/{id}:
+ * /api/ResponsibleById/{idResponsible}:
  *   get:
  *     summary: Obtener responsable por ID
  *     description: Retorna un responsable según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: idResponsible
  *         required: true
  *         description: ID del responsable
  *         schema:
@@ -36,7 +36,7 @@ router.get("/ResponsibleAll", ValidateToken, getAllResponsibles);
  */
 
 // Rutas para responsables con id
-router.get("/ResponsibleById/:id", ValidateToken, getAllResponsiblesById);
+router.get("/ResponsibleById/:idResponsible", ValidateToken, getAllResponsiblesById);
 
 /**
  * @swagger
@@ -54,13 +54,13 @@ router.post("/CreateResponsible", ValidateToken, createResponsible);
 
 /**
  * @swagger
- * /api/UpdateResponsible/{id}:
+ * /api/UpdateResponsible/{idResponsible}:
  *   put:
  *     summary: Actualizar responsable
  *     description: Actualiza un responsable según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: idResponsible
  *         required: true
  *         description: ID del responsable
  *         schema:
@@ -71,17 +71,17 @@ router.post("/CreateResponsible", ValidateToken, createResponsible);
  */
 
 // Rutas para actualizar un responsable existente
-router.put("/UpdateResponsible/:id", ValidateToken, updateResponsible);
+router.put("/UpdateResponsible/:idResponsible", ValidateToken, updateResponsible);
 
 /**
  * @swagger
- * /api/DeleteResponsible/{id}:
+ * /api/DeleteResponsible/{idResponsible}:
  *   delete:
  *     summary: Eliminar responsable
  *     description: Elimina un responsable según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: idResponsible
  *         required: true
  *         description: ID del responsable
  *         schema:
@@ -92,6 +92,6 @@ router.put("/UpdateResponsible/:id", ValidateToken, updateResponsible);
  */
 
 // Rutas para eliminar un responsable existente
-router.delete("/DeleteResponsible/:id", ValidateToken, deleteResponsible);
+router.delete("/DeleteResponsible/:idResponsible", ValidateToken, deleteResponsible);
 
 module.exports = router;

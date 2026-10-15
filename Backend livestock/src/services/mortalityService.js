@@ -23,9 +23,9 @@ const mortalitiesGetAll = async (limit, offset) => {
 }
 
 // Obtener registro de mortalidad por ID
-const getMortalityById = async (id) => {
+const getMortalityById = async (id_mortality) => {
     try {
-        const mortalityid = await mortality.findOne({ where: { id } });
+        const mortalityid = await mortality.findOne({ where: { id_mortality } });
         return mortalityid;
     } catch (error) {
         console.log(error);
@@ -34,9 +34,9 @@ const getMortalityById = async (id) => {
 }
 
 // Eliminar registro de mortalidad
-const mortalityDelete = async (id) => {
+const mortalityDelete = async (id_mortality) => {
     try {
-        const mortalityDelete = await mortality.destroy({ where: { id } });
+        const mortalityDelete = await mortality.destroy({ where: { id_mortality } });
         return mortalityDelete;
     } catch (error) {
         console.log(error);
@@ -45,9 +45,9 @@ const mortalityDelete = async (id) => {
 }
 
 // Actualizar registro de mortalidad
-const mortalityUpdate = async (id, data) => {
+const mortalityUpdate = async (id_mortality, data) => {
     try {
-        const mortalityToUpdate = await mortality.findOne({ where: { id } });
+        const mortalityToUpdate = await mortality.findOne({ where: { id_mortality } });
         if (!mortalityToUpdate) {
             return null;
         }

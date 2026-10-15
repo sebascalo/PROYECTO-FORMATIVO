@@ -2,6 +2,11 @@ const { DataTypes } = require('sequelize');
 const db = require('../config/conectionDB');
 
 const pasture = db.define('pasture', {
+    id_pasture: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
     // Nombre del potrero
     name: {
         type: DataTypes.STRING,

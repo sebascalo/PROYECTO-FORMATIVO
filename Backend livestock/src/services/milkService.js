@@ -21,9 +21,9 @@ const milksGetAll = async (limit, offset) => {
     }
 }
 // obtener registro de leche por id
-const getMilkById = async (id) => {
+const getMilkById = async (id_milk) => {
     try {
-        const milkid = await milk.findOne({ where: { id } });
+        const milkid = await milk.findOne({ where: { id_milk } });
         return milkid;
     }catch (error) {
         console.log(error);
@@ -31,9 +31,9 @@ const getMilkById = async (id) => {
     }
 }
 // inactivar registro de leche
-const milkDelete = async (id) => {
+const milkDelete = async (id_milk) => {
     try {
-        const milkDelete = await milk.destroy({ where: { id } });
+        const milkDelete = await milk.destroy({ where: { id_milk } });
         return milkDelete;
     }catch (error) {
         console.log(error);
@@ -41,10 +41,10 @@ const milkDelete = async (id) => {
     }
 }
 // actualizar registro de leche
-const milkUpdate = async (id, data) => {
+const milkUpdate = async (id_milk, data) => {
     try {
         // 1. Buscar el registro de leche
-        const milkToUpdate = await milk.findOne({ where: { id } });
+        const milkToUpdate = await milk.findOne({ where: { id_milk } });
         // 2. Si no existe, retornar null
         if (!milkToUpdate) {
             return null;

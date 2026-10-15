@@ -21,9 +21,9 @@ const pasturesGetAll = async (limit, offset) => {
     }
 }
 // obtener potrero por id
-const getPastureById = async (id) => {
+const getPastureById = async (id_pasture) => {
     try {
-        const pastureid = await pasture.findOne({ where: { id } });
+        const pastureid = await pasture.findOne({ where: { id_pasture } });
         return pastureid;
     }catch (error) {
         console.log(error);
@@ -31,9 +31,9 @@ const getPastureById = async (id) => {
     }
 }
 //inactivar potrero
-const pastureDelete = async (id) => {
+const pastureDelete = async (id_pasture) => {
     try {
-        const pastureDelete = await pasture.destroy({ where: { id } });
+        const pastureDelete = await pasture.destroy({ where: { id_pasture } });
         return pastureDelete;
     }catch (error) {
         console.log(error);
@@ -41,9 +41,9 @@ const pastureDelete = async (id) => {
     }
 }
 // actualizar potrero
-const pastureUpdate = async (id, data) => {
+const pastureUpdate = async (id_pasture, data) => {
     try {
-        const pastureToUpdate = await pasture.findOne({ where: { id } });
+        const pastureToUpdate = await pasture.findOne({ where: { id_pasture } });
         if (!pastureToUpdate) {
             return null;
         }

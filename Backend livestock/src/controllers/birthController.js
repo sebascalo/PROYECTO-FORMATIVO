@@ -26,9 +26,9 @@ const getAllBirths = async (req, res) => {
 
 const getAllBirthsById = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id_birth } = req.params;
         var errors = [];
-        if (!id) {
+        if (!id_birth) {
             errors.push("El ID del nacimiento es obligatorio");
         }
         if (errors.length > 0) {
@@ -37,8 +37,8 @@ const getAllBirthsById = async (req, res) => {
             res.json(response.json);
             return;
         }
-        const birth = await getBirthById(id)
-        var response = new Response(`Nacimiento ${id} obtenido exitosamente`, birth, null);
+        const birth = await getBirthById(id_birth);
+        var response = new Response(`Nacimiento ${id_birth} obtenido exitosamente`, birth, null);
         res.status(201);
         res.json(response.json);
     } catch (error) {
@@ -53,39 +53,36 @@ const getAllBirthsById = async (req, res) => {
 
 const createBirth = async (req, res) => {
     try {
-        const { motheridentification, landidentification, birthdate, sex, race, birthweight, conditionatbirth, observations, responsible, active } = req.body;
+        const { id_Bovine, id_pasture, birthdate, sex, id_race, birthweight, observations, idResponsible, active } = req.body;
         var errors = [];
         
         // Validaciones
-        if (!motheridentification || motheridentification.trim() === "") {
-            errors.push("La identificación de la madre es obligatoria");
+        if (!id_Bovine || String(id_Bovine).trim() === "") {
+            errors.push("La identificación del bovino es obligatoria");
         }
-        if (!landidentification || landidentification.trim() === "") {
+        if (!id_pasture || String(id_pasture).trim() === "") {
             errors.push("La identificación del potrero es obligatoria");
         }
-        if (!birthdate || birthdate.trim() === "") {
+        if (!birthdate || String(birthdate).trim() === "") {
             errors.push("La fecha de nacimiento es obligatoria");
         }
-        if (!sex || sex.trim() === "") {
+        if (!sex || String(sex).trim() === "") {
             errors.push("El sexo del bovino es obligatorio");
         }
         if (sex && !["Macho", "Hembra"].includes(sex)) {
             errors.push("El sexo debe ser Macho o Hembra");
         }
-        if (!race || race.trim() === "") {
-            errors.push("La raza del bovino es obligatoria");
+        if (!id_race || String(id_race).trim() === "") {
+            errors.push("La identificación de la raza es obligatoria");
         }
-        if (!birthweight || birthweight.toString().trim() === "" || isNaN(birthweight)) {
+        if (!birthweight || String(birthweight).trim() === "" || isNaN(birthweight)) {
             errors.push("El peso al nacer es obligatorio y debe ser un número");
         }
         if (birthweight && birthweight <= 0) {
             errors.push("El peso al nacer debe ser mayor a 0");
         }
-        if (!conditionatbirth || conditionatbirth.trim() === "") {
-            errors.push("La condición al nacer es obligatoria");
-        }
-        if (!responsible || responsible.trim() === "") {
-            errors.push("El responsable del registro es obligatorio");
+        if (!idResponsible || String(idResponsible).trim() === "") {
+            errors.push("La identificación del responsable del registro es obligatoria");
         }
 
         if (errors.length > 0) {
@@ -95,7 +92,17 @@ const createBirth = async (req, res) => {
             return;
         }
         
-        data = { motheridentification, landidentification, birthdate, sex, race, birthweight, conditionatbirth, observations, responsible, active }
+        const data = {
+            id_Bovine,
+            id_pasture,
+            birthdate,
+            sex,
+            id_race,
+            birthweight,
+            observations,
+            idResponsible,
+            active: active !== undefined ? active : true
+        };
         const birth = await birthCreate(data)
         var response = new Response("Nacimiento creado exitosamente", birth, null);
         res.status(201);
@@ -112,43 +119,40 @@ const createBirth = async (req, res) => {
 
 const updateBirth = async (req, res) => {
     try {
-        const { id } = req.params;
-        const { motheridentification, landidentification, birthdate, sex, race, birthweight, conditionatbirth, observations, responsible, active } = req.body;
+        const { id_birth } = req.params;
+        const { id_Bovine, id_pasture, birthdate, sex, id_race, birthweight, observations, idResponsible, active } = req.body;
         var errors = [];
         
         // Validaciones
-        if (!id) {
+        if (!id_birth || String(id_birth).trim() === "") {
             errors.push("El ID del nacimiento es obligatorio");
         }
-        if (!motheridentification || motheridentification.trim() === "") {
-            errors.push("La identificación de la madre es obligatoria");
+        if (!id_Bovine || String(id_Bovine).trim() === "") {
+            errors.push("La identificación del bovino es obligatoria");
         }
-        if (!landidentification || landidentification.trim() === "") {
+        if (!id_pasture || String(id_pasture).trim() === "") {
             errors.push("La identificación del potrero es obligatoria");
         }
-        if (!birthdate || birthdate.trim() === "") {
+        if (!birthdate || String(birthdate).trim() === "") {
             errors.push("La fecha de nacimiento es obligatoria");
         }
-        if (!sex || sex.trim() === "") {
+        if (!sex || String(sex).trim() === "") {
             errors.push("El sexo del bovino es obligatorio");
         }
         if (sex && !["Macho", "Hembra"].includes(sex)) {
             errors.push("El sexo debe ser Macho o Hembra");
         }
-        if (!race || race.trim() === "") {
-            errors.push("La raza del bovino es obligatoria");
+        if (!id_race || String(id_race).trim() === "") {
+            errors.push("La identificación de la raza es obligatoria");
         }
-        if (!birthweight || birthweight.toString().trim() === "" || isNaN(birthweight)) {
+        if (!birthweight || String(birthweight).trim() === "" || isNaN(birthweight)) {
             errors.push("El peso al nacer es obligatorio y debe ser un número");
         }
         if (birthweight && birthweight <= 0) {
             errors.push("El peso al nacer debe ser mayor a 0");
         }
-        if (!conditionatbirth || conditionatbirth.trim() === "") {
-            errors.push("La condición al nacer es obligatoria");
-        }
-        if (!responsible || responsible.trim() === "") {
-            errors.push("El responsable del registro es obligatorio");
+        if (!idResponsible || String(idResponsible).trim() === "") {
+            errors.push("La identificación del responsable del registro es obligatoria");
         }
 
         if (errors.length > 0) {
@@ -158,9 +162,19 @@ const updateBirth = async (req, res) => {
             return;
         }
         
-        data = { motheridentification, landidentification, birthdate, sex, race, birthweight, conditionatbirth, observations, responsible, active }
-        const birth = await birthUpdate(id, data)
-        var response = new Response(`Nacimiento ${id} actualizado exitosamente`, birth, null);
+        const data = {
+            id_Bovine,
+            id_pasture,
+            birthdate,
+            sex,
+            id_race,
+            birthweight,
+            observations,
+            idResponsible,
+            active: active !== undefined ? active : true
+        };
+        const birth = await birthUpdate(id_birth, data)
+        var response = new Response(`Nacimiento ${id_birth} actualizado exitosamente`, birth, null);
         res.status(200);
         res.json(response.json);
     } catch (error) {
@@ -175,9 +189,9 @@ const updateBirth = async (req, res) => {
 
 const deleteBirth = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id_birth } = req.params;
         var errors = [];
-        if (!id) {
+        if (!id_birth || String(id_birth).trim() === "") {
             errors.push("El ID del nacimiento es obligatorio");
         }
         if (errors.length > 0) {
@@ -186,8 +200,8 @@ const deleteBirth = async (req, res) => {
             res.json(response.json);
             return;
         }
-        const birth = await birthDelete(id)
-        var response = new Response(`Nacimiento ${id} eliminado exitosamente`, { id }, null);
+        const birth = await birthDelete(id_birth)
+        var response = new Response(`Nacimiento ${id_birth} eliminado exitosamente`, { id_birth }, null);
         res.status(201);
         res.json(response.json);
     } catch (error) {

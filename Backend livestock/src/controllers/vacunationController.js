@@ -16,7 +16,6 @@ const getAllVacunations = async (req, res) => {
         const limit = queryLimit ? Number(queryLimit) : 20;
         const offset = queryOffset ? Number(queryOffset) : 0; 
 
-
         const vacunations = await vacunationsGetAll(limit, offset);
         const response = new Response("Registros de vacunaciones obtenidos exitosamente", vacunations, null);
         res.status(200);
@@ -34,10 +33,10 @@ const getAllVacunations = async (req, res) => {
 // Obtener una vacunación por ID
 const getAllVacunationsById = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id_vacunation } = req.params;
         var errors = [];
         
-        if (!id) {
+        if (!id_vacunation) {
             errors.push("El ID de la vacunación es obligatorio");
         }
         
@@ -48,8 +47,8 @@ const getAllVacunationsById = async (req, res) => {
             return;
         }
         
-        const vacunation = await getVacunationById(id);
-        var response = new Response(`Vacunación ${id} obtenida exitosamente`, vacunation, null);
+        const vacunation = await getVacunationById(id_vacunation);
+        var response = new Response(`Vacunación ${id_vacunation} obtenida exitosamente`, vacunation, null);
         res.status(200);
         res.json(response.json);
     } catch (error) {
@@ -65,13 +64,13 @@ const getAllVacunationsById = async (req, res) => {
 // Crear una nueva vacunación
 const createVacunation = async (req, res) => {
     try {
+        console.log("📥 [BACK] Body recibido:", req.body);
         const { 
-            idBovine, 
+            id_Bovine, 
             vaccination_date, 
             applied_dose, 
-            vaccine_lot,        // CAMBIADO: application_site → vaccine_lot
-            medicine_name,      // NUEVO CAMPO
-            application_condition, 
+            vaccine_lot,
+            medicine_name,
             idResponsible, 
             observations 
         } = req.body;
@@ -79,31 +78,27 @@ const createVacunation = async (req, res) => {
         var errors = [];
 
         // Validaciones
-        if (!idBovine || idBovine.trim() === "") {
+        if (!id_Bovine || String(id_Bovine).trim() === "") {
             errors.push("El identificador del bovino es obligatorio");
         }
-        if (!vaccination_date || vaccination_date.trim() === "") {
+        if (!vaccination_date || String(vaccination_date).trim() === "") {
             errors.push("La fecha de vacunación es obligatoria");
         }
-        if (!applied_dose || applied_dose.trim() === "") {
+        if (!applied_dose || String(applied_dose).trim() === "") {
             errors.push("La dosis aplicada es obligatoria");
         }
-        if (!vaccine_lot || vaccine_lot.trim() === "") {  // CAMBIADO
+        if (!vaccine_lot || String(vaccine_lot).trim() === "") {
             errors.push("El lote de la vacuna es obligatorio");
         }
-        if (!medicine_name || medicine_name.trim() === "") {  // NUEVA VALIDACIÓN
+        if (!medicine_name || String(medicine_name).trim() === "") {
             errors.push("El nombre del medicamento es obligatorio");
         }
-        if (!application_condition || application_condition.trim() === "") {
-            errors.push("La condición de aplicación es obligatoria");
-        }
-        if (!idResponsible || idResponsible.trim() === "") {
+        if (!idResponsible || String(idResponsible).trim() === "") {
             errors.push("El responsable es obligatorio");
         }
         if (observations && observations.length > 255) {
             errors.push("Las observaciones no pueden exceder los 255 caracteres");
         }
-        // Validación adicional para medicine_name
         if (medicine_name && medicine_name.length > 100) {
             errors.push("El nombre del medicamento no puede exceder los 100 caracteres");
         }
@@ -119,15 +114,15 @@ const createVacunation = async (req, res) => {
         }
 
         const data = { 
-            idBovine, 
+            id_Bovine, 
             vaccination_date, 
             applied_dose, 
-            vaccine_lot,        // CAMBIADO
-            medicine_name,      // NUEVO CAMPO
-            application_condition, 
+            vaccine_lot,
+            medicine_name,
             idResponsible, 
             observations 
         };
+        console.log("📥 [BACK] data a guardar:", data);
         
         const vacunation = await vacunationCreate(data);
         var response = new Response("Vacunación creada exitosamente", vacunation, null);
@@ -146,54 +141,42 @@ const createVacunation = async (req, res) => {
 // Actualizar una vacunación
 const updateVacunation = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id_vacunation } = req.params;
         const { 
-            idBovine, 
+            id_Bovine, 
             vaccination_date, 
             applied_dose, 
-            vaccine_lot,        // CAMBIADO: application_site → vaccine_lot
-            medicine_name,      // NUEVO CAMPO
-            application_condition, 
+            vaccine_lot,
+            medicine_name,
             idResponsible, 
             observations 
         } = req.body;
         
         var errors = [];
 
-        // Validaciones
-        if (!id) {
+        if (!id_vacunation) {
             errors.push("El ID de la vacunación es obligatorio");
         }
-        if (!idBovine || idBovine.trim() === "") {
+        if (!id_Bovine || String(id_Bovine).trim() === "") {
             errors.push("El identificador del bovino es obligatorio");
         }
-        if (!vaccination_date || vaccination_date.trim() === "") {
+        if (!vaccination_date || String(vaccination_date).trim() === "") {
             errors.push("La fecha de vacunación es obligatoria");
         }
-        if (!applied_dose || applied_dose.trim() === "") {
+        if (!applied_dose || String(applied_dose).trim() === "") {
             errors.push("La dosis aplicada es obligatoria");
         }
-        if (!vaccine_lot || vaccine_lot.trim() === "") {  // CAMBIADO
+        if (!vaccine_lot || String(vaccine_lot).trim() === "") {
             errors.push("El lote de la vacuna es obligatorio");
         }
-        if (!medicine_name || medicine_name.trim() === "") {  // NUEVA VALIDACIÓN
+        if (!medicine_name || String(medicine_name).trim() === "") {
             errors.push("El nombre del medicamento es obligatorio");
         }
-        if (!application_condition || application_condition.trim() === "") {
-            errors.push("La condición de aplicación es obligatoria");
-        }
-        if (!idResponsible || idResponsible.trim() === "") {
+        if (!idResponsible || String(idResponsible).trim() === "") {
             errors.push("El responsable es obligatorio");
         }
         if (observations && observations.length > 255) {
             errors.push("Las observaciones no pueden exceder los 255 caracteres");
-        }
-        // Validación adicional para medicine_name
-        if (medicine_name && medicine_name.length > 100) {
-            errors.push("El nombre del medicamento no puede exceder los 100 caracteres");
-        }
-        if (vaccine_lot && vaccine_lot.length > 50) {
-            errors.push("El lote de la vacuna no puede exceder los 50 caracteres");
         }
 
         if (errors.length > 0) {
@@ -204,18 +187,17 @@ const updateVacunation = async (req, res) => {
         }
 
         const data = { 
-            idBovine, 
+            id_Bovine, 
             vaccination_date, 
             applied_dose, 
-            vaccine_lot,        // CAMBIADO
-            medicine_name,      // NUEVO CAMPO
-            application_condition, 
+            vaccine_lot,
+            medicine_name,
             idResponsible, 
             observations 
         };
         
-        const vacunation = await vacunationUpdate(id, data);
-        var response = new Response(`Vacunación ${id} actualizada exitosamente`, vacunation, null);
+        const vacunation = await vacunationUpdate(id_vacunation, data);
+        var response = new Response(`Vacunación ${id_vacunation} actualizada exitosamente`, vacunation, null);
         res.status(200);
         res.json(response.json);
     } catch (error) {
@@ -231,10 +213,10 @@ const updateVacunation = async (req, res) => {
 // Eliminar una vacunación
 const deleteVacunation = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id_vacunation } = req.params;
         var errors = [];
         
-        if (!id) {
+        if (!id_vacunation) {
             errors.push("El ID de la vacunación es obligatorio");
         }
         
@@ -245,8 +227,8 @@ const deleteVacunation = async (req, res) => {
             return;
         }
         
-        await vacunationDelete(id);
-        var response = new Response(`Vacunación ${id} eliminada exitosamente`, { id }, null);
+        await vacunationDelete(id_vacunation);
+        var response = new Response(`Vacunación ${id_vacunation} eliminada exitosamente`, { id_vacunation }, null);
         res.status(200);
         res.json(response.json);
     } catch (error) {

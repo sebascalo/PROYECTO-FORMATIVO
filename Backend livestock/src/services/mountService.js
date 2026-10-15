@@ -23,9 +23,9 @@ const mountsGetAll = async (limit, offset) => {
 }
 
 // Obtener monta natural por ID
-const getMountById = async (id) => {
+const getMountById = async (id_mount) => {
     try {
-        const mountid = await mount.findOne({ where: { id } });
+        const mountid = await mount.findOne({ where: { id_mount } });
         return mountid;
     } catch (error) {
         console.log(error);
@@ -34,9 +34,9 @@ const getMountById = async (id) => {
 }
 
 // Eliminar monta natural
-const mountDelete = async (id) => {
+const mountDelete = async (id_mount) => {
     try {
-        const mountDelete = await mount.destroy({ where: { id } });
+        const mountDelete = await mount.destroy({ where: { id_mount } });
         return mountDelete;
     } catch (error) {
         console.log(error);
@@ -45,9 +45,9 @@ const mountDelete = async (id) => {
 }
 
 // Actualizar monta natural
-const mountUpdate = async (id, data) => {
+const mountUpdate = async (id_mount, data) => {
     try {
-        const mountToUpdate = await mount.findOne({ where: { id } });
+        const mountToUpdate = await mount.findOne({ where: { id_mount } });
         if (!mountToUpdate) {
             return null;
         }

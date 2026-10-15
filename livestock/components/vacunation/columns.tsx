@@ -4,20 +4,31 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { type SharedTableFeatures } from "@/components/ui/data-table-features";
 
-// Forma de los datos que devuelve tu API (/api/vacunation/VacunationAll)
+// 👇 Tipos del JOIN
+export type CattleData = {
+  id_Bovine: number;
+  name: string;
+};
+
+export type ResponsibleData = {
+  idResponsible: number;
+  fullName: string;
+  role: string;
+};
+
 export type Vacunation = {
-  id: number | string;
-  idBovine: string;
+  id_vacunation: number | string;
+  id_Bovine: number;
   vaccination_date: string;
   applied_dose: string;
   vaccine_lot: string;
   medicine_name: string;
-  application_condition: string;
-  idResponsible: string;
+  idResponsible: number;
   observations: string;
+  cattleData?: CattleData | null;
+  responsibleData?: ResponsibleData | null;
 };
 
 const formatDate = (dateString?: string | null) => {
@@ -30,25 +41,17 @@ const formatDate = (dateString?: string | null) => {
   });
 };
 
-// Colores por condición de aplicación
-const conditionStyles: Record<string, string> = {
-  Sana: "bg-[#4B6043] text-white hover:bg-[#405539]",
-  Enferma: "bg-[#A9744F] text-white hover:bg-[#94623F]",
-  Gestante: "bg-[#8C8266] text-white hover:bg-[#77704F]",
-  Lactante: "bg-[#8C8266] text-white hover:bg-[#77704F]",
-  Recuperación: "bg-[#6B6459] text-white hover:bg-[#5A5449]",
-};
-
 const columnHelper = createColumnHelper<SharedTableFeatures, Vacunation>();
 
 export const columns = columnHelper.columns([
-  columnHelper.accessor("id", {
+  columnHelper.accessor("id_vacunation", {
     header: "ID",
     cell: ({ getValue }) => (
       <span className="text-[#6B6459]">{getValue()}</span>
     ),
   }),
-  columnHelper.accessor("idBovine", {
+  // 👇 BOVINO con nombre
+  columnHelper.accessor("cattleData", {
     header: ({ column }) => (
       <Button
         variant="ghost"
@@ -59,9 +62,14 @@ export const columns = columnHelper.columns([
         <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
       </Button>
     ),
-    cell: ({ getValue }) => (
-      <span className="font-medium text-[#2B2A26]">{getValue() || "-"}</span>
-    ),
+    cell: ({ getValue }) => {
+      const cattle = getValue();
+      return (
+        <span className="font-medium text-[#2B2A26]">
+          {cattle?.name ?? "Sin bovino"}
+        </span>
+      );
+    },
   }),
   columnHelper.accessor("vaccination_date", {
     header: "Fecha",
@@ -70,9 +78,7 @@ export const columns = columnHelper.columns([
   columnHelper.accessor("applied_dose", {
     header: "Dosis",
     cell: ({ getValue }) => (
-      <span className="text-[#2B2A26] tabular-nums">
-        {getValue() || "-"}
-      </span>
+      <span className="text-[#2B2A26] tabular-nums">{getValue() || "-"}</span>
     ),
   }),
   columnHelper.accessor("vaccine_lot", {
@@ -87,25 +93,21 @@ export const columns = columnHelper.columns([
       <span className="text-[#2B2A26]">{getValue() || "-"}</span>
     ),
   }),
-  columnHelper.accessor("application_condition", {
-    header: "Condición",
+  // 👇 RESPONSABLE con nombre + rol
+  columnHelper.accessor("responsibleData", {
+    header: "Responsable",
     cell: ({ getValue }) => {
-      const value = getValue();
-      if (!value) return <span className="text-[#6B6459]">-</span>;
+      const responsible = getValue();
+      if (!responsible) return <span className="text-[#6B6459]">-</span>;
       return (
-        <Badge
-          className={conditionStyles[value] ?? "bg-[#8C8266] text-white"}
-        >
-          {value}
-        </Badge>
+        <div className="flex flex-col">
+          <span className="text-[#2B2A26] font-medium">
+            {responsible.fullName}
+          </span>
+          <span className="text-xs text-[#6B6459]">{responsible.role}</span>
+        </div>
       );
     },
-  }),
-  columnHelper.accessor("idResponsible", {
-    header: "Responsable",
-    cell: ({ getValue }) => (
-      <span className="text-[#2B2A26]">{getValue() || "-"}</span>
-    ),
   }),
   columnHelper.accessor("observations", {
     header: "Observaciones",

@@ -9,7 +9,7 @@ import { type SharedTableFeatures } from "@/components/ui/data-table-features";
 
 // Forma de los datos que devuelve tu API (/api/pasture/PastureAll)
 export type Pasture = {
-  id: number | string;
+  id_pasture: number | string;
   name: string;
   extension: number;
   forageCapacity: number;
@@ -46,7 +46,7 @@ const pastureTypeStyles: Record<string, string> = {
 const columnHelper = createColumnHelper<SharedTableFeatures, Pasture>();
 
 export const columns = columnHelper.columns([
-  columnHelper.accessor("id", {
+  columnHelper.accessor("id_pasture", {
     header: "ID",
     cell: ({ getValue }) => (
       <span className="text-[#6B6459]">{getValue()}</span>

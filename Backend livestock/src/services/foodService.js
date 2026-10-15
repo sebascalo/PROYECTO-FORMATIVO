@@ -23,9 +23,9 @@ const foodsGetAll = async (limit, offset) => {
 }
 
 // Obtener alimento por ID
-const getFoodById = async (id) => {
+const getFoodById = async (id_food) => {
     try {
-        const foodid = await food.findOne({ where: { id } });
+        const foodid = await food.findOne({ where: { id_food } });
         return foodid;
     } catch (error) {
         console.log(error);
@@ -34,9 +34,9 @@ const getFoodById = async (id) => {
 }
 
 // Eliminar alimento
-const foodDelete = async (id) => {
+const foodDelete = async (id_food) => {
     try {
-        const foodDelete = await food.destroy({ where: { id } });
+        const foodDelete = await food.destroy({ where: { id_food } });
         return foodDelete;
     } catch (error) {
         console.log(error);
@@ -45,9 +45,9 @@ const foodDelete = async (id) => {
 }
 
 // Actualizar alimento
-const foodUpdate = async (id, data) => {
+const foodUpdate = async (id_food, data) => {
     try {
-        const foodToUpdate = await food.findOne({ where: { id } });
+        const foodToUpdate = await food.findOne({ where: { id_food } });
         if (!foodToUpdate) {
             return null;
         }

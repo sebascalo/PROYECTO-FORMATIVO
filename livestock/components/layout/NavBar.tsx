@@ -12,11 +12,11 @@ export default function NavBar() {
   };
 
   return (
-    <nav className="h-[70px] relative w-full px-2 md:px-6 lg:px-10 xl:px-16 flex items-center justify-between z-30 bg-gradient-to-r from-[#2B7FFF] to-[#1448E6]">
+    <nav className="h-[70px] relative w-full px-2 md:px-6 lg:px-10 xl:px-2 flex items-center justify-between z-30 bg-slate-50 border-b border-slate-200 shadow-sm">
       <div className="flex items-center gap-1">
         <Image src={logo} alt="Logo" width={50} height={50} />
         <Link href="/" className="flex items-center gap-1">
-          <span className="text-white font-bold text-3xl tracking-wide cursor-pointer">
+          <span className="text-[#2B7FFF] font-bold text-3xl tracking-wide cursor-pointer">
             Livestock
           </span>
         </Link>
@@ -24,15 +24,18 @@ export default function NavBar() {
 
       {/* desktop menu */}
       <div className="hidden sm:flex items-center gap-8">
-        <ul className="text-white md:flex hidden items-center gap-10">
+        <ul className="text-slate-800 md:flex hidden items-center gap-10">
           <li>
-            <Link className="text-white" href="/">
+            <Link
+              className="text-slate-800 hover:text-[#2B7FFF] transition-colors duration-200"
+              href="/"
+            >
               Inicio
             </Link>
           </li>
           <li>
             <Link
-              className="text-white"
+              className="text-slate-800 hover:text-[#2B7FFF] transition-colors duration-200"
               href="/Contacto"
             >
               Contacto
@@ -40,7 +43,7 @@ export default function NavBar() {
           </li>
           <li>
             <Link
-              className="text-white"
+              className="text-slate-800 hover:text-[#2B7FFF] transition-colors duration-200"
               href="/Nosotros"
             >
               Nosotros
@@ -49,7 +52,7 @@ export default function NavBar() {
         </ul>
         <Login
           Textbutton="Iniciar sesión"
-          style="cursor-pointer bg-white text-black w-40 h-11 rounded-full hover:bg-blue-900 hover:text-white transition-colors duration-300"
+          style="cursor-pointer bg-[#2B7FFF] text-white w-40 h-11 rounded-full hover:bg-[#1E63CC] transition-colors duration-300"
         />
       </div>
 
@@ -65,7 +68,7 @@ export default function NavBar() {
           width="30"
           height="30"
           viewBox="0 0 30 30"
-          fill="#ffffff"
+          fill="#2B7FFF"
         >
           <path d="M3 7a1 1 0 1 0 0 2h24a1 1 0 1 0 0-2zm0 7a1 1 0 1 0 0 2h24a1 1 0 1 0 0-2zm0 7a1 1 0 1 0 0 2h24a1 1 0 1 0 0-2z" />
         </svg>
@@ -73,18 +76,21 @@ export default function NavBar() {
 
       {/* mobile menu dropdown */}
       <div
-        className={`${openMenu ? "flex" : "hidden"} absolute top-[70px] left-0 w-full bg-gradient-to-r from-[#2B7FFF] to-[#1448E6] p-6 md:hidden`}
+        className={`${openMenu ? "flex" : "hidden"} absolute top-[70px] left-0 w-full bg-slate-50 shadow-lg border-b border-slate-200 p-6 md:hidden`}
       >
-        <ul className="flex flex-col space-y-4 text-white text-lg">
+        <ul className="flex flex-col space-y-4 text-slate-800 text-lg w-full">
           <li>
-            <Link href="/" className="text-sm">
+            <Link
+              href="/"
+              className="text-slate-800 hover:text-[#2B7FFF] transition-colors duration-200"
+            >
               Inicio
             </Link>
           </li>
           <li>
             <Link
               href="/Contacto"
-              className="text-sm"
+              className="text-slate-800 hover:text-[#2B7FFF] transition-colors duration-200"
             >
               Contacto
             </Link>
@@ -92,15 +98,17 @@ export default function NavBar() {
           <li>
             <Link
               href="/Nosotros"
-              className="text-sm"
+              className="text-slate-800 hover:text-[#2B7FFF] transition-colors duration-200"
             >
               Nosotros
             </Link>
           </li>
-          <Login
-            Textbutton="Iniciar sesión"
-            style="cursor-pointer bg-white text-black w-40 h-11 rounded-full hover:bg-blue-900 hover:text-white transition-colors duration-300"
-          />
+          <li>
+            <Login
+              Textbutton="Iniciar sesión"
+              style="cursor-pointer bg-[#2B7FFF] text-white w-40 h-11 rounded-full hover:bg-[#1E63CC] transition-colors duration-300"
+            />
+          </li>
         </ul>
       </div>
     </nav>

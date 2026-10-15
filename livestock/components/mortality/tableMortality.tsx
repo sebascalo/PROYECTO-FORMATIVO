@@ -8,17 +8,74 @@ interface TableMortalityProps {
   actions?: React.ReactNode;
 }
 
+// 👇 Tipos mínimos para los catálogos
+interface Cattle {
+  id_Bovine: number;
+  name: string;
+}
+
+interface Responsible {
+  idResponsible: number;
+  fullName: string;
+  role: string;
+}
+
 export default function TableMortality({ actions }: TableMortalityProps) {
   const [mortalidades, setMortalidades] = useState<Mortality[]>([]);
 
   useEffect(() => {
     const fetchMortalidades = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:3000/api/mortality/MortalityAll",
-        );
-        const resJson = await response.json();
-        setMortalidades(resJson.info ?? []);
+        const token = localStorage.getItem("token");
+        const headers = { Authorization: `Bearer ${token}` };
+
+        // 👇 3 fetch en paralelo
+        const [mortalityRes, cattleRes, responsibleRes] = await Promise.all([
+          fetch("http://localhost:3000/api/mortality/MortalityAll", { headers }),
+          fetch("http://localhost:3000/api/cattle/CattleAll?limit=500", {
+            headers,
+          }),
+          fetch(
+            "http://localhost:3000/api/responsible/ResponsibleAll?limit=500",
+            { headers },
+          ),
+        ]);
+
+        const [mortalityJson, cattleJson, responsibleJson] = await Promise.all([
+          mortalityRes.json(),
+          cattleRes.json(),
+          responsibleRes.json(),
+        ]);
+
+        const mortalityList: Mortality[] = mortalityJson.info ?? [];
+        const cattles: Cattle[] = cattleJson.info ?? [];
+        const responsibles: Responsible[] = responsibleJson.info ?? [];
+
+        // 👇 "JOIN en memoria"
+        const mortalidadesFormatted: Mortality[] = mortalityList.map((m) => {
+          const cattle = cattles.find(
+            (c) => String(c.id_Bovine) === String(m.id_Bovine),
+          );
+          const responsible = responsibles.find(
+            (r) => r.idResponsible === m.idResponsible,
+          );
+
+          return {
+            ...m,
+            cattleData: cattle
+              ? { id_Bovine: cattle.id_Bovine, name: cattle.name }
+              : null,
+            responsibleData: responsible
+              ? {
+                  idResponsible: responsible.idResponsible,
+                  fullName: responsible.fullName,
+                  role: responsible.role,
+                }
+              : null,
+          };
+        });
+
+        setMortalidades(mortalidadesFormatted);
       } catch (error) {
         console.error("Error:", error);
         setMortalidades([]);
@@ -46,7 +103,7 @@ export default function TableMortality({ actions }: TableMortalityProps) {
         <DataTable
           columns={columns}
           data={mortalidades}
-          filterColumnId="idBovine"
+          filterColumnId="id_Bovine"
           filterPlaceholder="Filtrar por bovino..."
           toolbar={actions}
         />

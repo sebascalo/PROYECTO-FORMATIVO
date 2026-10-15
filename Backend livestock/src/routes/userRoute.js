@@ -26,13 +26,13 @@ router.get("/UserAll",ValidateToken, getAllUsers);
 
 /**
  * @swagger
- * /api/users/UserById/{id}:
+ * /api/users/UserById/{userId}:
  *   get:
  *     summary: Obtener usuario por ID
  *     description: Retorna un usuario según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: userId
  *         required: true
  *         description: ID del usuario
  *         schema:
@@ -43,7 +43,7 @@ router.get("/UserAll",ValidateToken, getAllUsers);
  */
 
 // Obtener usuario por ID
-router.get("/UserById/:id",ValidateToken, getAllUsersById);
+router.get("/UserById/:userId",ValidateToken, getAllUsersById);
 
 /**
  * @swagger
@@ -61,13 +61,13 @@ router.post("/CreateUser",ValidateToken, createUser);
 
 /**
  * @swagger
- * /api/users/UpdateUser/{id}:
+ * /api/users/UpdateUser/{userId}:
  *   put:
  *     summary: Actualizar usuario
  *     description: Actualiza un usuario según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: userId
  *         required: true
  *         description: ID del usuario
  *         schema:
@@ -78,17 +78,17 @@ router.post("/CreateUser",ValidateToken, createUser);
  */
 
 // Actualizar usuario
-router.put("/UpdateUser/:id",ValidateToken, updateUser);
+router.put("/UpdateUser/:userId",ValidateToken, updateUser);
 
 /**
  * @swagger
- * /api/users/DeleteUser/{id}:
+ * /api/users/DeleteUser/{userId}:
  *   delete:
  *     summary: Inactivar usuario
  *     description: Inactiva un usuario según el ID enviado.
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: userId
  *         required: true
  *         description: ID del usuario
  *         schema:
@@ -99,6 +99,6 @@ router.put("/UpdateUser/:id",ValidateToken, updateUser);
  */
 
 // Inactivar usuario
-router.delete("/DeleteUser/:id",ValidateToken, deleteUser);
+router.delete("/DeleteUser/:userId",ValidateToken, deleteUser);
 
 module.exports = router;

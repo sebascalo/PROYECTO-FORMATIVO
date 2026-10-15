@@ -8,17 +8,69 @@ interface TableWeighingProps {
   actions?: React.ReactNode;
 }
 
+// 👇 Tipos mínimos para los catálogos
+interface Cattle {
+  id_Bovine: number;
+  name: string;
+}
+
+interface Responsible {
+  idResponsible: number;
+  fullName: string;
+  role: string;
+}
+
 export default function TableWeighing({ actions }: TableWeighingProps) {
   const [weighings, setWeighings] = useState<Weighing[]>([]);
 
   useEffect(() => {
     const fetchWeighings = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:3000/api/weighing/WeighingAll",
-        );
-        const resJson = await response.json();
-        setWeighings(resJson.info ?? []);
+        const token = localStorage.getItem("token");
+        const headers = { Authorization: `Bearer ${token}` };
+
+        // 👇 Traer las 3 listas en paralelo
+        const [weighingRes, cattleRes, responsibleRes] = await Promise.all([
+          fetch("http://localhost:3000/api/weighing/WeighingAll", { headers }),
+          fetch("http://localhost:3000/api/cattle/CattleAll?limit=500", { headers }),
+          fetch("http://localhost:3000/api/responsible/ResponsibleAll?limit=500", { headers }),
+        ]);
+
+        const [weighingJson, cattleJson, responsibleJson] = await Promise.all([
+          weighingRes.json(),
+          cattleRes.json(),
+          responsibleRes.json(),
+        ]);
+
+        const weighingList: Weighing[] = weighingJson.info ?? [];
+        const cattles: Cattle[] = cattleJson.info ?? [];
+        const responsibles: Responsible[] = responsibleJson.info ?? [];
+
+        // 👇 "JOIN en memoria"
+        const weighingsFormatted: Weighing[] = weighingList.map((w) => {
+          const cattle = cattles.find(
+            (c) => String(c.id_Bovine) === String(w.id_Bovine),
+          );
+          const responsible = responsibles.find(
+            (r) => r.idResponsible === w.idResponsible,
+          );
+
+          return {
+            ...w,
+            cattleData: cattle
+              ? { id_Bovine: cattle.id_Bovine, name: cattle.name }
+              : null,
+            responsibleData: responsible
+              ? {
+                  idResponsible: responsible.idResponsible,
+                  fullName: responsible.fullName,
+                  role: responsible.role,
+                }
+              : null,
+          };
+        });
+
+        setWeighings(weighingsFormatted);
       } catch (error) {
         console.error("Error:", error);
         setWeighings([]);
@@ -44,7 +96,7 @@ export default function TableWeighing({ actions }: TableWeighingProps) {
         <DataTable
           columns={columns}
           data={weighings}
-          filterColumnId="idBovine"
+          filterColumnId="id_Bovine"
           filterPlaceholder="Filtrar por bovino..."
           toolbar={actions}
         />
