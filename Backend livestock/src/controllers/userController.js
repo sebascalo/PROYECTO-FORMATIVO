@@ -105,9 +105,9 @@ const createUser = async (req, res) => {
         }
         
         // Mostrar el HTML en consola
-        console.log("===== HTML DEL CORREO =====");
-        console.log(htmlModific);
-        console.log("===== FIN HTML =====");
+        // console.log("===== HTML DEL CORREO =====");
+        // console.log(htmlModific);
+        // console.log("===== FIN HTML =====");
         console.log("Enviando correo a:", email);
 
         await sendEmail(

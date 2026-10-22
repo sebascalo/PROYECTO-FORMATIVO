@@ -10,21 +10,17 @@ import {
 } from "../ui/dialog";
 import ButtonCreate from "../ui/buttonCreate";
 
-// 👇 Tipo para razas
+// 👇 Tipos
 interface Race {
   id_race: number;
   name_race: string;
   active: "Active" | "Inactive";
 }
 
-// 👇 Tipo para potreros
-interface Pasture {
-  id_pasture: number;
+interface CattleBase {
+  id_Bovine: number;
   name: string;
-  extension: number;
-  forageCapacity: number;
-  pastureType: string;
-  currentStatus: string;
+  sex: string;
 }
 
 export default function FormCreationCattle() {
@@ -32,11 +28,13 @@ export default function FormCreationCattle() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
+    id_Bovine: "",
     name: "",
     id_race: "",
     sex: "",
     entrydate: "",
-    id_pasture: "",
+    id_mother: "",
+    id_father: "",
     birthdate: "",
     photo: "",
     currentweight: "",
@@ -47,80 +45,56 @@ export default function FormCreationCattle() {
   // 👇 Estados para razas
   const [races, setRaces] = useState<Race[]>([]);
   const [loadingRaces, setLoadingRaces] = useState(true);
-  const [racesError, setRacesError] = useState<string | null>(null);
 
-  // 👇 Estados para potreros
-  const [pastures, setPastures] = useState<Pasture[]>([]);
-  const [loadingPastures, setLoadingPastures] = useState(true);
-  const [pasturesError, setPasturesError] = useState<string | null>(null);
+  // 👇 Estados para padre/madre (bovinos existentes)
+  const [allCattles, setAllCattles] = useState<CattleBase[]>([]);
 
-  // 👇 Cargar razas al montar
+  // 👇 Cargar razas
   useEffect(() => {
     const fetchRaces = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch(
-          "http://localhost:3000/api/race/RaceAll?limit=100",
-          { headers: { Authorization: `Bearer ${token}` } },
-        );
+        const response = await fetch("http://localhost:3000/api/race/RaceAll?limit=100", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         const resJson = await response.json();
-
-        if (!response.ok) {
-          throw new Error(resJson?.message || "Error al obtener razas");
-        }
-
-        const activeRaces = (resJson.info ?? []).filter(
-          (r: Race) => r.active === "Active",
-        );
+        if (!response.ok) throw new Error(resJson?.message || "Error al obtener razas");
+        const activeRaces = (resJson.info ?? []).filter((r: Race) => r.active === "Active");
         setRaces(activeRaces);
       } catch (err) {
-        console.error("Error razas:", err);
-        setRacesError(
-          err instanceof Error ? err.message : "No se pudieron cargar las razas",
-        );
+        console.error("Error razas:", err); // 👈 Cambiado a console.error
       } finally {
         setLoadingRaces(false);
       }
     };
-
     fetchRaces();
   }, []);
 
-  // 👇 Cargar potreros al montar
+  // 👇 Cargar bovinos (para madres y padres)
   useEffect(() => {
-    const fetchPastures = async () => {
+    const fetchCattles = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch(
-          "http://localhost:3000/api/pasture/PastureAll?limit=100",
-          { headers: { Authorization: `Bearer ${token}` } },
-        );
+        const response = await fetch("http://localhost:3000/api/cattle/CattleAll?limit=500", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         const resJson = await response.json();
-
-        if (!response.ok) {
-          throw new Error(resJson?.message || "Error al obtener potreros");
+        if (response.ok) {
+          setAllCattles(resJson.info ?? []);
         }
-
-        setPastures(resJson.info ?? []);
       } catch (err) {
-        console.error("Error potreros:", err);
-        setPasturesError(
-          err instanceof Error
-            ? err.message
-            : "No se pudieron cargar los potreros",
-        );
-      } finally {
-        setLoadingPastures(false);
+        console.error("Error cargando bovinos para padres:", err);
       }
     };
-
-    fetchPastures();
+    fetchCattles();
   }, []);
 
+  // Filtros para los select de padre y madre
+  const mothers = allCattles.filter((c) => c.sex === "Hembra");
+  const fathers = allCattles.filter((c) => c.sex === "Macho");
+
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >,
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -129,11 +103,13 @@ export default function FormCreationCattle() {
 
   const limpiarFormulario = () => {
     setFormData({
+      id_Bovine: "",
       name: "",
       id_race: "",
       sex: "",
       entrydate: "",
-      id_pasture: "",
+      id_mother: "",
+      id_father: "",
       birthdate: "",
       photo: "",
       currentweight: "",
@@ -147,65 +123,36 @@ export default function FormCreationCattle() {
     e.preventDefault();
     setError(null);
 
-    // 👇 VALIDACIONES PREVIAS EN EL FRONTEND
-    if (!formData.name.trim()) {
-      setError("El nombre del bovino es obligatorio");
-      return;
-    }
-    if (!formData.id_race) {
-      setError("Debes seleccionar una raza");
-      return;
-    }
-    if (!formData.sex) {
-      setError("Debes seleccionar un sexo");
-      return;
-    }
-    if (!formData.entrydate) {
-      setError("La fecha de ingreso es obligatoria");
-      return;
-    }
-    if (!formData.id_pasture) {
-      setError("Debes seleccionar un potrero");
-      return;
-    }
-    if (!formData.birthdate) {
-      setError("La fecha de nacimiento es obligatoria");
-      return;
-    }
+    // 👇 Validaciones
+    if (!formData.id_Bovine.trim()) return setError("El ID / Arete del bovino es obligatorio");
+    if (!formData.name.trim()) return setError("El nombre del bovino es obligatorio");
+    if (!formData.id_race) return setError("Debes seleccionar una raza");
+    if (!formData.sex) return setError("Debes seleccionar un sexo");
+    if (!formData.entrydate) return setError("La fecha de ingreso es obligatoria");
+    if (!formData.birthdate) return setError("La fecha de nacimiento es obligatoria");
 
     const weight = parseFloat(formData.currentweight);
-    if (isNaN(weight) || weight <= 0) {
-      setError("El peso debe ser un número mayor a 0");
-      return;
-    }
+    if (isNaN(weight) || weight <= 0) return setError("El peso debe ser un número mayor a 0");
 
-    if (!formData.classificationbytype) {
-      setError("Debes seleccionar una clasificación");
-      return;
-    }
-    if (!formData.active) {
-      setError("Debes seleccionar un estado");
-      return;
-    }
+    if (!formData.classificationbytype) return setError("Debes seleccionar una clasificación");
+    if (!formData.active) return setError("Debes seleccionar un estado");
 
     if (new Date(formData.birthdate) > new Date(formData.entrydate)) {
-      setError(
-        "La fecha de nacimiento no puede ser posterior a la fecha de ingreso",
-      );
-      return;
+      return setError("La fecha de nacimiento no puede ser posterior a la de ingreso");
     }
 
     if (new Date(formData.entrydate) > new Date()) {
-      setError("La fecha de ingreso no puede ser una fecha futura");
-      return;
+      return setError("La fecha de ingreso no puede ser futura");
     }
 
     const datosEnviar = {
+      id_Bovine: Number(formData.id_Bovine),
       name: formData.name,
       id_race: Number(formData.id_race),
       sex: formData.sex,
       entrydate: formData.entrydate,
-      id_pasture: Number(formData.id_pasture),
+      id_mother: formData.id_mother ? Number(formData.id_mother) : null,
+      id_father: formData.id_father ? Number(formData.id_father) : null,
       birthdate: formData.birthdate,
       photo: formData.photo || null,
       currentweight: weight,
@@ -216,17 +163,14 @@ export default function FormCreationCattle() {
     setIsSubmitting(true);
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(
-        "http://localhost:3000/api/cattle/CreateCattle",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(datosEnviar),
+      const response = await fetch("http://localhost:3000/api/cattle/CreateCattle", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-      );
+        body: JSON.stringify(datosEnviar),
+      });
 
       if (!response.ok) {
         let backendMessage = "";
@@ -234,43 +178,29 @@ export default function FormCreationCattle() {
           const errorBody = await response.json();
           if (Array.isArray(errorBody?.errors)) {
             backendMessage = errorBody.errors
-              .map((e: { message?: string } | string) =>
-                typeof e === "string" ? e : e.message ?? String(e),
-              )
+              .map((e: { message?: string } | string) => (typeof e === "string" ? e : e.message ?? String(e)))
               .join(" | ");
           } else {
-            backendMessage =
-              errorBody?.message ||
-              errorBody?.error ||
-              JSON.stringify(errorBody);
+            backendMessage = errorBody?.message || errorBody?.error || JSON.stringify(errorBody);
           }
         } catch {
           backendMessage = await response.text();
         }
-        throw new Error(
-          `El servidor respondió ${response.status}: ${backendMessage || "sin detalle"}`,
-        );
+        throw new Error(`El servidor respondió ${response.status}: ${backendMessage}`);
       }
 
       limpiarFormulario();
       setOpen(false);
       window.location.reload();
     } catch (error) {
-      console.error("Error:", error);
-      setError(
-        error instanceof Error
-          ? error.message
-          : "No se pudo guardar el bovino. Intenta de nuevo.",
-      );
+      setError(error instanceof Error ? error.message : "No se pudo guardar el bovino.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleOpenChange = (newOpen: boolean) => {
-    if (!newOpen) {
-      limpiarFormulario();
-    }
+    if (!newOpen) limpiarFormulario();
     setOpen(newOpen);
   };
 
@@ -284,20 +214,25 @@ export default function FormCreationCattle() {
           Crear Bovino
         </DialogTitle>
 
-        <form
-          id="cattle-create-form"
-          onSubmit={handleSubmit}
-          className="space-y-4"
-        >
+        <form id="cattle-create-form" onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
+            {/* ID MANUAL */}
+            <div>
+              <label htmlFor="id_Bovine" className="block text-sm font-medium text-gray-700 mb-1">ID / Arete:</label>
+              <input
+                type="number"
+                id="id_Bovine"
+                name="id_Bovine"
+                value={formData.id_Bovine}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043]"
+                placeholder="Ej: 1001"
+              />
+            </div>
+
             {/* NOMBRE */}
             <div>
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Nombre:
-              </label>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Nombre:</label>
               <input
                 type="text"
                 id="name"
@@ -309,48 +244,27 @@ export default function FormCreationCattle() {
               />
             </div>
 
-            {/* RAZA DINÁMICA */}
+            {/* RAZA */}
             <div>
-              <label
-                htmlFor="id_race"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Raza:
-              </label>
+              <label htmlFor="id_race" className="block text-sm font-medium text-gray-700 mb-1">Raza:</label>
               <select
                 id="id_race"
                 name="id_race"
                 value={formData.id_race}
                 onChange={handleChange}
                 disabled={loadingRaces}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043] bg-white disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043] bg-white"
               >
-                <option value="">
-                  {loadingRaces
-                    ? "Cargando razas..."
-                    : racesError
-                      ? "Error al cargar razas"
-                      : "Seleccione una raza"}
-                </option>
+                <option value="">{loadingRaces ? "Cargando razas..." : "Seleccione una raza"}</option>
                 {races.map((race) => (
-                  <option key={race.id_race} value={race.id_race}>
-                    {race.name_race}
-                  </option>
+                  <option key={race.id_race} value={race.id_race}>{race.name_race}</option>
                 ))}
               </select>
-              {racesError && (
-                <p className="text-xs text-red-600 mt-1">{racesError}</p>
-              )}
             </div>
 
             {/* SEXO */}
             <div>
-              <label
-                htmlFor="sex"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Sexo:
-              </label>
+              <label htmlFor="sex" className="block text-sm font-medium text-gray-700 mb-1">Sexo:</label>
               <select
                 id="sex"
                 name="sex"
@@ -364,14 +278,43 @@ export default function FormCreationCattle() {
               </select>
             </div>
 
+            {/* PADRE (MACHO) */}
+            <div>
+              <label htmlFor="id_father" className="block text-sm font-medium text-gray-700 mb-1">Padre (Opcional):</label>
+              <select
+                id="id_father"
+                name="id_father"
+                value={formData.id_father}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043] bg-white"
+              >
+                <option value="">Sin registrar</option>
+                {fathers.map((c) => (
+                  <option key={c.id_Bovine} value={c.id_Bovine}>{c.id_Bovine} - {c.name}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* MADRE (HEMBRA) */}
+            <div>
+              <label htmlFor="id_mother" className="block text-sm font-medium text-gray-700 mb-1">Madre (Opcional):</label>
+              <select
+                id="id_mother"
+                name="id_mother"
+                value={formData.id_mother}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043] bg-white"
+              >
+                <option value="">Sin registrar</option>
+                {mothers.map((c) => (
+                  <option key={c.id_Bovine} value={c.id_Bovine}>{c.id_Bovine} - {c.name}</option>
+                ))}
+              </select>
+            </div>
+
             {/* FECHA INGRESO */}
             <div>
-              <label
-                htmlFor="entrydate"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Fecha de Ingreso:
-              </label>
+              <label htmlFor="entrydate" className="block text-sm font-medium text-gray-700 mb-1">Fecha de Ingreso:</label>
               <input
                 type="date"
                 id="entrydate"
@@ -383,48 +326,9 @@ export default function FormCreationCattle() {
               />
             </div>
 
-            {/* POTRERO DINÁMICO */}
-            <div>
-              <label
-                htmlFor="id_pasture"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Potrero:
-              </label>
-              <select
-                id="id_pasture"
-                name="id_pasture"
-                value={formData.id_pasture}
-                onChange={handleChange}
-                disabled={loadingPastures}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043] bg-white disabled:opacity-60 disabled:cursor-not-allowed"
-              >
-                <option value="">
-                  {loadingPastures
-                    ? "Cargando potreros..."
-                    : pasturesError
-                      ? "Error al cargar potreros"
-                      : "Seleccione un potrero"}
-                </option>
-                {pastures.map((pasture) => (
-                  <option key={pasture.id_pasture} value={pasture.id_pasture}>
-                    {pasture.name}
-                  </option>
-                ))}
-              </select>
-              {pasturesError && (
-                <p className="text-xs text-red-600 mt-1">{pasturesError}</p>
-              )}
-            </div>
-
             {/* FECHA NACIMIENTO */}
             <div>
-              <label
-                htmlFor="birthdate"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Fecha de Nacimiento:
-              </label>
+              <label htmlFor="birthdate" className="block text-sm font-medium text-gray-700 mb-1">Fecha de Nacimiento:</label>
               <input
                 type="date"
                 id="birthdate"
@@ -438,12 +342,7 @@ export default function FormCreationCattle() {
 
             {/* PESO */}
             <div>
-              <label
-                htmlFor="currentweight"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Peso Actual (kg):
-              </label>
+              <label htmlFor="currentweight" className="block text-sm font-medium text-gray-700 mb-1">Peso Actual (kg):</label>
               <input
                 type="number"
                 id="currentweight"
@@ -459,12 +358,7 @@ export default function FormCreationCattle() {
 
             {/* CLASIFICACIÓN */}
             <div>
-              <label
-                htmlFor="classificationbytype"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Clasificación:
-              </label>
+              <label htmlFor="classificationbytype" className="block text-sm font-medium text-gray-700 mb-1">Clasificación:</label>
               <select
                 id="classificationbytype"
                 name="classificationbytype"
@@ -473,20 +367,17 @@ export default function FormCreationCattle() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043] bg-white"
               >
                 <option value="">Seleccione una clasificación</option>
-                <option value="Lechero">Lechero</option>
-                <option value="Carne">Carne</option>
-                <option value="Doble propósito">Doble propósito</option>
+                <option value="Toro">Toro</option>
+                <option value="Novilla levante">Novilla levante</option>
+                <option value="Novilla vientre">Novilla vientre</option>
+                <option value="Ternero">Ternero</option>
+                <option value="Vaca">Vaca</option>
               </select>
             </div>
 
             {/* ESTADO */}
             <div>
-              <label
-                htmlFor="active"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Estado:
-              </label>
+              <label htmlFor="active" className="block text-sm font-medium text-gray-700 mb-1">Estado:</label>
               <select
                 id="active"
                 name="active"
@@ -502,12 +393,7 @@ export default function FormCreationCattle() {
 
             {/* FOTO */}
             <div>
-              <label
-                htmlFor="photo"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Foto (URL):
-              </label>
+              <label htmlFor="photo" className="block text-sm font-medium text-gray-700 mb-1">Foto (URL):</label>
               <input
                 type="text"
                 id="photo"
@@ -521,22 +407,11 @@ export default function FormCreationCattle() {
           </div>
         </form>
 
-        {/* 👇 Descripción a la izquierda */}
-        <p className="text-sm text-gray-600 -mt-2">
-          Complete los campos para crear un nuevo bovino.
-        </p>
-
-        {/* 👇 Oculto para accesibilidad */}
-        <DialogDescription className="sr-only">
-          Complete los campos para crear un nuevo bovino.
-        </DialogDescription>
+        <p className="text-sm text-gray-600 -mt-2">Complete los campos para crear un nuevo bovino.</p>
+        <DialogDescription className="sr-only">Complete los campos para crear un nuevo bovino.</DialogDescription>
 
         <DialogFooter className="flex-col gap-2 sm:flex-col">
-          {error && (
-            <p className="text-sm text-red-600 text-center font-medium">
-              ⚠️ {error}
-            </p>
-          )}
+          {error && <p className="text-sm text-red-600 text-center font-medium">⚠️ {error}</p>}
           <div className="flex flex-row gap-2 w-full">
             <button
               type="button"

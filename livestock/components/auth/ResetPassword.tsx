@@ -1,5 +1,4 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,6 +11,7 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import React from "react";
 
 interface ResetPasswordProps {
   open?: boolean;
@@ -19,11 +19,37 @@ interface ResetPasswordProps {
   onCancel?: () => void;
 }
 
-export default function ResetPassword({
+export default function ResetPassword({ 
   open,
   onOpenChange,
   onCancel,
 }: ResetPasswordProps) {
+
+  const [email, setEmail] = React.useState("");
+
+  const handleResetPassword = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const data = {
+      email: email
+    };
+
+    fetch("http://localhost:3000/api/auth/reset-password", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        alert(data.message);
+      } else {
+        alert("No se pudo enviar el correo, intente nuevamente.");
+      }
+    });
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="bg-white text-black sm:max-w-sm p-6">
@@ -34,7 +60,7 @@ export default function ResetPassword({
           aria-label="Cerrar"
         ></button>
 
-        <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
+        <form onSubmit={handleResetPassword} className="space-y-4">
           <DialogHeader>
             <DialogTitle className="font-bold text-center text-black">
               Restablecer Contraseña
@@ -53,6 +79,8 @@ export default function ResetPassword({
                 id="usuario"
                 name="usuario"
                 placeholder="*****@gmail.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="bg-white text-black placeholder:text-gray-400 focus:outline focus:outline-2 focus:outline-blue-500"
               />
             </Field>
@@ -69,7 +97,7 @@ export default function ResetPassword({
             
             <Button
               type="submit"
-              className="cursor-pointer flex-1 bg-green-500 hover:bg-green-600 hover:text-white"
+              className="cursor-pointer flex-1 bg-[#2B7FFF] text-white hover:bg-[#1E63CC] hover:text-white"
             >
               Restablecer Contraseña
             </Button>

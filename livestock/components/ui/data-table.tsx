@@ -7,6 +7,7 @@ import {
   type ColumnFiltersState,
   type RowData,
   type SortingState,
+  type PaginationState,
 } from "@tanstack/react-table";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -29,10 +30,8 @@ import {
 interface DataTableProps<TData extends RowData> {
   columns: ColumnDef<SharedTableFeatures, TData>[];
   data: TData[];
-  // Nombre de la columna sobre la que se aplica el buscador de texto (opcional)
   filterColumnId?: string;
   filterPlaceholder?: string;
-  // Elemento(s) que se muestran a la derecha del buscador (ej: botón "Agregar")
   toolbar?: React.ReactNode;
 }
 
@@ -47,35 +46,29 @@ export function DataTable<TData extends RowData>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   );
+  
+  // 👇 1. Agregamos el estado de la paginación
+  const [pagination, setPagination] = React.useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 5,
+  });
 
-  // const table = useTable({
-  //   features: sharedTableFeatures,
-  //   data,
-  //   columns,
-  //   onSortingChange: setSorting,
-  //   onColumnFiltersChange: setColumnFilters,
-  //   state: {
-  //     sorting,
-  //     columnFilters,
-  //   },
-  // });
   const table = useTable({
-  features: sharedTableFeatures,
-  data,
-  columns,
-  onSortingChange: setSorting,
-  onColumnFiltersChange: setColumnFilters,
-  state: {
-    sorting,
-    columnFilters,
-  },
-  initialState: {
-    pagination: { pageSize: 10, pageIndex: 0 },
-  },
-});
+    features: sharedTableFeatures,
+    data,
+    columns,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onPaginationChange: setPagination, // 👈 2. Lo conectamos
+    state: {
+      sorting,
+      columnFilters,
+      pagination, // 👈 3. Le pasamos el estado
+    },
+  });
 
   const totalRows = table.getFilteredRowModel().rows.length;
-  const pageIndex = table.state.pagination?.pageIndex ?? 0;
+  const pageIndex = pagination.pageIndex;
   const pageCount = table.getPageCount();
 
   return (

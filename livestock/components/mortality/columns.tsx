@@ -4,6 +4,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { type SharedTableFeatures } from "@/components/ui/data-table-features";
 
 // 👇 Tipos del JOIN
@@ -21,11 +22,10 @@ export type ResponsibleData = {
 export type Mortality = {
   id_mortality: number;
   id_Bovine: number | null;
-  dateofdeath: string;
+  dateofExit: string;
+  exitReason: string;
   idResponsible: number | null;
-  fateoftheanimal: string;
   observations: string;
-  // 👇 Vienen del JOIN en el frontend
   cattleData?: CattleData | null;
   responsibleData?: ResponsibleData | null;
 };
@@ -40,6 +40,14 @@ const formatDate = (dateString?: string | null) => {
   });
 };
 
+const exitReasonStyles: Record<string, string> = {
+  Venta: "bg-[#4B6043] text-white hover:bg-[#405539]",
+  Muerte: "bg-[#A9744F] text-white hover:bg-[#94623F]",
+  Traslado: "bg-[#8C8266] text-white hover:bg-[#77704F]",
+  Descarte: "bg-[#6B6459] text-white hover:bg-[#5A5449]",
+  Otro: "bg-[#2B2A26] text-white hover:bg-[#1E1D1A]",
+};
+
 const columnHelper = createColumnHelper<SharedTableFeatures, Mortality>();
 
 export const columns = columnHelper.columns([
@@ -49,7 +57,7 @@ export const columns = columnHelper.columns([
       <span className="text-[#6B6459]">{getValue()}</span>
     ),
   }),
-  // 👇 BOVINO con nombre
+  // 👇 BOVINO con filtro de búsqueda
   columnHelper.accessor("cattleData", {
     header: ({ column }) => (
       <Button
@@ -61,6 +69,12 @@ export const columns = columnHelper.columns([
         <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
       </Button>
     ),
+    // 👇 Forzamos a que el filtro busque dentro del nombre del bovino
+    filterFn: (row, id, value) => {
+      const cattle = row.getValue(id) as CattleData | null;
+      if (!cattle) return false;
+      return cattle.name.toLowerCase().includes(value.toLowerCase());
+    },
     cell: ({ getValue }) => {
       const cattle = getValue();
       return (
@@ -70,11 +84,22 @@ export const columns = columnHelper.columns([
       );
     },
   }),
-  columnHelper.accessor("dateofdeath", {
-    header: "Fecha de Muerte",
+  columnHelper.accessor("dateofExit", {
+    header: "Fecha de Salida",
     cell: ({ getValue }) => formatDate(getValue()),
   }),
-  // 👇 RESPONSABLE con nombre + rol
+  columnHelper.accessor("exitReason", {
+    header: "Motivo de Salida",
+    cell: ({ getValue }) => {
+      const value = getValue();
+      if (!value) return <span className="text-[#6B6459]">-</span>;
+      return (
+        <Badge className={exitReasonStyles[value] ?? "bg-[#8C8266] text-white"}>
+          {value}
+        </Badge>
+      );
+    },
+  }),
   columnHelper.accessor("responsibleData", {
     header: "Responsable",
     cell: ({ getValue }) => {
@@ -89,12 +114,6 @@ export const columns = columnHelper.columns([
         </div>
       );
     },
-  }),
-  columnHelper.accessor("fateoftheanimal", {
-    header: "Destino",
-    cell: ({ getValue }) => (
-      <span className="text-[#6B6459]">{getValue() || "-"}</span>
-    ),
   }),
   columnHelper.accessor("observations", {
     header: "Observaciones",

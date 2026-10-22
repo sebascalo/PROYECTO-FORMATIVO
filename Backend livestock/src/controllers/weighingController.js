@@ -1,5 +1,6 @@
 const { weighingCreate, weighingUpdate, weighingDelete, getWeighingById, weighingsGetAll } = require("../services/weighingService");
 const Response = require("../functions/response");
+const Cattle = require("../models/cattleModel"); // 👈 Importamos el modelo de bovinos
 
 // Obtener todos los registros de pesajes
 const getAllWeighings = async (req, res) => {
@@ -53,32 +54,21 @@ const getAllWeighingsById = async (req, res) => {
 
 const createWeighing = async (req, res) => {
     try {
-        console.log("📥 [BACK] Body recibido:", req.body);
         const { id_Bovine, weighingdate, currentweight, profitorloss, bodycondition, observations, idResponsible } = req.body;
         var errors = [];
         
         // Validaciones
-        if (!id_Bovine || String(id_Bovine).trim() === "") {
-            errors.push("El identificador del bovino es obligatoria");
+        if (!id_Bovine || String(id_Bovine).trim() === "") errors.push("El identificador del bovino es obligatoria");
+        if (!weighingdate || String(weighingdate).trim() === "") errors.push("La fecha del pesaje es obligatoria");
+        if (!currentweight || String(currentweight).trim() === "" || isNaN(currentweight)) errors.push("El peso actual es obligatorio y debe ser un número");
+        
+        // 👇 Validación actualizada con los nuevos valores del select
+        if (bodycondition && String(bodycondition).trim() !== "" && !["1 - Flaco", "2 - Delgado", "3 - Ideal", "4 - Gordo", "5 - Obeso"].includes(bodycondition)) {
+            errors.push("La condición corporal no es válida");
         }
-        if (!weighingdate || String(weighingdate).trim() === "") {
-            errors.push("La fecha del pesaje es obligatoria");
-        }
-        if (!currentweight || String(currentweight).trim() === "" || isNaN(currentweight)) {
-            errors.push("El peso actual es obligatorio y debe ser un número");
-        }
-        if (profitorloss && String(profitorloss).trim() !== "" && isNaN(profitorloss)) {
-            errors.push("La ganancia/pérdida debe ser un número");
-        }
-        if (bodycondition && String(bodycondition).trim() !== "" && !["Delgado", "Normal", "Gordo"].includes(bodycondition)) {
-            errors.push("La condición corporal debe ser: Delgado, Normal o Gordo");
-        }
-        if (observations && observations.length > 255) {
-            errors.push("Las observaciones no pueden exceder los 255 caracteres");
-        }
-        if (idResponsible && String(idResponsible).trim() === "") {
-            errors.push("El responsable no puede estar vacío");
-        }
+        
+        if (observations && observations.length > 255) errors.push("Las observaciones no pueden exceder los 255 caracteres");
+        if (idResponsible && String(idResponsible).trim() === "") errors.push("El responsable no puede estar vacío");
 
         if (errors.length > 0) {
             var response = new Response("Error al crear el pesaje", null, errors)
@@ -88,8 +78,16 @@ const createWeighing = async (req, res) => {
         }
         
         const data = { id_Bovine, weighingdate, currentweight, profitorloss, bodycondition, observations, idResponsible }
-        console.log("📥 [BACK] data a guardar:", data);
         const weighing = await weighingCreate(data)
+
+        // 👇 NUEVO: Actualizar el peso del bovino en la tabla 'cattles'
+        if (id_Bovine && currentweight) {
+            await Cattle.update(
+                { currentweight: currentweight },
+                { where: { id_Bovine: id_Bovine } }
+            );
+        }
+
         var response = new Response("Pesaje creado exitosamente", weighing, null);
         res.status(201);
         res.json(response.json);
@@ -109,29 +107,13 @@ const updateWeighing = async (req, res) => {
         const { id_Bovine, weighingdate, currentweight, profitorloss, bodycondition, observations, idResponsible } = req.body;
         var errors = [];
         
-        if (!id_weighing) {
-            errors.push("El ID del pesaje es obligatorio");
-        }
-        if (!id_Bovine || String(id_Bovine).trim() === "") {
-            errors.push("La identificación del bovino es obligatoria");
-        }
-        if (!weighingdate || String(weighingdate).trim() === "") {
-            errors.push("La fecha del pesaje es obligatoria");
-        }
-        if (!currentweight || String(currentweight).trim() === "" || isNaN(currentweight)) {
-            errors.push("El peso actual es obligatorio y debe ser un número");
-        }
-        if (profitorloss && String(profitorloss).trim() !== "" && isNaN(profitorloss)) {
-            errors.push("La ganancia/pérdida debe ser un número");
-        }
-        if (bodycondition && String(bodycondition).trim() !== "" && !["Delgado", "Normal", "Gordo"].includes(bodycondition)) {
-            errors.push("La condición corporal debe ser: Delgado, Normal o Gordo");
-        }
-        if (observations && observations.length > 255) {
-            errors.push("Las observaciones no pueden exceder los 255 caracteres");
-        }
-        if (idResponsible && String(idResponsible).trim() === "") {
-            errors.push("El responsable no puede estar vacío");
+        if (!id_weighing) errors.push("El ID del pesaje es obligatorio");
+        if (!id_Bovine || String(id_Bovine).trim() === "") errors.push("La identificación del bovino es obligatoria");
+        if (!weighingdate || String(weighingdate).trim() === "") errors.push("La fecha del pesaje es obligatoria");
+        if (!currentweight || String(currentweight).trim() === "" || isNaN(currentweight)) errors.push("El peso actual es obligatorio y debe ser un número");
+        
+        if (bodycondition && String(bodycondition).trim() !== "" && !["1 - Flaco", "2 - Delgado", "3 - Ideal", "4 - Gordo", "5 - Obeso"].includes(bodycondition)) {
+            errors.push("La condición corporal no es válida");
         }
 
         if (errors.length > 0) {
@@ -143,6 +125,15 @@ const updateWeighing = async (req, res) => {
         
         const data = { id_Bovine, weighingdate, currentweight, profitorloss, bodycondition, observations, idResponsible }
         const weighing = await weighingUpdate(id_weighing, data)
+
+        // 👇 NUEVO: Actualizar el peso del bovino también si se edita el pesaje
+        if (id_Bovine && currentweight) {
+            await Cattle.update(
+                { currentweight: currentweight },
+                { where: { id_Bovine: id_Bovine } }
+            );
+        }
+
         var response = new Response(`Pesaje ${id_weighing} actualizado exitosamente`, weighing, null);
         res.status(200);
         res.json(response.json);
@@ -157,29 +148,20 @@ const updateWeighing = async (req, res) => {
 }
 
 const deleteWeighing = async (req, res) => {
+    // ... (se queda igual)
     try {
         const { id_weighing } = req.params;
         var errors = [];
-        if (!id_weighing) {
-            errors.push("El ID del pesaje es obligatorio");
-        }
-        if (errors.length > 0) {
-            var response = new Response("Error al eliminar el pesaje", null, errors)
-            res.status(400)
-            res.json(response.json);
-            return;
-        }
+        if (!id_weighing) errors.push("El ID del pesaje es obligatorio");
+        if (errors.length > 0) return res.status(400).json(new Response("Error al eliminar el pesaje", null, errors).json);
+        
         const weighing = await weighingDelete(id_weighing)
         var response = new Response(`Pesaje ${id_weighing} eliminado exitosamente`, { id_weighing }, null);
         res.status(201);
         res.json(response.json);
     } catch (error) {
         console.error("Error en deleteWeighing:", error);
-        const errorResponse = new Response("Error interno del servidor", null, [
-            { message: error.message || "Ocurrió un error inesperado" }
-        ]);
-        res.status(500);
-        res.json(errorResponse.json);
+        res.status(500).json(new Response("Error interno del servidor", null, [{ message: error.message }]).json);
     }
 }
 

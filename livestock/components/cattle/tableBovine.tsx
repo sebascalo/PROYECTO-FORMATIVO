@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-
 import { DataTable } from "@/components/ui/data-table";
 import { columns, type Cattle } from "./columns";
 
@@ -8,15 +7,9 @@ interface TableCattleProps {
   actions?: React.ReactNode;
 }
 
-// 👇 Tipos mínimos para los catálogos
 interface Race {
   id_race: number;
   name_race: string;
-}
-
-interface Pasture {
-  id_pasture: number;
-  name: string;
 }
 
 export default function TableCattle({ actions }: TableCattleProps) {
@@ -28,36 +21,31 @@ export default function TableCattle({ actions }: TableCattleProps) {
         const token = localStorage.getItem("token");
         const headers = { Authorization: `Bearer ${token}` };
 
-        // 👇 3 fetch en paralelo
-        const [cattleRes, raceRes, pastureRes] = await Promise.all([
+        const [cattleRes, raceRes] = await Promise.all([
           fetch("http://localhost:3000/api/cattle/CattleAll?limit=500", {
             headers,
           }),
           fetch("http://localhost:3000/api/race/RaceAll?limit=500", {
             headers,
           }),
-          fetch("http://localhost:3000/api/pasture/PastureAll?limit=500", {
-            headers,
-          }),
         ]);
 
-        const [cattleJson, raceJson, pastureJson] = await Promise.all([
+        const [cattleJson, raceJson] = await Promise.all([
           cattleRes.json(),
           raceRes.json(),
-          pastureRes.json(),
         ]);
 
         const cattleList: Cattle[] = cattleJson.info ?? [];
         const races: Race[] = raceJson.info ?? [];
-        const pastures: Pasture[] = pastureJson.info ?? [];
-
-        // 👇 "JOIN en memoria"
-        const cattlesFormatted: Cattle[] = cattleList.map((c) => {
+        const cattlesFormatted: Cattle[] = cattleList.map((c): Cattle => {
           const race = races.find(
             (r) => String(r.id_race) === String(c.id_race),
           );
-          const pasture = pastures.find(
-            (p) => String(p.id_pasture) === String(c.id_pasture),
+          const father = cattleList.find(
+            (item) => item.id_Bovine === c.id_father,
+          );
+          const mother = cattleList.find(
+            (item) => item.id_Bovine === c.id_mother,
           );
 
           return {
@@ -65,13 +53,17 @@ export default function TableCattle({ actions }: TableCattleProps) {
             raceData: race
               ? { id_race: race.id_race, name_race: race.name_race }
               : null,
-            pastureData: pasture
-              ? { id_pasture: pasture.id_pasture, name: pasture.name }
+            fatherData: father
+              ? { id_Bovine: Number(father.id_Bovine), name: father.name }
+              : null,
+            motherData: mother
+              ? { id_Bovine: Number(mother.id_Bovine), name: mother.name }
               : null,
           };
         });
 
-        setCattles(cattlesFormatted);
+        // 👇 Invertimos el arreglo para que el más nuevo salga primero
+        setCattles([...cattlesFormatted].reverse());
       } catch (error) {
         console.error("Error:", error);
         setCattles([]);

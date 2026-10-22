@@ -12,11 +12,6 @@ export type CattleData = {
   name: string;
 };
 
-export type PastureData = {
-  id_pasture: number;
-  name: string;
-};
-
 export type RaceData = {
   id_race: number;
   name_race: string;
@@ -28,11 +23,10 @@ export type ResponsibleData = {
   role: string;
 };
 
-// 👇 Forma real que devuelve tu API (/api/birth/BirthAll)
+// 👇 Forma real de los datos (sin pastureData)
 export type Birth = {
   id_birth: number;
   id_Bovine: number | null;
-  id_pasture: number | null;
   birthdate: string;
   sex: string;
   id_race: number | null;
@@ -40,9 +34,8 @@ export type Birth = {
   observations: string;
   idResponsible: number | null;
   active: boolean;
-  // 👇 Agregados por el JOIN en el frontend
+  // JOIN
   cattleData?: CattleData | null;
-  pastureData?: PastureData | null;
   raceData?: RaceData | null;
   responsibleData?: ResponsibleData | null;
 };
@@ -87,18 +80,7 @@ export const columns = columnHelper.columns([
       );
     },
   }),
-  // 👇 POTRERO (nombre del JOIN)
-  columnHelper.accessor("pastureData", {
-    header: "Potrero",
-    cell: ({ getValue }) => {
-      const pasture = getValue();
-      return (
-        <span className="text-[#6B6459]">
-          {pasture?.name ?? "Sin potrero"}
-        </span>
-      );
-    },
-  }),
+  // ❌ COLUMNA DE POTRERO ELIMINADA
   columnHelper.accessor("birthdate", {
     header: "Fecha",
     cell: ({ getValue }) => formatDate(getValue()),
@@ -150,7 +132,7 @@ export const columns = columnHelper.columns([
       <span className="text-[#6B6459] text-sm">{getValue() || "-"}</span>
     ),
   }),
-  // 👇 RESPONSABLE (nombre + rol del JOIN)
+  // 👇 RESPONSABLE (nombre + rol)
   columnHelper.accessor("responsibleData", {
     header: "Responsable",
     cell: ({ getValue }) => {

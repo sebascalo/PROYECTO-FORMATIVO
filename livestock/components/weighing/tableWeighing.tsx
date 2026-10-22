@@ -8,12 +8,6 @@ interface TableWeighingProps {
   actions?: React.ReactNode;
 }
 
-// 👇 Tipos mínimos para los catálogos
-interface Cattle {
-  id_Bovine: number;
-  name: string;
-}
-
 interface Responsible {
   idResponsible: number;
   fullName: string;
@@ -29,37 +23,27 @@ export default function TableWeighing({ actions }: TableWeighingProps) {
         const token = localStorage.getItem("token");
         const headers = { Authorization: `Bearer ${token}` };
 
-        // 👇 Traer las 3 listas en paralelo
-        const [weighingRes, cattleRes, responsibleRes] = await Promise.all([
-          fetch("http://localhost:3000/api/weighing/WeighingAll", { headers }),
-          fetch("http://localhost:3000/api/cattle/CattleAll?limit=500", { headers }),
+        // Ya no pedimos los bovinos, solo pesajes y responsables
+        const [weighingRes, responsibleRes] = await Promise.all([
+          fetch("http://localhost:3000/api/weighing/WeighingAll?limit=500", { headers }),
           fetch("http://localhost:3000/api/responsible/ResponsibleAll?limit=500", { headers }),
         ]);
 
-        const [weighingJson, cattleJson, responsibleJson] = await Promise.all([
+        const [weighingJson, responsibleJson] = await Promise.all([
           weighingRes.json(),
-          cattleRes.json(),
           responsibleRes.json(),
         ]);
 
         const weighingList: Weighing[] = weighingJson.info ?? [];
-        const cattles: Cattle[] = cattleJson.info ?? [];
         const responsibles: Responsible[] = responsibleJson.info ?? [];
 
-        // 👇 "JOIN en memoria"
         const weighingsFormatted: Weighing[] = weighingList.map((w) => {
-          const cattle = cattles.find(
-            (c) => String(c.id_Bovine) === String(w.id_Bovine),
-          );
           const responsible = responsibles.find(
-            (r) => r.idResponsible === w.idResponsible,
+            (r) => String(r.idResponsible) === String(w.idResponsible),
           );
 
           return {
             ...w,
-            cattleData: cattle
-              ? { id_Bovine: cattle.id_Bovine, name: cattle.name }
-              : null,
             responsibleData: responsible
               ? {
                   idResponsible: responsible.idResponsible,
@@ -70,7 +54,8 @@ export default function TableWeighing({ actions }: TableWeighingProps) {
           };
         });
 
-        setWeighings(weighingsFormatted);
+        // Invertimos para que el más nuevo salga primero
+        setWeighings([...weighingsFormatted].reverse());
       } catch (error) {
         console.error("Error:", error);
         setWeighings([]);
@@ -97,7 +82,7 @@ export default function TableWeighing({ actions }: TableWeighingProps) {
           columns={columns}
           data={weighings}
           filterColumnId="id_Bovine"
-          filterPlaceholder="Filtrar por bovino..."
+          filterPlaceholder="Filtrar por ID de bovino..."
           toolbar={actions}
         />
       </div>

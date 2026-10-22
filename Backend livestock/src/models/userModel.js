@@ -60,6 +60,10 @@ const user = db.define('user', {
         type: DataTypes.BOOLEAN,
          defaultValue: true     
     },
+    resetPasswordToken: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
     solNewPassword:{
         type: DataTypes.BOOLEAN,
         defaultValue: false

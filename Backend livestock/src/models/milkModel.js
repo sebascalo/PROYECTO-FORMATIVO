@@ -1,7 +1,7 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/conectionDB');
+const { DataTypes } = require("sequelize");
+const sequelize = require("../config/conectionDB");
 
-const milk = sequelize.define('milk', {
+const milk = sequelize.define("milk", {
     id_milk: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -27,10 +27,7 @@ const milk = sequelize.define('milk', {
         type: DataTypes.FLOAT,
         allowNull: false,
     },
-    milkQuality: { // calidadLeche
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
+    // ❌ milkQuality eliminado
     observations: { // observaciones
         type: DataTypes.STRING,
         allowNull: true,
@@ -43,15 +40,15 @@ const milk = sequelize.define('milk', {
             key: 'idResponsible'
         },
     },
-    active:{
+    active: {
         type: DataTypes.BOOLEAN,
-         defaultValue: true     
+        defaultValue: true     
     },
-    createdAt:{
+    createdAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
     },
-    updatedAt:{
+    updatedAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
     }

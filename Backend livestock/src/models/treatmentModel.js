@@ -31,7 +31,7 @@
             type: DataTypes.STRING,
             allowNull: false
         },
-        treatment_duration: { // Duración del tratamiento
+        treatment_duration: { // Duración del tratamiento en dias
             type: DataTypes.STRING,
             allowNull: false
         },

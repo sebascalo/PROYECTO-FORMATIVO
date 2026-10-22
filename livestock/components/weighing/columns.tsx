@@ -42,10 +42,13 @@ const formatDate = (dateString?: string | null) => {
   });
 };
 
+// 👇 Estilos actualizados para las nuevas condiciones
 const bodyConditionStyles: Record<string, string> = {
-  Delgado: "bg-[#A9744F] text-white hover:bg-[#94623F]",
-  Normal: "bg-[#4B6043] text-white hover:bg-[#405539]",
-  Gordo: "bg-[#8C8266] text-white hover:bg-[#77704F]",
+  "1 - Flaco": "bg-[#A9744F] text-white hover:bg-[#94623F]",
+  "2 - Delgado": "bg-[#8C8266] text-white hover:bg-[#77704F]",
+  "3 - Ideal": "bg-[#4B6043] text-white hover:bg-[#405539]",
+  "4 - Gordo": "bg-[#6B6459] text-white hover:bg-[#5A5449]",
+  "5 - Obeso": "bg-[#2B2A26] text-white hover:bg-[#1E1D1A]",
 };
 
 const columnHelper = createColumnHelper<SharedTableFeatures, Weighing>();
@@ -57,26 +60,21 @@ export const columns = columnHelper.columns([
       <span className="text-[#6B6459]">{getValue()}</span>
     ),
   }),
-  // 👇 BOVINO con nombre
-  columnHelper.accessor("cattleData", {
+  // 👇 ID BOVINO
+  columnHelper.accessor("id_Bovine", {
     header: ({ column }) => (
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         className="h-auto p-0 font-semibold uppercase tracking-wide text-xs text-[#6B6459] hover:bg-transparent hover:text-[#2B2A26]"
       >
-        Bovino
+        ID Bovino
         <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
       </Button>
     ),
-    cell: ({ getValue }) => {
-      const cattle = getValue();
-      return (
-        <span className="font-medium text-[#2B2A26]">
-          {cattle?.name ?? "Sin bovino"}
-        </span>
-      );
-    },
+    cell: ({ getValue }) => (
+      <span className="font-medium text-[#2B2A26]">{getValue()}</span>
+    ),
   }),
   columnHelper.accessor("weighingdate", {
     header: "Fecha",
@@ -110,8 +108,9 @@ export const columns = columnHelper.columns([
       );
     },
   }),
+  // 👇 CONDICIÓN CORPORAL
   columnHelper.accessor("bodycondition", {
-    header: "Condición",
+    header: "Condición Corporal",
     cell: ({ getValue }) => {
       const value = getValue();
       return (
@@ -129,7 +128,7 @@ export const columns = columnHelper.columns([
       <span className="text-[#6B6459] text-sm">{getValue() || "-"}</span>
     ),
   }),
-  // 👇 RESPONSABLE (nombre + rol en dos líneas, como nacimientos)
+  // 👇 RESPONSABLE
   columnHelper.accessor("responsibleData", {
     header: "Responsable",
     cell: ({ getValue }) => {

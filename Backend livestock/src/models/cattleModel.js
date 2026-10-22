@@ -5,53 +5,70 @@ const cattle = db.define("cattle", {
     id_Bovine: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        autoIncrement: true
+        autoIncrement: false,
+        allowNull: false
     },
-    name: { // Nombre del bovino
+    name: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    id_race: { // ID de la raza del bovino
+    id_race: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    sex: { // Sexo del bovino (Macho/Hembra)
+    sex: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    entrydate: { // Fecha de ingreso del bovino
+    entrydate: {
         type: DataTypes.DATE,
         allowNull: false
     },
-    id_pasture: { // Potrero donde se encuentra el bovino
-        type: DataTypes.STRING,
-        allowNull: false
+    // ❌ ELIMINADO: id_pasture
+    // ✅ NUEVO: Padre y Madre
+    id_mother: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: "cattles",
+            key: "id_Bovine"
+        },
+        comment: "Madre del bovino (Hembra)"
     },
-    birthdate: { // Fecha de nacimiento del bovino
+    id_father: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: "cattles",
+            key: "id_Bovine"
+        },
+        comment: "Padre del bovino (Macho)"
+    },
+    birthdate: {
         type: DataTypes.DATE,
         allowNull: false
     },
-    photo: { // URL de la foto del bovino (opcional)
+    photo: {
         type: DataTypes.STRING,
         allowNull: true
     },
-    currentweight: { // Peso actual del bovino
+    currentweight: {
         type: DataTypes.FLOAT,
         allowNull: false
     },
-    classificationbytype: { // Clasificación del bovino por tipo (ej: lechero, carne, doble propósito)
+    classificationbytype: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    active: { // Estado del bovino (activo/inactivo)
+    active: {
         type: DataTypes.BOOLEAN,
         defaultValue: true
     },
-    createdAt: { // Fecha de creación del registro
+    createdAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
     },
-    updatedAt: { // Fecha de última actualización del registro
+    updatedAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
     }

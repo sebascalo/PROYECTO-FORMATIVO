@@ -1,45 +1,48 @@
 const { DataTypes } = require("sequelize");
 const db = require("../config/conectionDB");
 
-const mortality = db.define("mortality", {
-    id_mortality: {
+const exit = db.define("exit", {
+    id_mortality: { // Mantenemos este nombre para no romper la PK
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
-    id_Bovine: { // Identificación del bovino
+    id_Bovine: {
         type: DataTypes.INTEGER,
-        allowNull: true
+        allowNull: false,
+        references: {
+            model: 'cattles',
+            key: 'id_Bovine'
+        }
     },
-    dateofdeath: { // Fecha de muerte del bovino
+    dateofExit: { // Fecha de salida del bovino
         type: DataTypes.DATE,
-        allowNull: true
+        allowNull: false
     },
-    idResponsible: { // Responsable del registro de la muerte del bovino
+    exitReason: { // Razón de la salida del bovino (muerte, venta, sacrificio, etc.)
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    idResponsible: {
         type: DataTypes.INTEGER,
-        allowNull: true,
+        allowNull: false,
         references: {
             model: 'responsibles',
             key: 'idResponsible'
         }
     },
-    fateoftheanimal: { // Destino del animal después de la muerte (enterrado, incinerado, vendido para consumo)
+    observations: {
         type: DataTypes.STRING,
         allowNull: true
     },
-    observations: { // Observaciones adicionales sobre la muerte del bovino
-        type: DataTypes.STRING,
-        allowNull: true
-    },
-    createdAt: { // Fecha de creación del registro
+    createdAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
     },
-    updatedAt: { // Fecha de última actualización del registro
+    updatedAt: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
     }
 });
 
-module.exports = mortality;
-    
+module.exports = exit;

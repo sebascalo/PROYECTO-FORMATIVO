@@ -108,7 +108,7 @@ export function AppSidebar() {
                 >
                   <a href="/dashboard/birth">
                     <Baby />
-                    <span>Nacimiento</span>
+                    <span>Parto</span>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -127,7 +127,7 @@ export function AppSidebar() {
                 >
                   <a href="/dashboard/mortality">
                     <AlertTriangle />
-                    <span>Mortalidad</span>
+                    <span>Salida</span>
                   </a>
                 </SidebarMenuButton>
               </SidebarMenuItem>

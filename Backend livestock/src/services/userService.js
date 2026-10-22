@@ -73,12 +73,36 @@ const getUserByEmail = async (email) => {
         throw error;
     }
 }
+// actualizar email de usuario
+const updateForEmailUser = async (email, data) => {
+    try {
+        const userToUpdate = await user.update(data, { where: { email } });
+        return userToUpdate;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
 
+// buscar usuario por token de recuperación
+const getUserByToken = async (token) => {
+    try {
+        const userToken = await user.findOne({
+            where: { resetPasswordToken: token, solNewPassword: true }
+        });
+        return userToken;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
 module.exports = {
     userCreate,
     usersGetAll,
     getUserById,
     userDelete,
     userUpdate,
-    getUserByEmail
+    getUserByEmail,
+    updateForEmailUser,
+    getUserByToken
 }

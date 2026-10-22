@@ -10,17 +10,11 @@ import {
 } from "../ui/dialog";
 import ButtonCreate from "../ui/buttonCreate";
 
-// 👇 Tipos
 interface Cattle {
   id_Bovine: number;
   name: string;
   sex: string;
   active: boolean | number;
-}
-
-interface Pasture {
-  id_pasture: number;
-  name: string;
 }
 
 interface Race {
@@ -42,7 +36,6 @@ export default function FormCreationBirth() {
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     id_Bovine: "",
-    id_pasture: "",
     birthdate: new Date().toISOString().split("T")[0],
     sex: "",
     id_race: "",
@@ -51,14 +44,9 @@ export default function FormCreationBirth() {
     idResponsible: "",
   });
 
-  // 👇 Estados para cada select
   const [cattles, setCattles] = useState<Cattle[]>([]);
   const [loadingCattles, setLoadingCattles] = useState(true);
   const [cattlesError, setCattlesError] = useState<string | null>(null);
-
-  const [pastures, setPastures] = useState<Pasture[]>([]);
-  const [loadingPastures, setLoadingPastures] = useState(true);
-  const [pasturesError, setPasturesError] = useState<string | null>(null);
 
   const [races, setRaces] = useState<Race[]>([]);
   const [loadingRaces, setLoadingRaces] = useState(true);
@@ -66,33 +54,25 @@ export default function FormCreationBirth() {
 
   const [responsibles, setResponsibles] = useState<Responsible[]>([]);
   const [loadingResponsibles, setLoadingResponsibles] = useState(true);
-  const [responsiblesError, setResponsiblesError] = useState<string | null>(
-    null,
-  );
+  const [responsiblesError, setResponsiblesError] = useState<string | null>(null);
 
   // 👇 Cargar bovinos (solo hembras activas)
   useEffect(() => {
     const fetchCattles = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch(
-          "http://localhost:3000/api/cattle/CattleAll?limit=500",
-          { headers: { Authorization: `Bearer ${token}` } },
-        );
+        const response = await fetch("http://localhost:3000/api/cattle/CattleAll?limit=500", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         const resJson = await response.json();
         if (!response.ok) throw new Error(resJson?.message || "Error bovinos");
 
         const femaleCattles = (resJson.info ?? []).filter(
-          (c: Cattle) =>
-            c.sex === "Hembra" &&
-            (c.active === true || Number(c.active) === 1),
+          (c: Cattle) => c.sex === "Hembra" && (c.active === true || Number(c.active) === 1),
         );
         setCattles(femaleCattles);
       } catch (err) {
-        console.error("Error bovinos:", err);
-        setCattlesError(
-          err instanceof Error ? err.message : "No se pudieron cargar bovinos",
-        );
+        setCattlesError(err instanceof Error ? err.message : "No se pudieron cargar bovinos");
       } finally {
         setLoadingCattles(false);
       }
@@ -100,50 +80,20 @@ export default function FormCreationBirth() {
     fetchCattles();
   }, []);
 
-  // 👇 Cargar potreros
-  useEffect(() => {
-    const fetchPastures = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(
-          "http://localhost:3000/api/pasture/PastureAll?limit=100",
-          { headers: { Authorization: `Bearer ${token}` } },
-        );
-        const resJson = await response.json();
-        if (!response.ok) throw new Error(resJson?.message || "Error potreros");
-        setPastures(resJson.info ?? []);
-      } catch (err) {
-        console.error("Error potreros:", err);
-        setPasturesError(
-          err instanceof Error ? err.message : "No se pudieron cargar potreros",
-        );
-      } finally {
-        setLoadingPastures(false);
-      }
-    };
-    fetchPastures();
-  }, []);
-
-  // 👇 Cargar razas activas
+  // 👇 Cargar razas
   useEffect(() => {
     const fetchRaces = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch(
-          "http://localhost:3000/api/race/RaceAll?limit=100",
-          { headers: { Authorization: `Bearer ${token}` } },
-        );
+        const response = await fetch("http://localhost:3000/api/race/RaceAll?limit=100", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         const resJson = await response.json();
         if (!response.ok) throw new Error(resJson?.message || "Error razas");
-        const activeRaces = (resJson.info ?? []).filter(
-          (r: Race) => r.active === "Active",
-        );
+        const activeRaces = (resJson.info ?? []).filter((r: Race) => r.active === "Active");
         setRaces(activeRaces);
       } catch (err) {
-        console.error("Error razas:", err);
-        setRacesError(
-          err instanceof Error ? err.message : "No se pudieron cargar razas",
-        );
+        setRacesError(err instanceof Error ? err.message : "No se pudieron cargar razas");
       } finally {
         setLoadingRaces(false);
       }
@@ -151,29 +101,20 @@ export default function FormCreationBirth() {
     fetchRaces();
   }, []);
 
-  // 👇 Cargar responsables activos
+  // 👇 Cargar responsables
   useEffect(() => {
     const fetchResponsibles = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch(
-          "http://localhost:3000/api/responsible/ResponsibleAll?limit=200",
-          { headers: { Authorization: `Bearer ${token}` } },
-        );
+        const response = await fetch("http://localhost:3000/api/responsible/ResponsibleAll?limit=200", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         const resJson = await response.json();
-        if (!response.ok)
-          throw new Error(resJson?.message || "Error responsables");
-        const activeResponsibles = (resJson.info ?? []).filter(
-          (r: Responsible) => r.status === "Active",
-        );
+        if (!response.ok) throw new Error(resJson?.message || "Error responsables");
+        const activeResponsibles = (resJson.info ?? []).filter((r: Responsible) => r.status === "Active");
         setResponsibles(activeResponsibles);
       } catch (err) {
-        console.error("Error responsables:", err);
-        setResponsiblesError(
-          err instanceof Error
-            ? err.message
-            : "No se pudieron cargar responsables",
-        );
+        setResponsiblesError(err instanceof Error ? err.message : "No se pudieron cargar responsables");
       } finally {
         setLoadingResponsibles(false);
       }
@@ -182,9 +123,7 @@ export default function FormCreationBirth() {
   }, []);
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >,
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -194,7 +133,6 @@ export default function FormCreationBirth() {
   const limpiarFormulario = () => {
     setFormData({
       id_Bovine: "",
-      id_pasture: "",
       birthdate: new Date().toISOString().split("T")[0],
       sex: "",
       id_race: "",
@@ -209,26 +147,20 @@ export default function FormCreationBirth() {
     e.preventDefault();
     setError(null);
 
-    // 👇 Validaciones previas
     if (!formData.id_Bovine) return setError("Debes seleccionar una madre");
-    if (!formData.id_pasture) return setError("Debes seleccionar un potrero");
     if (!formData.birthdate) return setError("La fecha es obligatoria");
     if (!formData.sex) return setError("Debes seleccionar un sexo");
     if (!formData.id_race) return setError("Debes seleccionar una raza");
 
     const weight = parseFloat(formData.birthweight);
-    if (isNaN(weight) || weight <= 0)
-      return setError("El peso debe ser mayor a 0");
+    if (isNaN(weight) || weight <= 0) return setError("El peso debe ser mayor a 0");
+    if (!formData.idResponsible) return setError("Debes seleccionar un responsable");
 
-    if (!formData.idResponsible)
-      return setError("Debes seleccionar un responsable");
-
-    if (new Date(formData.birthdate) > new Date())
-      return setError("La fecha no puede ser futura");
+    if (new Date(formData.birthdate) > new Date()) return setError("La fecha no puede ser futura");
 
     const datosEnviar = {
       id_Bovine: Number(formData.id_Bovine),
-      id_pasture: Number(formData.id_pasture),
+      // ❌ Quitamos id_pasture
       birthdate: formData.birthdate,
       sex: formData.sex,
       id_race: Number(formData.id_race),
@@ -241,52 +173,35 @@ export default function FormCreationBirth() {
     setIsSubmitting(true);
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(
-        "http://localhost:3000/api/birth/CreateBirth",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(datosEnviar),
+      const response = await fetch("http://localhost:3000/api/birth/CreateBirth", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-      );
+        body: JSON.stringify(datosEnviar),
+      });
 
       if (!response.ok) {
         let backendMessage = "";
         try {
           const errorBody = await response.json();
           if (Array.isArray(errorBody?.errors)) {
-            backendMessage = errorBody.errors
-              .map((e: { message?: string } | string) =>
-                typeof e === "string" ? e : e.message ?? String(e),
-              )
-              .join(" | ");
+            backendMessage = errorBody.errors.map((e: any) => typeof e === "string" ? e : e.message).join(" | ");
           } else {
-            backendMessage =
-              errorBody?.message ||
-              errorBody?.error ||
-              JSON.stringify(errorBody);
+            backendMessage = errorBody?.message || errorBody?.error || JSON.stringify(errorBody);
           }
         } catch {
           backendMessage = await response.text();
         }
-        throw new Error(
-          `El servidor respondió ${response.status}: ${backendMessage || "sin detalle"}`,
-        );
+        throw new Error(`El servidor respondió ${response.status}: ${backendMessage}`);
       }
 
       limpiarFormulario();
       setOpen(false);
       window.location.reload();
     } catch (error) {
-      console.error("Error:", error);
-      setError(
-        error instanceof Error
-          ? error.message
-          : "No se pudo guardar el nacimiento.",
-      );
+      setError(error instanceof Error ? error.message : "No se pudo guardar el nacimiento.");
     } finally {
       setIsSubmitting(false);
     }
@@ -306,20 +221,11 @@ export default function FormCreationBirth() {
         <DialogTitle className="font-bold text-2xl text-center">
           Crear Nacimiento
         </DialogTitle>
-        <form
-          id="birth-create-form"
-          onSubmit={handleSubmit}
-          className="space-y-4"
-        >
+        <form id="birth-create-form" onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            {/* MADRE (solo hembras activas) */}
+            {/* MADRE */}
             <div>
-              <label
-                htmlFor="id_Bovine"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Madre:
-              </label>
+              <label htmlFor="id_Bovine" className="block text-sm font-medium text-gray-700 mb-1">Madre:</label>
               <select
                 id="id_Bovine"
                 name="id_Bovine"
@@ -328,66 +234,17 @@ export default function FormCreationBirth() {
                 disabled={loadingCattles}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043] bg-white disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                <option value="">
-                  {loadingCattles
-                    ? "Cargando madres..."
-                    : cattlesError
-                      ? "Error al cargar madres"
-                      : "Seleccione una madre"}
-                </option>
+                <option value="">{loadingCattles ? "Cargando madres..." : "Seleccione una madre"}</option>
                 {cattles.map((c) => (
-                  <option key={c.id_Bovine} value={c.id_Bovine}>
-                    {c.id_Bovine} - {c.name}
-                  </option>
+                  <option key={c.id_Bovine} value={c.id_Bovine}>{c.id_Bovine} - {c.name}</option>
                 ))}
               </select>
-              {cattlesError && (
-                <p className="text-xs text-red-600 mt-1">{cattlesError}</p>
-              )}
-            </div>
-
-            {/* POTRERO */}
-            <div>
-              <label
-                htmlFor="id_pasture"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Potrero:
-              </label>
-              <select
-                id="id_pasture"
-                name="id_pasture"
-                value={formData.id_pasture}
-                onChange={handleChange}
-                disabled={loadingPastures}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043] bg-white disabled:opacity-60 disabled:cursor-not-allowed"
-              >
-                <option value="">
-                  {loadingPastures
-                    ? "Cargando potreros..."
-                    : pasturesError
-                      ? "Error al cargar potreros"
-                      : "Seleccione un potrero"}
-                </option>
-                {pastures.map((p) => (
-                  <option key={p.id_pasture} value={p.id_pasture}>
-                    {p.name}
-                  </option>
-                ))}
-              </select>
-              {pasturesError && (
-                <p className="text-xs text-red-600 mt-1">{pasturesError}</p>
-              )}
+              {cattlesError && <p className="text-xs text-red-600 mt-1">{cattlesError}</p>}
             </div>
 
             {/* FECHA */}
             <div>
-              <label
-                htmlFor="birthdate"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Fecha de Nacimiento:
-              </label>
+              <label htmlFor="birthdate" className="block text-sm font-medium text-gray-700 mb-1">Fecha de Nacimiento:</label>
               <input
                 type="date"
                 id="birthdate"
@@ -401,12 +258,7 @@ export default function FormCreationBirth() {
 
             {/* SEXO */}
             <div>
-              <label
-                htmlFor="sex"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Sexo:
-              </label>
+              <label htmlFor="sex" className="block text-sm font-medium text-gray-700 mb-1">Sexo:</label>
               <select
                 id="sex"
                 name="sex"
@@ -422,12 +274,7 @@ export default function FormCreationBirth() {
 
             {/* RAZA */}
             <div>
-              <label
-                htmlFor="id_race"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Raza:
-              </label>
+              <label htmlFor="id_race" className="block text-sm font-medium text-gray-700 mb-1">Raza:</label>
               <select
                 id="id_race"
                 name="id_race"
@@ -436,32 +283,17 @@ export default function FormCreationBirth() {
                 disabled={loadingRaces}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043] bg-white disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                <option value="">
-                  {loadingRaces
-                    ? "Cargando razas..."
-                    : racesError
-                      ? "Error al cargar razas"
-                      : "Seleccione una raza"}
-                </option>
+                <option value="">{loadingRaces ? "Cargando razas..." : "Seleccione una raza"}</option>
                 {races.map((r) => (
-                  <option key={r.id_race} value={r.id_race}>
-                    {r.name_race}
-                  </option>
+                  <option key={r.id_race} value={r.id_race}>{r.name_race}</option>
                 ))}
               </select>
-              {racesError && (
-                <p className="text-xs text-red-600 mt-1">{racesError}</p>
-              )}
+              {racesError && <p className="text-xs text-red-600 mt-1">{racesError}</p>}
             </div>
 
             {/* PESO */}
             <div>
-              <label
-                htmlFor="birthweight"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Peso al Nacer (kg):
-              </label>
+              <label htmlFor="birthweight" className="block text-sm font-medium text-gray-700 mb-1">Peso al Nacer (kg):</label>
               <input
                 type="number"
                 id="birthweight"
@@ -477,12 +309,7 @@ export default function FormCreationBirth() {
 
             {/* RESPONSABLE */}
             <div>
-              <label
-                htmlFor="idResponsible"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Responsable:
-              </label>
+              <label htmlFor="idResponsible" className="block text-sm font-medium text-gray-700 mb-1">Responsable:</label>
               <select
                 id="idResponsible"
                 name="idResponsible"
@@ -491,35 +318,18 @@ export default function FormCreationBirth() {
                 disabled={loadingResponsibles}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043] bg-white disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                <option value="">
-                  {loadingResponsibles
-                    ? "Cargando responsables..."
-                    : responsiblesError
-                      ? "Error al cargar responsables"
-                      : "Seleccione un responsable"}
-                </option>
+                <option value="">{loadingResponsibles ? "Cargando responsables..." : "Seleccione un responsable"}</option>
                 {responsibles.map((r) => (
-                  <option key={r.idResponsible} value={r.idResponsible}>
-                    {r.fullName} - {r.role}
-                  </option>
+                  <option key={r.idResponsible} value={r.idResponsible}>{r.fullName} - {r.role}</option>
                 ))}
               </select>
-              {responsiblesError && (
-                <p className="text-xs text-red-600 mt-1">
-                  {responsiblesError}
-                </p>
-              )}
+              {responsiblesError && <p className="text-xs text-red-600 mt-1">{responsiblesError}</p>}
             </div>
           </div>
 
           {/* OBSERVACIONES */}
           <div>
-            <label
-              htmlFor="observations"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Observaciones:
-            </label>
+            <label htmlFor="observations" className="block text-sm font-medium text-gray-700 mb-1">Observaciones:</label>
             <div className="relative">
               <textarea
                 id="observations"
@@ -534,23 +344,10 @@ export default function FormCreationBirth() {
               {formData.observations.length > 0 && (
                 <button
                   type="button"
-                  onClick={() =>
-                    setFormData((prev) => ({ ...prev, observations: "" }))
-                  }
+                  onClick={() => setFormData((prev) => ({ ...prev, observations: "" }))}
                   className="absolute top-3 right-3 flex items-center justify-center w-6 h-6 rounded-full bg-gray-300 hover:bg-gray-400 text-white transition-colors"
-                  aria-label="Limpiar observaciones"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
                     <line x1="6" y1="6" x2="18" y2="18"></line>
                   </svg>
@@ -558,27 +355,16 @@ export default function FormCreationBirth() {
               )}
             </div>
             <div className="flex justify-between items-center mt-1">
-              <p className="text-sm text-gray-600">
-                Complete los campos para crear un nuevo nacimiento.
-              </p>
-              <p className="text-sm text-gray-500">
-                {formData.observations.length}/100
-              </p>
+              <p className="text-sm text-gray-600">Complete los campos para crear un nuevo nacimiento.</p>
+              <p className="text-xs text-gray-500">{formData.observations.length}/100</p>
             </div>
           </div>
         </form>
 
-        {/* 👇 Oculto para accesibilidad */}
-        <DialogDescription className="sr-only">
-          Complete los campos para crear un nuevo nacimiento.
-        </DialogDescription>
+        <DialogDescription className="sr-only">Complete los campos para crear un nuevo nacimiento.</DialogDescription>
 
         <DialogFooter className="flex-col gap-2 sm:flex-col">
-          {error && (
-            <p className="text-sm text-red-600 text-center font-medium">
-              ⚠️ {error}
-            </p>
-          )}
+          {error && <p className="text-sm text-red-600 text-center font-medium">⚠️ {error}</p>}
           <div className="flex flex-row gap-2 w-full">
             <button
               type="button"
