@@ -38,15 +38,11 @@ const shiftStyles: Record<string, string> = {
 const columnHelper = createColumnHelper<SharedTableFeatures, Milk>();
 
 export const columns = columnHelper.columns([
-  columnHelper.accessor("id_milk", {
-    header: "ID",
-    cell: ({ getValue }) => <span className="text-[#6B6459]">{getValue()}</span>,
-  }),
   // 👇 COLUMNA BOVINO con filtro de búsqueda arreglado
   columnHelper.accessor("id_Bovine", {
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} className="h-auto p-0 font-semibold uppercase tracking-wide text-xs text-[#6B6459] hover:bg-transparent hover:text-[#2B2A26]">
-        Bovino <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
+        ID Bovino <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
       </Button>
     ),
     // 👇 Forzamos a que el filtro convierta el ID a texto para que funcione el buscador

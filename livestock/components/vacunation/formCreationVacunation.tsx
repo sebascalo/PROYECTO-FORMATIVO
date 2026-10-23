@@ -290,7 +290,7 @@ export default function FormCreationVacunation() {
                 htmlFor="applied_dose"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Dosis Aplicada:
+                Dosis Aplicada (ml):
               </label>
               <input
                 type="text"

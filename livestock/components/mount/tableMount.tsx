@@ -80,7 +80,7 @@ export default function TableMount({ actions }: TableMountProps) {
           };
         });
 
-        setMounts(mountsFormatted);
+        setMounts([...mountsFormatted].reverse());
       } catch (error) {
         console.error("Error:", error);
         setMounts([]);

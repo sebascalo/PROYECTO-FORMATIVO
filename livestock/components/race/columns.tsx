@@ -16,12 +16,6 @@ export type Race = {
 const columnHelper = createColumnHelper<SharedTableFeatures, Race>();
 
 export const columns = columnHelper.columns([
-  columnHelper.accessor("id_race", {
-    header: "ID",
-    cell: ({ getValue }) => (
-      <span className="text-[#6B6459]">{getValue()}</span>
-    ),
-  }),
   columnHelper.accessor("name_race", {
     header: ({ column }) => (
       <Button

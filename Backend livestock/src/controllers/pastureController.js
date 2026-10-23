@@ -1,202 +1,87 @@
 const { pastureCreate, pastureUpdate, pastureDelete, getPastureById, pasturesGetAll } = require("../services/pastureService");
 const Response = require("../functions/response");
 
-// Obtener todos los registros de potreros
 const getAllPastures = async (req, res) => {
     try {
-        let queryLimit = req.query.limit;
-        let queryOffset = req.query.offset;
-        
-        const limit = queryLimit ? Number(queryLimit) : 20;
-        const offset = queryOffset ? Number(queryOffset) : 0; 
-
+        const limit = req.query.limit ? Number(req.query.limit) : 20;
+        const offset = req.query.offset ? Number(req.query.offset) : 0; 
         const pastures = await pasturesGetAll(limit, offset);
-        const response = new Response("Registros de potreros obtenidos exitosamente", pastures, null);
-        res.status(200);
-        res.json(response.json);
+        res.status(200).json(new Response("Registros de potreros obtenidos exitosamente", pastures, null).json);
     } catch (error) {
         console.error("Error en getAllPastures:", error);
-        const errorResponse = new Response("Error interno del servidor", null, [
-            { message: error.message || "Ocurrió un error inesperado" }
-        ]);
-        res.status(500);
-        res.json(errorResponse.json);
+        res.status(500).json(new Response("Error interno", null, [{ message: error.message }]).json);
     }
 };
 
 const getAllPasturesById = async (req, res) => {
     try {
-        const { id_pasture } = req.params;
-        var errors = [];
-        if (!id_pasture) {
-            errors.push("El ID del potrero es obligatorio");
-        }
-        if (errors.length > 0) {
-            var response = new Response("Error al obtener el potrero", null, errors);
-            res.status(400);
-            res.json(response.json);
-            return;
-        }
-        const pasture = await getPastureById(id_pasture);
-        var response = new Response(`Potrero ${id_pasture} obtenido exitosamente`, pasture, null);
-        res.status(201);
-        res.json(response.json);
+        const { id } = req.params;
+        if (!id) return res.status(400).json(new Response("Error", null, ["El ID es obligatorio"]).json);
+        const pasture = await getPastureById(id);
+        res.status(200).json(new Response(`Potrero ${id} obtenido exitosamente`, pasture, null).json);
     } catch (error) {
         console.error("Error en getAllPasturesById:", error);
-        const errorResponse = new Response("Error interno del servidor", null, [
-            { message: error.message || "Ocurrió un error inesperado" }
-        ]);
-        res.status(500);
-        res.json(errorResponse.json);
+        res.status(500).json(new Response("Error interno", null, [{ message: error.message }]).json);
     }
 }
 
 const createPasture = async (req, res) => {
     try {
-        // NOTA: Se actualizaron los campos según el nuevo modelo
-        const { name, extension, forageCapacity, pastureType, cattleEntryDate, cattleExitDate, currentStatus, lastChemicalApplication } = req.body;
-        
+        // 👇 Cambiamos lastChemicalApplication por observations
+        const { name, extension, forageCapacity, pastureType, cattleEntryDate, cattleExitDate, currentStatus, observations } = req.body;
         var errors = [];
-        // Validaciones actualizadas
-        if (!name || name.trim() === "") {
-            errors.push("El nombre del potrero es obligatorio");
-        }
-        if (!extension || extension.toString().trim() === "" || isNaN(extension)) {
-            errors.push("El tamaño del potrero es obligatorio y debe ser un número");
-        }
-        if (!forageCapacity || forageCapacity.toString().trim() === "" || isNaN(forageCapacity)) {
-            errors.push("El aforo (capacidad máxima) es obligatorio y debe ser un número");
-        }
-        if (!pastureType || pastureType.trim() === "") {
-            errors.push("El tipo de pastura es obligatorio");
-        }
-        if (!currentStatus || currentStatus.trim() === "") {
-            errors.push("El estado actual es obligatorio");
-        }
         
-        if (errors.length > 0) {
-            var response = new Response("Error al crear el potrero", null, errors)
-            res.status(400)
-            res.json(response.json);
-            return;
-        }
+        if (!name || name.trim() === "") errors.push("El nombre del potrero es obligatorio");
+        if (!extension || extension.toString().trim() === "" || isNaN(extension)) errors.push("El tamaño es obligatorio y debe ser un número");
+        if (!forageCapacity || forageCapacity.toString().trim() === "" || isNaN(forageCapacity)) errors.push("El aforo es obligatorio y debe ser un número");
+        if (!pastureType || pastureType.trim() === "") errors.push("El tipo de pastura es obligatorio");
+        if (!currentStatus || currentStatus.trim() === "") errors.push("El estado actual es obligatorio");
+        
+        if (errors.length > 0) return res.status(400).json(new Response("Error al crear el potrero", null, errors).json);
 
-        // Los campos de fecha y químico son opcionales, así que se pasan tal cual (pueden ser null)
-        const data = { 
-            name, 
-            extension, 
-            forageCapacity, 
-            pastureType, 
-            cattleEntryDate, 
-            cattleExitDate, 
-            currentStatus, 
-            lastChemicalApplication 
-        };
-
-        const pasture = await pastureCreate(data)
-        var response = new Response("Potrero creado exitosamente", pasture, null);
-        res.status(201);
-        res.json(response.json);
+        const data = { name, extension, forageCapacity, pastureType, cattleEntryDate, cattleExitDate, currentStatus, observations };
+        const pasture = await pastureCreate(data);
+        res.status(201).json(new Response("Potrero creado exitosamente", pasture, null).json);
     } catch (error) {
         console.error("Error en createPasture:", error);
-        const errorResponse = new Response("Error interno del servidor", null, [
-            { message: error.message || "Ocurrió un error inesperado" }
-        ]);
-        res.status(500);
-        res.json(errorResponse.json);
+        res.status(500).json(new Response("Error interno", null, [{ message: error.message }]).json);
     }
 }
 
 const updatePasture = async (req, res) => {
     try {
-        const { id_pasture } = req.params;
-        const { name, extension, forageCapacity, pastureType, cattleEntryDate, cattleExitDate, currentStatus, lastChemicalApplication } = req.body;
-        
+        const { id } = req.params;
+        const { name, extension, forageCapacity, pastureType, cattleEntryDate, cattleExitDate, currentStatus, observations } = req.body;
         var errors = [];
-        // Validaciones
-        if (!id_pasture) {
-            errors.push("El ID del potrero es obligatorio");
-        }
-        if (!name || name.trim() === "") {
-            errors.push("El nombre del potrero es obligatorio");
-        }
-        if (!extension || extension.toString().trim() === "" || isNaN(extension)) {
-            errors.push("El tamaño del potrero es obligatorio y debe ser un número");
-        }
-        if (!forageCapacity || forageCapacity.toString().trim() === "" || isNaN(forageCapacity)) {
-            errors.push("El aforo (capacidad máxima) es obligatorio y debe ser un número");
-        }
-        if (!pastureType || pastureType.trim() === "") {
-            errors.push("El tipo de pastura es obligatorio");
-        }
-        if (!currentStatus || currentStatus.trim() === "") {
-            errors.push("El estado actual es obligatorio");
-        }
         
-        if (errors.length > 0) {
-            var response = new Response("Error al actualizar el potrero", null, errors)
-            res.status(400)
-            res.json(response.json);
-            return;
-        }
+        if (!id) errors.push("El ID del potrero es obligatorio");
+        if (!name || name.trim() === "") errors.push("El nombre del potrero es obligatorio");
+        if (!extension || extension.toString().trim() === "" || isNaN(extension)) errors.push("El tamaño es obligatorio");
+        if (!forageCapacity || forageCapacity.toString().trim() === "" || isNaN(forageCapacity)) errors.push("El aforo es obligatorio");
+        if (!pastureType || pastureType.trim() === "") errors.push("El tipo de pastura es obligatorio");
+        if (!currentStatus || currentStatus.trim() === "") errors.push("El estado actual es obligatorio");
+        
+        if (errors.length > 0) return res.status(400).json(new Response("Error al actualizar el potrero", null, errors).json);
 
-        const data = { 
-            name, 
-            extension, 
-            forageCapacity, 
-            pastureType, 
-            cattleEntryDate, 
-            cattleExitDate, 
-            currentStatus, 
-            lastChemicalApplication 
-        };
-
-        const pasture = await pastureUpdate(id_pasture, data)
-        var response = new Response(`Potrero ${id_pasture} actualizado exitosamente`, pasture, null);
-        res.status(200);
-        res.json(response.json);
+        const data = { name, extension, forageCapacity, pastureType, cattleEntryDate, cattleExitDate, currentStatus, observations };
+        const pasture = await pastureUpdate(id, data);
+        res.status(200).json(new Response(`Potrero ${id} actualizado exitosamente`, pasture, null).json);
     } catch (error) {
         console.error("Error en updatePasture:", error);
-        const errorResponse = new Response("Error interno del servidor", null, [
-            { message: error.message || "Ocurrió un error inesperado" }
-        ]);
-        res.status(500);
-        res.json(errorResponse.json);
+        res.status(500).json(new Response("Error interno", null, [{ message: error.message }]).json);
     }
 }
 
 const deletePasture = async (req, res) => {
     try {
-        const { id_pasture } = req.params;
-        var errors = [];
-        if (!id_pasture) {
-            errors.push("El ID del potrero es obligatorio");
-        }
-        if (errors.length > 0) {
-            var response = new Response("Error al eliminar el potrero", null, errors)
-            res.status(400)
-            res.json(response.json);
-            return;
-        }
-        data = { id_pasture }
-        const pasture = await pastureDelete(id_pasture)
-        var response = new Response(`Potrero ${id_pasture} eliminado exitosamente`, { id_pasture }, null);
-        res.status(201);
-        res.json(response.json);
+        const { id } = req.params;
+        if (!id) return res.status(400).json(new Response("Error", null, ["El ID es obligatorio"]).json);
+        await pastureDelete(id);
+        res.status(200).json(new Response(`Potrero ${id} eliminado exitosamente`, { id }, null).json);
     } catch (error) {
         console.error("Error en deletePasture:", error);
-        const errorResponse = new Response("Error interno del servidor", null, [
-            { message: error.message || "Ocurrió un error inesperado" }
-        ]);
-        res.status(500);
-        res.json(errorResponse.json);
+        res.status(500).json(new Response("Error interno", null, [{ message: error.message }]).json);
     }
 }
 
-module.exports = {
-    getAllPastures,
-    getAllPasturesById,
-    createPasture,
-    updatePasture,
-    deletePasture
-};
+module.exports = { getAllPastures, getAllPasturesById, createPasture, updatePasture, deletePasture };

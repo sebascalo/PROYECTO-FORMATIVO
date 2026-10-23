@@ -54,7 +54,7 @@ const classificationStyles: Record<string, string> = {
 const columnHelper = createColumnHelper<SharedTableFeatures, Cattle>();
 
 export const columns = columnHelper.columns([
-  columnHelper.accessor("id_Bovine", { header: "ID", cell: ({ getValue }) => <span className="text-[#6B6459]">{getValue()}</span> }),
+  columnHelper.accessor("id_Bovine", { header: "ID BOVINO", cell: ({ getValue }) => <span className="text-[#6B6459]">{getValue()}</span> }),
   columnHelper.accessor("name", {
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} className="h-auto p-0 font-semibold uppercase tracking-wide text-xs text-[#6B6459] hover:bg-transparent hover:text-[#2B2A26]">

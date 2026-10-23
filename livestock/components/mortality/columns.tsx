@@ -7,12 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { type SharedTableFeatures } from "@/components/ui/data-table-features";
 
-// 👇 Tipos del JOIN
-export type CattleData = {
-  id_Bovine: number;
-  name: string;
-};
-
+// 👇 Tipos del JOIN (Quitamos CattleData)
 export type ResponsibleData = {
   idResponsible: number;
   fullName: string;
@@ -26,7 +21,6 @@ export type Mortality = {
   exitReason: string;
   idResponsible: number | null;
   observations: string;
-  cattleData?: CattleData | null;
   responsibleData?: ResponsibleData | null;
 };
 
@@ -51,35 +45,27 @@ const exitReasonStyles: Record<string, string> = {
 const columnHelper = createColumnHelper<SharedTableFeatures, Mortality>();
 
 export const columns = columnHelper.columns([
-  columnHelper.accessor("id_mortality", {
-    header: "ID",
-    cell: ({ getValue }) => (
-      <span className="text-[#6B6459]">{getValue()}</span>
-    ),
-  }),
-  // 👇 BOVINO con filtro de búsqueda
-  columnHelper.accessor("cattleData", {
+  // COLUMNA BOVINO (Muestra el ID)
+  columnHelper.accessor("id_Bovine", {
     header: ({ column }) => (
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         className="h-auto p-0 font-semibold uppercase tracking-wide text-xs text-[#6B6459] hover:bg-transparent hover:text-[#2B2A26]"
       >
-        Bovino
+        ID BOVINO
         <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
       </Button>
     ),
-    // 👇 Forzamos a que el filtro busque dentro del nombre del bovino
+    // 👇 Filtro para que el buscador funcione con el número del ID
     filterFn: (row, id, value) => {
-      const cattle = row.getValue(id) as CattleData | null;
-      if (!cattle) return false;
-      return cattle.name.toLowerCase().includes(value.toLowerCase());
+      return String(row.getValue(id)).toLowerCase().includes(value.toLowerCase());
     },
     cell: ({ getValue }) => {
-      const cattle = getValue();
+      const value = getValue();
       return (
         <span className="font-medium text-[#2B2A26]">
-          {cattle?.name ?? "Sin bovino"}
+          {value ?? "Sin bovino"}
         </span>
       );
     },

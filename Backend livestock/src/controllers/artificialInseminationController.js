@@ -1,180 +1,86 @@
 const { artificialInseminationCreate, artificialInseminationUpdate, artificialInseminationDelete, getArtificialInseminationById, artificialInseminationsGetAll } = require("../services/artificialInseminationService");
 const Response = require("../functions/response");
 
-// Obtener todos los registros de inseminaciones artificiales
 const getAllArtificialInseminations = async (req, res) => {
     try {
-        let queryLimit = req.query.limit;
-        let queryOffset = req.query.offset;
-        
-        const limit = queryLimit ? Number(queryLimit) : 20;
-        const offset = queryOffset ? Number(queryOffset) : 0; 
-
+        const limit = req.query.limit ? Number(req.query.limit) : 20;
+        const offset = req.query.offset ? Number(req.query.offset) : 0; 
         const artificialInseminations = await artificialInseminationsGetAll(limit, offset);
-        const response = new Response("Registros de inseminaciones artificiales obtenidos exitosamente", artificialInseminations, null);
-        res.status(200);
-        res.json(response.json);
+        res.status(200).json(new Response("Registros obtenidos exitosamente", artificialInseminations, null).json);
     } catch (error) {
         console.error("Error en getAllArtificialInseminations:", error);
-        const errorResponse = new Response("Error interno del servidor", null, [
-            { message: error.message || "Ocurrió un error inesperado" }
-        ]);
-        res.status(500);
-        res.json(errorResponse.json);
+        res.status(500).json(new Response("Error interno del servidor", null, [{ message: error.message }]).json);
     }
 };
 
 const getAllArtificialInseminationsById = async (req, res) => {
     try {
         const { id_artifInse } = req.params;
-        var errors = [];
-        if (!id_artifInse) {
-            errors.push("El ID de la inseminación artificial es obligatorio");
-        }
-        if (errors.length > 0) {
-            var response = new Response("Error al obtener la inseminación artificial", null, errors);
-            res.status(400);
-            res.json(response.json);
-            return;
-        }
+        if (!id_artifInse) return res.status(400).json(new Response("Error", null, ["El ID es obligatorio"]).json);
         const artificialInsemination = await getArtificialInseminationById(id_artifInse);
-        var response = new Response(`Inseminación artificial ${id_artifInse} obtenida exitosamente`, artificialInsemination, null);
-        res.status(201);
-        res.json(response.json);
+        res.status(200).json(new Response(`Inseminación ${id_artifInse} obtenida exitosamente`, artificialInsemination, null).json);
     } catch (error) {
-        console.error("Error en getAllArtificialInseminationsById:", error);
-        const errorResponse = new Response("Error interno del servidor", null, [
-            { message: error.message || "Ocurrió un error inesperado" }
-        ]);
-        res.status(500);
-        res.json(errorResponse.json);
+        console.error("Error:", error);
+        res.status(500).json(new Response("Error interno", null, [{ message: error.message }]).json);
     }
 }
 
 const createArtificialInsemination = async (req, res) => {
     try {
-        console.log("📥 [BACK] Body recibido:", req.body);
-        const { id_Bovine, inseminationDate, semenID, id_race, observations, idResponsible } = req.body;
+        const { id_madre, id_toro, inseminationDate, semenID, id_race, servicio, observations, idResponsible } = req.body;
         var errors = [];
         
-        // Validaciones
-        if (!id_Bovine || String(id_Bovine).trim() === "" || isNaN(id_Bovine)) {
-            errors.push("La identificación del bovino es obligatoria y debe ser un número");
-        }
-        if (!inseminationDate || String(inseminationDate).trim() === "") {
-            errors.push("La fecha de inseminación es obligatoria");
-        }
-        if (!semenID || String(semenID).trim() === "") {
-            errors.push("El código o lote de la pajilla es obligatorio");
-        }
-        if (!id_race || String(id_race).trim() === "") {
-            errors.push("La raza de la pajilla es obligatoria");
-        }
-        if (!idResponsible || String(idResponsible).trim() === "") {
-            errors.push("El responsable de la inseminación es obligatorio");
-        }
+        if (!id_madre || String(id_madre).trim() === "" || isNaN(id_madre)) errors.push("La madre es obligatoria");
+        if (!inseminationDate || String(inseminationDate).trim() === "") errors.push("La fecha es obligatoria");
+        if (!semenID || String(semenID).trim() === "") errors.push("El código de la pajilla es obligatorio");
+        if (!id_race || String(id_race).trim() === "") errors.push("La raza es obligatoria");
+        if (!idResponsible || String(idResponsible).trim() === "") errors.push("El responsable es obligatorio");
 
-        if (errors.length > 0) {
-            var response = new Response("Error al crear la inseminación artificial", null, errors)
-            res.status(400)
-            res.json(response.json);
-            return;
-        }
+        if (errors.length > 0) return res.status(400).json(new Response("Error al crear", null, errors).json);
         
-        const data = { id_Bovine, inseminationDate, semenID, id_race, observations, idResponsible };
-        console.log("📥 [BACK] data a guardar:", data);
+        const data = { id_madre, id_toro: id_toro ? Number(id_toro) : null, inseminationDate, semenID, id_race, servicio, observations, idResponsible };
         const artificialInsemination = await artificialInseminationCreate(data);
-        var response = new Response("Inseminación artificial creada exitosamente", artificialInsemination, null);
-        res.status(201);
-        res.json(response.json);
+        res.status(201).json(new Response("Inseminación creada exitosamente", artificialInsemination, null).json);
     } catch (error) {
         console.error("Error en createArtificialInsemination:", error);
-        const errorResponse = new Response("Error interno del servidor", null, [
-            { message: error.message || "Ocurrió un error inesperado" }
-        ]);
-        res.status(500);
-        res.json(errorResponse.json);
+        res.status(500).json(new Response("Error interno", null, [{ message: error.message }]).json);
     }
 }
 
 const updateArtificialInsemination = async (req, res) => {
     try {
         const { id_artifInse } = req.params;
-        const { id_Bovine, inseminationDate, semenID, id_race, observations, idResponsible } = req.body;
+        const { id_madre, id_toro, inseminationDate, semenID, id_race, servicio, observations, idResponsible } = req.body;
         var errors = [];
         
-        if (!id_artifInse) {
-            errors.push("El ID de la inseminación artificial es obligatorio");
-        }
-        if (!id_Bovine || String(id_Bovine).trim() === "" || isNaN(id_Bovine)) {
-            errors.push("La identificación del bovino es obligatoria y debe ser un número");
-        }
-        if (!inseminationDate || String(inseminationDate).trim() === "") {
-            errors.push("La fecha de inseminación es obligatoria");
-        }
-        if (!semenID || String(semenID).trim() === "") {
-            errors.push("El código o lote de la pajilla es obligatorio");
-        }
-        if (!id_race || String(id_race).trim() === "") {
-            errors.push("La raza de la pajilla es obligatoria");
-        }
-        if (!idResponsible || String(idResponsible).trim() === "") {
-            errors.push("El responsable de la inseminación es obligatorio");
-        }
+        if (!id_artifInse) errors.push("El ID es obligatorio");
+        if (!id_madre || String(id_madre).trim() === "" || isNaN(id_madre)) errors.push("La madre es obligatoria");
+        if (!inseminationDate || String(inseminationDate).trim() === "") errors.push("La fecha es obligatoria");
+        if (!semenID || String(semenID).trim() === "") errors.push("El código es obligatorio");
+        if (!id_race || String(id_race).trim() === "") errors.push("La raza es obligatoria");
+        if (!idResponsible || String(idResponsible).trim() === "") errors.push("El responsable es obligatorio");
 
-        if (errors.length > 0) {
-            var response = new Response("Error al actualizar la inseminación artificial", null, errors)
-            res.status(400)
-            res.json(response.json);
-            return;
-        }
+        if (errors.length > 0) return res.status(400).json(new Response("Error al actualizar", null, errors).json);
         
-        const data = { id_Bovine, inseminationDate, semenID, id_race, observations, idResponsible };
+        const data = { id_madre, id_toro: id_toro ? Number(id_toro) : null, inseminationDate, semenID, id_race, servicio, observations, idResponsible };
         const artificialInsemination = await artificialInseminationUpdate(id_artifInse, data);
-        var response = new Response(`Inseminación artificial ${id_artifInse} actualizada exitosamente`, artificialInsemination, null);
-        res.status(200);
-        res.json(response.json);
+        res.status(200).json(new Response(`Inseminación actualizada`, artificialInsemination, null).json);
     } catch (error) {
         console.error("Error en updateArtificialInsemination:", error);
-        const errorResponse = new Response("Error interno del servidor", null, [
-            { message: error.message || "Ocurrió un error inesperado" }
-        ]);
-        res.status(500);
-        res.json(errorResponse.json);
+        res.status(500).json(new Response("Error interno", null, [{ message: error.message }]).json);
     }
 }
 
 const deleteArtificialInsemination = async (req, res) => {
     try {
         const { id_artifInse } = req.params;
-        var errors = [];
-        if (!id_artifInse) {
-            errors.push("El ID de la inseminación artificial es obligatorio");
-        }
-        if (errors.length > 0) {
-            var response = new Response("Error al eliminar la inseminación artificial", null, errors)
-            res.status(400)
-            res.json(response.json);
-            return;
-        }
-        const artificialInsemination = await artificialInseminationDelete(id_artifInse);
-        var response = new Response(`Inseminación artificial ${id_artifInse} eliminada exitosamente`, { id_artifInse }, null);
-        res.status(201);
-        res.json(response.json);
+        if (!id_artifInse) return res.status(400).json(new Response("Error", null, ["El ID es obligatorio"]).json);
+        await artificialInseminationDelete(id_artifInse);
+        res.status(200).json(new Response(`Inseminación eliminada exitosamente`, { id_artifInse }, null).json);
     } catch (error) {
         console.error("Error en deleteArtificialInsemination:", error);
-        const errorResponse = new Response("Error interno del servidor", null, [
-            { message: error.message || "Ocurrió un error inesperado" }
-        ]);
-        res.status(500);
-        res.json(errorResponse.json);
+        res.status(500).json(new Response("Error interno", null, [{ message: error.message }]).json);
     }
 }
 
-module.exports = {
-    getAllArtificialInseminations,
-    getAllArtificialInseminationsById,
-    createArtificialInsemination,
-    updateArtificialInsemination,
-    deleteArtificialInsemination
-};
+module.exports = { getAllArtificialInseminations, getAllArtificialInseminationsById, createArtificialInsemination, updateArtificialInsemination, deleteArtificialInsemination };

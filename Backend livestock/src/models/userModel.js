@@ -68,6 +68,10 @@ const user = db.define('user', {
         type: DataTypes.BOOLEAN,
         defaultValue: false
     },
+    resetPasswordExpires:{
+    type: DataTypes.DATE,
+    allowNull: true
+    },
     createdAt:{
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW

@@ -8,11 +8,6 @@ interface TableVacunationProps {
   actions?: React.ReactNode;
 }
 
-interface Cattle {
-  id_Bovine: number;
-  name: string;
-}
-
 interface Responsible {
   idResponsible: number;
   fullName: string;
@@ -28,11 +23,9 @@ export default function TableVacunation({ actions }: TableVacunationProps) {
         const token = localStorage.getItem("token");
         const headers = { Authorization: `Bearer ${token}` };
 
-        const [vacRes, cattleRes, responsibleRes] = await Promise.all([
+        // 👇 Solo 2 fetch (vacunaciones y responsables)
+        const [vacRes, responsibleRes] = await Promise.all([
           fetch("http://localhost:3000/api/vacunation/VacunationAll?limit=500", {
-            headers,
-          }),
-          fetch("http://localhost:3000/api/cattle/CattleAll?limit=500", {
             headers,
           }),
           fetch(
@@ -41,29 +34,21 @@ export default function TableVacunation({ actions }: TableVacunationProps) {
           ),
         ]);
 
-        const [vacJson, cattleJson, responsibleJson] = await Promise.all([
+        const [vacJson, responsibleJson] = await Promise.all([
           vacRes.json(),
-          cattleRes.json(),
           responsibleRes.json(),
         ]);
 
-        const vacList: Vacunation[] = vacJson.info ?? [];
-        const cattles: Cattle[] = cattleJson.info ?? [];
+        const vacList: Vacunation[] = Array.isArray(vacJson.info) ? vacJson.info : [];
         const responsibles: Responsible[] = responsibleJson.info ?? [];
 
         const vacFormatted: Vacunation[] = vacList.map((v) => {
-          const cattle = cattles.find(
-            (c) => String(c.id_Bovine) === String(v.id_Bovine),
-          );
           const responsible = responsibles.find(
-            (r) => r.idResponsible === v.idResponsible,
+            (r) => String(r.idResponsible) === String(v.idResponsible),
           );
 
           return {
             ...v,
-            cattleData: cattle
-              ? { id_Bovine: cattle.id_Bovine, name: cattle.name }
-              : null,
             responsibleData: responsible
               ? {
                   idResponsible: responsible.idResponsible,
@@ -74,7 +59,8 @@ export default function TableVacunation({ actions }: TableVacunationProps) {
           };
         });
 
-        setVacunations(vacFormatted);
+        // 👇 Invertimos para que el último registro salga primero
+        setVacunations([...vacFormatted].reverse());
       } catch (error) {
         console.error("Error:", error);
         setVacunations([]);
@@ -103,7 +89,7 @@ export default function TableVacunation({ actions }: TableVacunationProps) {
           columns={columns}
           data={vacunations}
           filterColumnId="id_Bovine"
-          filterPlaceholder="Filtrar por bovino..."
+          filterPlaceholder="Filtrar por ID de bovino..."
           toolbar={actions}
         />
       </div>

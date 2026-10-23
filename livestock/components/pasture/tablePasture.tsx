@@ -14,11 +14,17 @@ export default function TablePasture({ actions }: TablePastureProps) {
   useEffect(() => {
     const fetchPastures = async () => {
       try {
+        const token = localStorage.getItem("token");
         const response = await fetch(
-          "http://localhost:3000/api/pasture/PastureAll",
+          "http://localhost:3000/api/pasture/PastureAll?limit=500",
+          { headers: { Authorization: `Bearer ${token}` } },
         );
         const resJson = await response.json();
-        setPastures(resJson.info ?? []);
+        
+        const pastureList: Pasture[] = Array.isArray(resJson.info) ? resJson.info : [];
+        
+        // 👇 INVERTIMOS EL ARREGLO AQUÍ
+        setPastures([...pastureList].reverse());
       } catch (error) {
         console.error("Error:", error);
         setPastures([]);
@@ -33,11 +39,7 @@ export default function TablePasture({ actions }: TablePastureProps) {
         <div>
           <h1 className="text-2xl font-semibold text-[#2B2A26]">Potreros</h1>
           <p className="text-sm text-[#6B6459]">
-            {pastures.length}{" "}
-            {pastures.length === 1
-              ? "potrero registrado"
-              : "potreros registrados"}
-            .
+            {pastures.length} {pastures.length === 1 ? "potrero registrado" : "potreros registrados"}.
           </p>
         </div>
 

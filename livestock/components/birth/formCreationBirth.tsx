@@ -215,11 +215,11 @@ export default function FormCreationBirth() {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <ButtonCreate>Agregar Nacimiento</ButtonCreate>
+        <ButtonCreate>Agregar Parto</ButtonCreate>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] md:max-w-[800px]">
         <DialogTitle className="font-bold text-2xl text-center">
-          Crear Nacimiento
+          Crear Parto
         </DialogTitle>
         <form id="birth-create-form" onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
@@ -355,13 +355,13 @@ export default function FormCreationBirth() {
               )}
             </div>
             <div className="flex justify-between items-center mt-1">
-              <p className="text-sm text-gray-600">Complete los campos para crear un nuevo nacimiento.</p>
+              <p className="text-sm text-gray-600">Complete los campos para crear un nuevo parto.</p>
               <p className="text-xs text-gray-500">{formData.observations.length}/100</p>
             </div>
           </div>
         </form>
 
-        <DialogDescription className="sr-only">Complete los campos para crear un nuevo nacimiento.</DialogDescription>
+        <DialogDescription className="sr-only">Complete los campos para crear un nuevo parto.</DialogDescription>
 
         <DialogFooter className="flex-col gap-2 sm:flex-col">
           {error && <p className="text-sm text-red-600 text-center font-medium">⚠️ {error}</p>}

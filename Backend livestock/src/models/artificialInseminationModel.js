@@ -7,13 +7,23 @@ const artificialInsemination = db.define("artificialInsemination", {
     primaryKey: true,
     autoIncrement: true,
   },
-  id_Bovine: {
+  id_madre: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: "cattles",       // 👈 antes decía "bovinos"
-      key: "id_Bovine",       // 👈 antes decía "id"
+      model: "cattles",
+      key: "id_Bovine",
     },
+    comment: "Vaca que recibe la inseminación",
+  },
+  id_toro: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: {
+      model: "cattles",
+      key: "id_Bovine",
+    },
+    comment: "Toro donante o padre",
   },
   inseminationDate: {
     type: DataTypes.DATEONLY,
@@ -30,6 +40,10 @@ const artificialInsemination = db.define("artificialInsemination", {
       model: "races",
       key: "id_race",
     },
+  },
+  servicio: { // 👈 NUEVO CAMPO
+    type: DataTypes.STRING(100),
+    allowNull: true,
   },
   observations: {
     type: DataTypes.TEXT,

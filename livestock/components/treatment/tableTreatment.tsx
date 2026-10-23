@@ -8,11 +8,6 @@ interface TableTreatmentProps {
   actions?: React.ReactNode;
 }
 
-interface Cattle {
-  id_Bovine: number;
-  name: string;
-}
-
 interface Responsible {
   idResponsible: number;
   fullName: string;
@@ -28,42 +23,27 @@ export default function TableTreatment({ actions }: TableTreatmentProps) {
         const token = localStorage.getItem("token");
         const headers = { Authorization: `Bearer ${token}` };
 
-        const [treatmentRes, cattleRes, responsibleRes] = await Promise.all([
-          fetch("http://localhost:3000/api/treatment/TreatmentAll?limit=500", {
-            headers,
-          }),
-          fetch("http://localhost:3000/api/cattle/CattleAll?limit=500", {
-            headers,
-          }),
-          fetch(
-            "http://localhost:3000/api/responsible/ResponsibleAll?limit=500",
-            { headers },
-          ),
+        // 👇 Quitamos el fetch de cattle
+        const [treatmentRes, responsibleRes] = await Promise.all([
+          fetch("http://localhost:3000/api/treatment/TreatmentAll?limit=500", { headers }),
+          fetch("http://localhost:3000/api/responsible/ResponsibleAll?limit=500", { headers }),
         ]);
 
-        const [treatmentJson, cattleJson, responsibleJson] = await Promise.all([
+        const [treatmentJson, responsibleJson] = await Promise.all([
           treatmentRes.json(),
-          cattleRes.json(),
           responsibleRes.json(),
         ]);
 
-        const treatmentList: Treatment[] = treatmentJson.info ?? [];
-        const cattles: Cattle[] = cattleJson.info ?? [];
+        const treatmentList: Treatment[] = Array.isArray(treatmentJson.info) ? treatmentJson.info : [];
         const responsibles: Responsible[] = responsibleJson.info ?? [];
 
         const treatmentFormatted: Treatment[] = treatmentList.map((t) => {
-          const cattle = cattles.find(
-            (c) => String(c.id_Bovine) === String(t.id_Bovine),
-          );
           const responsible = responsibles.find(
-            (r) => r.idResponsible === t.idResponsible,
+            (r) => String(r.idResponsible) === String(t.idResponsible),
           );
 
           return {
             ...t,
-            cattleData: cattle
-              ? { id_Bovine: cattle.id_Bovine, name: cattle.name }
-              : null,
             responsibleData: responsible
               ? {
                   idResponsible: responsible.idResponsible,
@@ -74,7 +54,8 @@ export default function TableTreatment({ actions }: TableTreatmentProps) {
           };
         });
 
-        setTreatments(treatmentFormatted);
+        // 👇 Invertimos para que el más nuevo salga primero
+        setTreatments([...treatmentFormatted].reverse());
       } catch (error) {
         console.error("Error:", error);
         setTreatments([]);
@@ -87,15 +68,9 @@ export default function TableTreatment({ actions }: TableTreatmentProps) {
     <div className="min-h-screen bg-white px-6 py-8">
       <div className="mx-auto max-w-6xl space-y-6">
         <div>
-          <h1 className="text-2xl font-semibold text-[#2B2A26]">
-            Tratamientos
-          </h1>
+          <h1 className="text-2xl font-semibold text-[#2B2A26]">Tratamientos</h1>
           <p className="text-sm text-[#6B6459]">
-            {treatments.length}{" "}
-            {treatments.length === 1
-              ? "tratamiento registrado"
-              : "tratamientos registrados"}
-            .
+            {treatments.length} {treatments.length === 1 ? "tratamiento registrado" : "tratamientos registrados"}.
           </p>
         </div>
 
@@ -103,7 +78,7 @@ export default function TableTreatment({ actions }: TableTreatmentProps) {
           columns={columns}
           data={treatments}
           filterColumnId="id_Bovine"
-          filterPlaceholder="Filtrar por bovino..."
+          filterPlaceholder="Filtrar por ID de bovino..."
           toolbar={actions}
         />
       </div>

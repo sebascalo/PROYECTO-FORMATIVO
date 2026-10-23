@@ -53,7 +53,6 @@ export default function TableMilk({ actions }: TableMilkProps) {
           };
         });
 
-        // 👇 Invertimos el arreglo para que el más nuevo salga primero
         setMilks([...milksFormatted].reverse());
       } catch (error) {
         console.error("Error:", error);

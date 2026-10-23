@@ -2,15 +2,9 @@
 
 import { createColumnHelper } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { type SharedTableFeatures } from "@/components/ui/data-table-features";
-
-// 👇 Tipos del JOIN
-export type CattleData = {
-  id_Bovine: number;
-  name: string;
-};
 
 export type ResponsibleData = {
   idResponsible: number;
@@ -26,8 +20,6 @@ export type Mount = {
   serviceNumber: number;
   observations: string;
   idResponsible: number;
-  cowData?: CattleData | null;
-  bullData?: CattleData | null;
   responsibleData?: ResponsibleData | null;
 };
 
@@ -44,56 +36,55 @@ const formatDate = (dateString?: string | null) => {
 const columnHelper = createColumnHelper<SharedTableFeatures, Mount>();
 
 export const columns = columnHelper.columns([
-  columnHelper.accessor("id_mount", {
-    header: "ID",
-    cell: ({ getValue }) => (
-      <span className="text-[#6B6459]">{getValue()}</span>
-    ),
-  }),
-  // 👇 VACA
-  columnHelper.accessor("cowData", {
+  // ❌ COLUMNA ID ELIMINADA
+
+  // 👇 ID MADRE (Vaca)
+  columnHelper.accessor("id_cow", {
     header: ({ column }) => (
       <Button
         variant="ghost"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         className="h-auto p-0 font-semibold uppercase tracking-wide text-xs text-[#6B6459] hover:bg-transparent hover:text-[#2B2A26]"
       >
-        Vaca
+        ID Madre
         <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
       </Button>
     ),
-    cell: ({ getValue }) => {
-      const cow = getValue();
-      return (
-        <span className="font-medium text-[#2B2A26]">
-          {cow?.name ?? "Sin vaca"}
-        </span>
-      );
+    filterFn: (row, id, value) => {
+      return String(row.getValue(id)).toLowerCase().includes(value.toLowerCase());
     },
+    cell: ({ getValue }) => (
+      <span className="font-medium text-[#2B2A26]">{getValue() ?? "-"}</span>
+    ),
   }),
-  // 👇 TORO
-  columnHelper.accessor("bullData", {
-    header: "Toro",
-    cell: ({ getValue }) => {
-      const bull = getValue();
-      return (
-        <span className="font-medium text-[#2B2A26]">
-          {bull?.name ?? "Sin toro"}
-        </span>
-      );
-    },
+
+  // 👇 ID PADRE (Toro)
+  columnHelper.accessor("id_bull", {
+    header: "ID Padre",
+    cell: ({ getValue }) => (
+      <span className="text-[#2B2A26]">{getValue() ?? "-"}</span>
+    ),
   }),
+
   columnHelper.accessor("breedingDate", {
     header: "Fecha",
     cell: ({ getValue }) => formatDate(getValue()),
   }),
+
+  // 👇 SERVICIO CON BADGE
   columnHelper.accessor("serviceNumber", {
-    header: () => <div className="text-right">Servicio</div>,
-    cell: ({ getValue }) => (
-      <div className="text-right tabular-nums">{getValue() ?? "-"}</div>
-    ),
+    header: "Servicio",
+    cell: ({ getValue }) => {
+      const value = getValue();
+      if (!value) return <span className="text-[#6B6459]">-</span>;
+      return (
+        <Badge className="bg-[#4B6043] text-white hover:bg-[#405539]">
+          Servicio {value}
+        </Badge>
+      );
+    },
   }),
-  // 👇 RESPONSABLE
+
   columnHelper.accessor("responsibleData", {
     header: "Responsable",
     cell: ({ getValue }) => {
@@ -109,6 +100,7 @@ export const columns = columnHelper.columns([
       );
     },
   }),
+
   columnHelper.accessor("observations", {
     header: "Observaciones",
     cell: ({ getValue }) => (

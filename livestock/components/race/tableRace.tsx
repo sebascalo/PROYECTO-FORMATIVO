@@ -1,8 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-
 import { DataTable } from "@/components/ui/data-table";
-import { columns, type Race } from "./columns";
+import { columns, type Race } from "./columns"; // Asegúrate que el tipo se llame Race
 
 interface TableRaceProps {
   actions?: React.ReactNode;
@@ -14,18 +13,16 @@ export default function TableRace({ actions }: TableRaceProps) {
   useEffect(() => {
     const fetchRaces = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:3000/api/race/RaceAll",
-        );
+        const token = localStorage.getItem("token");
+        const response = await fetch("http://localhost:3000/api/race/RaceAll?limit=500", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         const resJson = await response.json();
-        const datos = Array.isArray(resJson)
-          ? resJson
-          : Array.isArray(resJson.info)
-            ? resJson.info
-            : Array.isArray(resJson.data)
-              ? resJson.data
-              : [];
-        setRaces(datos);
+        
+        const raceList: Race[] = Array.isArray(resJson.info) ? resJson.info : [];
+        
+        // 👇 INVERTIMOS EL ARREGLO AQUÍ PARA QUE EL ÚLTIMO SALGA PRIMERO
+        setRaces([...raceList].reverse());
       } catch (error) {
         console.error("Error:", error);
         setRaces([]);
@@ -35,13 +32,12 @@ export default function TableRace({ actions }: TableRaceProps) {
   }, []);
 
   return (
-    <div className="min-h-screen px-6 py-8">
+    <div className="min-h-screen bg-white px-6 py-8">
       <div className="mx-auto max-w-6xl space-y-6">
         <div>
           <h1 className="text-2xl font-semibold text-[#2B2A26]">Razas</h1>
           <p className="text-sm text-[#6B6459]">
-            {races.length}{" "}
-            {races.length === 1 ? "raza registrada" : "razas registradas"}.
+            {races.length} {races.length === 1 ? "raza registrada" : "razas registradas"}.
           </p>
         </div>
 
@@ -49,7 +45,7 @@ export default function TableRace({ actions }: TableRaceProps) {
           columns={columns}
           data={races}
           filterColumnId="name_race"
-          filterPlaceholder="Filtrar por nombre..."
+          filterPlaceholder="Filtrar por nombre de raza..."
           toolbar={actions}
         />
       </div>

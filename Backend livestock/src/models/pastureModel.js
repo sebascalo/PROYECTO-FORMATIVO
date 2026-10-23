@@ -43,11 +43,10 @@ const pasture = db.define('pasture', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    // Última aplicación de fertilizante, herbicida o químico
-    lastChemicalApplication: { 
+    // Observaciones sobre el potrero
+    observations: { // 👈 CAMBIO: antes lastChemicalApplication
         type: DataTypes.STRING,
-        allowNull: true,
-        comment: 'Nombre del último fertilizante, herbicida o químico aplicado'
+        allowNull: true
     },
     createdAt: {
         type: DataTypes.DATE,

@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const bcrypt = require("bcrypt");
 const path = require("path");
 const fs = require("fs");
+const crypto = require("crypto");
 
 const { getUserByEmail, updateForEmailUser, getUserByToken} = require('../services/userService');
 const User = require("../models/userModel");
@@ -105,9 +106,13 @@ const resetPassword = async (req, res) => {
     );
     return res.json(response);
   }
-  const token = Buffer.from(user.uuid).toString("base64");
+  // Token aleatorio (va en el correo) y su versión cifrada (va en la BD)
+  const token = crypto.randomBytes(32).toString("hex");
+  const tokenHash = await bcrypt.hash(token, 10);
+
   let data = {
-    resetPasswordToken: token,
+    resetPasswordToken: tokenHash,
+    resetPasswordExpires: new Date(Date.now() + 60 * 60 * 1000), // 1 hora
     solNewPassword: true
   };
   await updateForEmailUser(email, data);
@@ -125,14 +130,13 @@ const resetPassword = async (req, res) => {
     htmlModific = htmlModific.replace(`{{${key}}}`, dataTemaplate.params[key]);
   }
     htmlModific = htmlModific.replace("{{@name}}", user.name);
+    htmlModific = htmlModific.replace("{{@fecha}}", new Date().toLocaleDateString());
+    htmlModific = htmlModific.replace("{{@año}}", new Date().getFullYear());
 
   console.log("HTML Modificado:", email);
   await sendEmail(email, dataTemaplate.subject, null, htmlModific);
 
-  const response = new Response(
-    "Correo de recuperación enviado",
-    {token},
-  );
+  const response = new Response("Correo de recuperación enviado");
   return res.status(200).json(response.json);
   } catch (error) {
     console.error("Error en resetPassword:", error);
@@ -230,6 +234,7 @@ const newPassword = async (req, res) => {
     // Guardar contraseña y limpiar la solicitud de recuperación
     user.password = hashedPassword;
     user.resetPasswordToken = null;
+    user.resetPasswordExpires = null;
     user.solNewPassword = false;
 
     await user.save();

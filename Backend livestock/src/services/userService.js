@@ -1,4 +1,6 @@
 const user = require('../models/userModel');
+const { Op } = require('sequelize');
+const bcrypt = require('bcrypt');
 
 // crear usuario
 const userCreate = async (data) => {
@@ -84,13 +86,23 @@ const updateForEmailUser = async (email, data) => {
     }
 }
 
-// buscar usuario por token de recuperación
+// buscar usuario por token de recuperación (cifrado con bcrypt)
 const getUserByToken = async (token) => {
     try {
-        const userToken = await user.findOne({
-            where: { resetPasswordToken: token, solNewPassword: true }
+        // Solo usuarios con solicitud activa y que no haya expirado
+        const users = await user.findAll({
+            where: {
+                solNewPassword: true,
+                resetPasswordExpires: { [Op.gt]: new Date() }
+            }
         });
-        return userToken;
+        // Comparar el token con el hash guardado de cada uno
+        for (const u of users) {
+            if (u.resetPasswordToken && await bcrypt.compare(token, u.resetPasswordToken)) {
+                return u;
+            }
+        }
+        return null;
     } catch (error) {
         console.log(error);
         throw error;

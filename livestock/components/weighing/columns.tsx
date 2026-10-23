@@ -54,13 +54,7 @@ const bodyConditionStyles: Record<string, string> = {
 const columnHelper = createColumnHelper<SharedTableFeatures, Weighing>();
 
 export const columns = columnHelper.columns([
-  columnHelper.accessor("id_weighing", {
-    header: "ID",
-    cell: ({ getValue }) => (
-      <span className="text-[#6B6459]">{getValue()}</span>
-    ),
-  }),
-  // 👇 ID BOVINO
+  // ID BOVINO
   columnHelper.accessor("id_Bovine", {
     header: ({ column }) => (
       <Button

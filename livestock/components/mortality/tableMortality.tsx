@@ -8,11 +8,6 @@ interface TableMortalityProps {
   actions?: React.ReactNode;
 }
 
-interface Cattle {
-  id_Bovine: number;
-  name: string;
-}
-
 interface Responsible {
   idResponsible: number;
   fullName: string;
@@ -28,36 +23,27 @@ export default function TableMortality({ actions }: TableMortalityProps) {
         const token = localStorage.getItem("token");
         const headers = { Authorization: `Bearer ${token}` };
 
-        const [mortalityRes, cattleRes, responsibleRes] = await Promise.all([
+        // 👇 Solo hacemos 2 fetch (salidas y responsables)
+        const [mortalityRes, responsibleRes] = await Promise.all([
           fetch("http://localhost:3000/api/mortality/MortalityAll?limit=500", { headers }),
-          fetch("http://localhost:3000/api/cattle/CattleAll?limit=500", { headers }),
           fetch("http://localhost:3000/api/responsible/ResponsibleAll?limit=500", { headers }),
         ]);
 
-        const [mortalityJson, cattleJson, responsibleJson] = await Promise.all([
+        const [mortalityJson, responsibleJson] = await Promise.all([
           mortalityRes.json(),
-          cattleRes.json(),
           responsibleRes.json(),
         ]);
 
-        // 👇 Validación para que no explote si hay error
         const mortalityList: Mortality[] = Array.isArray(mortalityJson.info) ? mortalityJson.info : [];
-        const cattles: Cattle[] = cattleJson.info ?? [];
         const responsibles: Responsible[] = responsibleJson.info ?? [];
 
         const mortalidadesFormatted: Mortality[] = mortalityList.map((m) => {
-          const cattle = cattles.find(
-            (c) => String(c.id_Bovine) === String(m.id_Bovine),
-          );
           const responsible = responsibles.find(
             (r) => String(r.idResponsible) === String(m.idResponsible),
           );
 
           return {
             ...m,
-            cattleData: cattle
-              ? { id_Bovine: cattle.id_Bovine, name: cattle.name }
-              : null,
             responsibleData: responsible
               ? {
                   idResponsible: responsible.idResponsible,
@@ -68,6 +54,7 @@ export default function TableMortality({ actions }: TableMortalityProps) {
           };
         });
 
+        // Invertimos para que salga el más nuevo primero
         setMortalidades([...mortalidadesFormatted].reverse());
       } catch (error) {
         console.error("Error:", error);
@@ -96,8 +83,8 @@ export default function TableMortality({ actions }: TableMortalityProps) {
         <DataTable
           columns={columns}
           data={mortalidades}
-          filterColumnId="cattleData" // 👈 Ahora busca por el objeto del bovino
-          filterPlaceholder="Filtrar por nombre de bovino..."
+          filterColumnId="id_Bovine" // 👈 Filtramos por el ID
+          filterPlaceholder="Filtrar por ID de bovino..."
           toolbar={actions}
         />
       </div>

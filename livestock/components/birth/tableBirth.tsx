@@ -8,11 +8,6 @@ interface TableBirthProps {
   actions?: React.ReactNode;
 }
 
-interface Cattle {
-  id_Bovine: number;
-  name: string;
-}
-
 interface Race {
   id_race: number;
   name_race: string;
@@ -33,31 +28,23 @@ export default function TableBirth({ actions }: TableBirthProps) {
         const token = localStorage.getItem("token");
         const headers = { Authorization: `Bearer ${token}` };
 
-        // 👇 Ya no pedimos los potreros (solo 4 fetch)
-        const [birthRes, cattleRes, raceRes, responsibleRes] = await Promise.all([
+        const [birthRes, raceRes, responsibleRes] = await Promise.all([
           fetch("http://localhost:3000/api/birth/BirthAll?limit=500", { headers }),
-          fetch("http://localhost:3000/api/cattle/CattleAll?limit=500", { headers }),
           fetch("http://localhost:3000/api/race/RaceAll?limit=500", { headers }),
           fetch("http://localhost:3000/api/responsible/ResponsibleAll?limit=500", { headers }),
         ]);
 
-        const [birthJson, cattleJson, raceJson, responsibleJson] = await Promise.all([
+        const [birthJson, raceJson, responsibleJson] = await Promise.all([
           birthRes.json(),
-          cattleRes.json(),
           raceRes.json(),
           responsibleRes.json(),
         ]);
 
-        // Validación para evitar que falle si hay error de red
         const birthList: Birth[] = Array.isArray(birthJson.info) ? birthJson.info : [];
-        const cattles: Cattle[] = cattleJson.info ?? [];
         const races: Race[] = raceJson.info ?? [];
         const responsibles: Responsible[] = responsibleJson.info ?? [];
 
         const birthsFormatted: Birth[] = birthList.map((b) => {
-          const cattle = cattles.find(
-            (c) => String(c.id_Bovine) === String(b.id_Bovine),
-          );
           const race = races.find(
             (r) => String(r.id_race) === String(b.id_race),
           );
@@ -67,10 +54,6 @@ export default function TableBirth({ actions }: TableBirthProps) {
 
           return {
             ...b,
-            cattleData: cattle
-              ? { id_Bovine: cattle.id_Bovine, name: cattle.name }
-              : null,
-            // ❌ pastureData eliminado
             raceData: race
               ? { id_race: race.id_race, name_race: race.name_race }
               : null,
@@ -84,7 +67,6 @@ export default function TableBirth({ actions }: TableBirthProps) {
           };
         });
 
-        // Invertimos para que salga el más nuevo primero
         setBirths([...birthsFormatted].reverse());
       } catch (error) {
         console.error("Error:", error);
@@ -98,10 +80,10 @@ export default function TableBirth({ actions }: TableBirthProps) {
     <div className="min-h-screen bg-white px-6 py-8">
       <div className="mx-auto max-w-6xl space-y-6">
         <div>
-          <h1 className="text-2xl font-semibold text-[#2B2A26]">Nacimientos</h1>
+          <h1 className="text-2xl font-semibold text-[#2B2A26]">Partos</h1>
           <p className="text-sm text-[#6B6459]">
             {births.length}{" "}
-            {births.length === 1 ? "nacimiento registrado" : "nacimientos registrados"}.
+            {births.length === 1 ? "parto registrado" : "partos registrados"}.
           </p>
         </div>
 
@@ -109,7 +91,7 @@ export default function TableBirth({ actions }: TableBirthProps) {
           columns={columns}
           data={births}
           filterColumnId="id_Bovine"
-          filterPlaceholder="Filtrar por madre..."
+          filterPlaceholder="Filtrar por ID de madre..."
           toolbar={actions}
         />
       </div>
