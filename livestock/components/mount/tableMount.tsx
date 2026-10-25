@@ -105,8 +105,7 @@ export default function TableMount({ actions }: TableMountProps) {
         <DataTable
           columns={columns}
           data={mounts}
-          filterColumnId="id_cow"
-          filterPlaceholder="Filtrar por vaca..."
+          filterPlaceholder="Buscar en todos los campos..."
           toolbar={actions}
         />
       </div>

@@ -88,8 +88,7 @@ export default function TableVacunation({ actions }: TableVacunationProps) {
         <DataTable
           columns={columns}
           data={vacunations}
-          filterColumnId="id_Bovine"
-          filterPlaceholder="Filtrar por ID de bovino..."
+          filterPlaceholder="Buscar en todos los campos..."
           toolbar={actions}
         />
       </div>

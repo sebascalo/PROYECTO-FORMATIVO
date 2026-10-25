@@ -59,7 +59,7 @@ const login = async (req, res) => {
 
     const response = new Response(
       "login successful",
-      { token },
+      { token, userId: user.userId },
       null
     );
 
@@ -257,9 +257,33 @@ const newPassword = async (req, res) => {
   }
 };
 
+const changePasswordAuth = async (req, res) => {
+  try {
+    const { email, currentPassword, newPassword } = req.body;
+
+    const user = await getUserByEmail(email);
+    if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
+
+    // Validar que la contraseña actual sea correcta
+    const match = bcrypt.compareSync(currentPassword, user.password);
+    if (!match) {
+      return res.status(400).json({ message: "La contraseña actual es incorrecta" });
+    }
+
+    // Encriptar y guardar la nueva
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+
+    return res.json({ success: true, message: "Contraseña actualizada correctamente" });
+  } catch (error) {
+    return res.status(500).json({ message: "Error al cambiar contraseña", error: error.message });
+  }
+};
+
 module.exports = {
   login,
   resetPassword,
   validateResetPassword,
   newPassword,
+  changePasswordAuth
 };

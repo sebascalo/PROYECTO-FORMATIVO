@@ -3,12 +3,9 @@ import {
   columnVisibilityFeature,
   createFilteredRowModel,
   createPaginatedRowModel,
-  createSortedRowModel,
   filterFn_includesString,
+  globalFilteringFeature,
   rowPaginationFeature,
-  rowSortingFeature,
-  sortFn_alphanumeric,
-  sortFn_text,
   tableFeatures,
 } from "@tanstack/react-table";
 
@@ -17,13 +14,11 @@ import {
 export const sharedTableFeatures = tableFeatures({
   columnFilteringFeature,
   columnVisibilityFeature,
+  globalFilteringFeature,
   rowPaginationFeature,
-  rowSortingFeature,
   filteredRowModel: createFilteredRowModel(),
   paginatedRowModel: createPaginatedRowModel(),
-  sortedRowModel: createSortedRowModel(),
   filterFns: { includesString: filterFn_includesString },
-  sortFns: { alphanumeric: sortFn_alphanumeric, text: sortFn_text },
 });
 
 // Este tipo se pasa como primer generico a ColumnDef, Column, Table, Row, etc.

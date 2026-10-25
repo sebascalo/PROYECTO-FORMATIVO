@@ -136,15 +136,22 @@ const updateUser = async (req, res) => {
     try {
         const { userId } = req.params;
         const { name, email, password, documentId, postJob, id_roll } = req.body;
-        var errors = [];
+        const data = {};
+        const errors = [];
         
         if (!userId) errors.push("El ID del usuario es obligatorio");
-        if (!name || name.trim() === "") errors.push("El nombre del usuario es obligatorio");
-        if (!email || email.trim() === "") errors.push("El correo del usuario es obligatorio");
-        if (!password || password.trim() === "") errors.push("La contraseña es obligatoria");
-        if (!documentId || documentId.trim() === "") errors.push("El documento de identidad es obligatorio");
-        if (!postJob || postJob.trim() === "") errors.push("El cargo del usuario es obligatorio");
-        if (!id_roll || id_roll.trim() === "") errors.push("El rol del usuario es obligatorio");
+        const fields = { name, email, password, documentId, postJob, id_roll };
+        for (const [field, value] of Object.entries(fields)) {
+            if (value === undefined) continue;
+            if (typeof value === "string" && value.trim() === "") {
+                errors.push(`El campo ${field} no puede estar vacío`);
+                continue;
+            }
+            data[field] = value;
+        }
+        if (Object.keys(data).length === 0) {
+            errors.push("Debes enviar al menos un campo para actualizar");
+        }
         
         if (errors.length > 0) {
             var response = new Response("Error al actualizar el usuario", null, errors); 
@@ -152,8 +159,13 @@ const updateUser = async (req, res) => {
             res.json(response.json);
             return;
         }
-        data = { name, email, password, documentId, postJob, id_roll };
         const user = await userUpdate(userId, data);
+        if (!user) {
+            const response = new Response("Usuario no encontrado", null, [
+                "No existe un usuario con el ID indicado"
+            ]);
+            return res.status(404).json(response.json);
+        }
         var response = new Response(`Usuario ${userId} actualizado exitosamente`, user, null); 
         res.status(201);
         res.json(response.json);

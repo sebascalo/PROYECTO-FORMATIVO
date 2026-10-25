@@ -124,8 +124,7 @@ export default function TableNutrition({ actions }: TableNutritionProps) {
         <DataTable
           columns={columns}
           data={nutritions}
-          filterColumnId="id_Bovine"
-          filterPlaceholder="Filtrar por bovino..."
+          filterPlaceholder="Buscar en todos los campos..."
           toolbar={actions}
         />
       </div>

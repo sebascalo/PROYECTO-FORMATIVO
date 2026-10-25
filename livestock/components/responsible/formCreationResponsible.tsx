@@ -19,7 +19,8 @@ export default function FormCreationResponsible() {
     role: "",
     email: "",
     phoneNumber: "",
-    status: "Active",
+    // 👇 Ya no necesitamos que el usuario elija, siempre será Activo
+    status: "Active", 
   });
 
   const handleChange = (
@@ -28,6 +29,19 @@ export default function FormCreationResponsible() {
     >,
   ) => {
     const { name, value } = e.target;
+
+    // 👇 VALIDACIÓN SOLO PARA EL TELÉFONO
+    if (name === "phoneNumber") {
+      // Remueve todo lo que no sea un número
+      const soloNumeros = value.replace(/\D/g, "");
+      // Corta a un máximo de 10 dígitos
+      const recortado = soloNumeros.slice(0, 10);
+      
+      setFormData((prev) => ({ ...prev, [name]: recortado }));
+      if (error) setError(null);
+      return;
+    }
+
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (error) setError(null);
   };
@@ -38,7 +52,7 @@ export default function FormCreationResponsible() {
       role: "",
       email: "",
       phoneNumber: "",
-      status: "Active",
+      status: "Active", // Siempre vuelve a Active
     });
     setError(null);
   };
@@ -46,6 +60,11 @@ export default function FormCreationResponsible() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    // 👇 Validación extra de seguridad
+    if (formData.phoneNumber.length < 10) {
+      return setError("El número de teléfono debe tener exactamente 10 dígitos");
+    }
 
     setIsSubmitting(true);
     try {
@@ -58,7 +77,7 @@ export default function FormCreationResponsible() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(formData), // Envía status: "Active" automáticamente
         },
       );
 
@@ -198,30 +217,14 @@ export default function FormCreationResponsible() {
                 name="phoneNumber"
                 value={formData.phoneNumber}
                 onChange={handleChange}
+                inputMode="numeric" // 👈 Teclado numérico en móviles
+                maxLength={10}      // 👈 Límite de 10
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043]"
                 placeholder="Ej: 3001234567"
               />
             </div>
 
-            {/* ESTADO */}
-            <div className="col-span-2">
-              <label
-                htmlFor="status"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Estado:
-              </label>
-              <select
-                id="status"
-                name="status"
-                value={formData.status}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043] bg-white"
-              >
-                <option value="Active">Activo</option>
-                <option value="Inactive">Inactivo</option>
-              </select>
-            </div>
+            {/* 👇 EL SELECT DE ESTADO FUE ELIMINADO 👇 */}
           </div>
         </form>
 

@@ -44,8 +44,7 @@ export default function TableFood({ actions }: TableFoodProps) {
         <DataTable
           columns={columns}
           data={foods}
-          filterColumnId="food_name"
-          filterPlaceholder="Filtrar por nombre..."
+          filterPlaceholder="Buscar en todos los campos..."
           toolbar={actions}
         />
       </div>

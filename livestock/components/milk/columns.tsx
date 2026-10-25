@@ -1,8 +1,6 @@
 "use client";
 
 import { createColumnHelper } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { type SharedTableFeatures } from "@/components/ui/data-table-features";
 
@@ -40,11 +38,7 @@ const columnHelper = createColumnHelper<SharedTableFeatures, Milk>();
 export const columns = columnHelper.columns([
   // 👇 COLUMNA BOVINO con filtro de búsqueda arreglado
   columnHelper.accessor("id_Bovine", {
-    header: ({ column }) => (
-      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} className="h-auto p-0 font-semibold uppercase tracking-wide text-xs text-[#6B6459] hover:bg-transparent hover:text-[#2B2A26]">
-        ID Bovino <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
-      </Button>
-    ),
+    header: "ID Bovino",
     // 👇 Forzamos a que el filtro convierta el ID a texto para que funcione el buscador
     filterFn: (row, id, value) => {
       const searchValue = value.toLowerCase();

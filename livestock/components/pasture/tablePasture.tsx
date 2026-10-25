@@ -46,8 +46,7 @@ export default function TablePasture({ actions }: TablePastureProps) {
         <DataTable
           columns={columns}
           data={pastures}
-          filterColumnId="name"
-          filterPlaceholder="Filtrar por nombre..."
+          filterPlaceholder="Buscar en todos los campos..."
           toolbar={actions}
         />
       </div>

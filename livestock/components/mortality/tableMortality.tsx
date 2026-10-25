@@ -83,8 +83,7 @@ export default function TableMortality({ actions }: TableMortalityProps) {
         <DataTable
           columns={columns}
           data={mortalidades}
-          filterColumnId="id_Bovine" // 👈 Filtramos por el ID
-          filterPlaceholder="Filtrar por ID de bovino..."
+          filterPlaceholder="Buscar en todos los campos..."
           toolbar={actions}
         />
       </div>

@@ -77,8 +77,7 @@ export default function TableTreatment({ actions }: TableTreatmentProps) {
         <DataTable
           columns={columns}
           data={treatments}
-          filterColumnId="id_Bovine"
-          filterPlaceholder="Filtrar por ID de bovino..."
+          filterPlaceholder="Buscar en todos los campos..."
           toolbar={actions}
         />
       </div>

@@ -54,7 +54,7 @@ const user = db.define('user', {
     },
     verifyEmail: {
         type: DataTypes.BOOLEAN,
-        defaultValue: false
+        defaultValue: true
     },
     active:{
         type: DataTypes.BOOLEAN,

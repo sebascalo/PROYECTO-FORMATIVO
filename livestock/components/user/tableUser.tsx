@@ -55,8 +55,7 @@ export default function TableUser({ actions }: TableUserProps) {
         <DataTable
           columns={columns}
           data={users}
-          filterColumnId="name"
-          filterPlaceholder="Filtrar por nombre..."
+          filterPlaceholder="Buscar en todos los campos..."
           toolbar={actions}
         />
       </div>

@@ -66,6 +66,7 @@ export default function Login({ Textbutton = "", style = "" }: LoginProps) {
         if (data.success) {
           const token = data.info.token;
           localStorage.setItem("token", token);
+          localStorage.setItem("userId", String(data.info.userId));
           router.push("/dashboard");
         } else {
           alert(data.message);

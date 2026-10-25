@@ -75,8 +75,7 @@ export default function TableMilk({ actions }: TableMilkProps) {
         <DataTable
           columns={columns}
           data={milks}
-          filterColumnId="id_Bovine"
-          filterPlaceholder="Filtrar por ID de bovino..."
+          filterPlaceholder="Buscar en todos los campos..."
           toolbar={actions}
         />
       </div>

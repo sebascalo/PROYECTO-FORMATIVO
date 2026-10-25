@@ -4,9 +4,7 @@ import * as React from "react";
 import {
   useTable,
   type ColumnDef,
-  type ColumnFiltersState,
   type RowData,
-  type SortingState,
   type PaginationState,
 } from "@tanstack/react-table";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -30,24 +28,33 @@ import {
 interface DataTableProps<TData extends RowData> {
   columns: ColumnDef<SharedTableFeatures, TData>[];
   data: TData[];
-  filterColumnId?: string;
   filterPlaceholder?: string;
   toolbar?: React.ReactNode;
+}
+
+function getSearchableText(value: unknown): string {
+  if (value === null || value === undefined) return "";
+  if (
+    typeof value === "string" ||
+    typeof value === "number" ||
+    typeof value === "boolean"
+  ) {
+    return String(value);
+  }
+  if (Array.isArray(value)) return value.map(getSearchableText).join(" ");
+  if (typeof value === "object") {
+    return Object.values(value).map(getSearchableText).join(" ");
+  }
+  return "";
 }
 
 export function DataTable<TData extends RowData>({
   columns,
   data,
-  filterColumnId,
-  filterPlaceholder = "Filtrar...",
+  filterPlaceholder = "Buscar en todos los campos...",
   toolbar,
 }: DataTableProps<TData>) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
-  );
-  
-  // 👇 1. Agregamos el estado de la paginación
+  const [globalFilter, setGlobalFilter] = React.useState("");
   const [pagination, setPagination] = React.useState<PaginationState>({
     pageIndex: 0,
     pageSize: 5,
@@ -57,13 +64,16 @@ export function DataTable<TData extends RowData>({
     features: sharedTableFeatures,
     data,
     columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    onPaginationChange: setPagination, // 👈 2. Lo conectamos
+    onGlobalFilterChange: setGlobalFilter,
+    onPaginationChange: setPagination,
+    globalFilterFn: (row, _columnId, filterValue) =>
+      getSearchableText(row.original)
+        .toLocaleLowerCase()
+        .includes(String(filterValue ?? "").trim().toLocaleLowerCase()),
+    getColumnCanGlobalFilter: () => true,
     state: {
-      sorting,
-      columnFilters,
-      pagination, // 👈 3. Le pasamos el estado
+      globalFilter,
+      pagination,
     },
   });
 
@@ -73,29 +83,18 @@ export function DataTable<TData extends RowData>({
 
   return (
     <div className="space-y-4">
-      {(filterColumnId || toolbar) && (
-        <div className="flex items-center justify-between gap-4">
-          {filterColumnId ? (
-            <Input
-              placeholder={filterPlaceholder}
-              value={
-                (table
-                  .getColumn(filterColumnId)
-                  ?.getFilterValue() as string) ?? ""
-              }
-              onChange={(event) =>
-                table
-                  .getColumn(filterColumnId)
-                  ?.setFilterValue(event.target.value)
-              }
-              className="max-w-sm rounded-md bg-white border-[#E7E2D6] focus-visible:ring-[#4B6043]/30 focus-visible:border-[#4B6043]"
-            />
-          ) : (
-            <div />
-          )}
-          {toolbar}
-        </div>
-      )}
+      <div className="flex items-center justify-between gap-4">
+        <Input
+          placeholder={filterPlaceholder}
+          value={globalFilter}
+          onChange={(event) => {
+            setGlobalFilter(event.target.value);
+            setPagination((current) => ({ ...current, pageIndex: 0 }));
+          }}
+          className="max-w-sm rounded-md bg-white border-[#E7E2D6] focus-visible:ring-[#4B6043]/30 focus-visible:border-[#4B6043]"
+        />
+        {toolbar}
+      </div>
 
       <div className="overflow-hidden rounded-xl border border-[#E7E2D6] bg-white shadow-sm">
         <Table>

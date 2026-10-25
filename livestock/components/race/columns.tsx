@@ -1,9 +1,6 @@
 "use client";
 
 import { createColumnHelper } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
 import { type SharedTableFeatures } from "@/components/ui/data-table-features";
 
 // Forma de los datos que devuelve tu API (/api/race/RaceAll)
@@ -17,16 +14,7 @@ const columnHelper = createColumnHelper<SharedTableFeatures, Race>();
 
 export const columns = columnHelper.columns([
   columnHelper.accessor("name_race", {
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="h-auto p-0 font-semibold uppercase tracking-wide text-xs text-[#6B6459] hover:bg-transparent hover:text-[#2B2A26]"
-      >
-        Nombre de la Raza
-        <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
-      </Button>
-    ),
+    header: "Nombre de la Raza",
     cell: ({ getValue }) => (
       <span className="font-medium text-[#2B2A26]">{getValue()}</span>
     ),

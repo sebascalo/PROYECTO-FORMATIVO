@@ -81,8 +81,7 @@ export default function TableWeighing({ actions }: TableWeighingProps) {
         <DataTable
           columns={columns}
           data={weighings}
-          filterColumnId="id_Bovine"
-          filterPlaceholder="Filtrar por ID de bovino..."
+          filterPlaceholder="Buscar en todos los campos..."
           toolbar={actions}
         />
       </div>

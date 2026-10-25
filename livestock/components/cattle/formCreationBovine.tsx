@@ -39,7 +39,7 @@ export default function FormCreationCattle() {
     photo: "",
     currentweight: "",
     classificationbytype: "",
-    active: "Activo",
+    active: "Activo", // 👈 CAMBIO: queda fijo en Activo
   });
 
   // 👇 Estados para razas
@@ -62,7 +62,7 @@ export default function FormCreationCattle() {
         const activeRaces = (resJson.info ?? []).filter((r: Race) => r.active === "Active");
         setRaces(activeRaces);
       } catch (err) {
-        console.error("Error razas:", err); // 👈 Cambiado a console.error
+        console.error("Error razas:", err);
       } finally {
         setLoadingRaces(false);
       }
@@ -114,7 +114,7 @@ export default function FormCreationCattle() {
       photo: "",
       currentweight: "",
       classificationbytype: "",
-      active: "Activo",
+      active: "Activo", // 👈 CAMBIO: siempre vuelve a Activo al limpiar
     });
     setError(null);
   };
@@ -135,7 +135,7 @@ export default function FormCreationCattle() {
     if (isNaN(weight) || weight <= 0) return setError("El peso debe ser un número mayor a 0");
 
     if (!formData.classificationbytype) return setError("Debes seleccionar una clasificación");
-    if (!formData.active) return setError("Debes seleccionar un estado");
+    // 👈 CAMBIO: se elimina la validación de "active"
 
     if (new Date(formData.birthdate) > new Date(formData.entrydate)) {
       return setError("La fecha de nacimiento no puede ser posterior a la de ingreso");
@@ -157,7 +157,7 @@ export default function FormCreationCattle() {
       photo: formData.photo || null,
       currentweight: weight,
       classificationbytype: formData.classificationbytype,
-      active: formData.active,
+      active: "Activo", // 👈 CAMBIO: siempre se envía Activo al backend
     };
 
     setIsSubmitting(true);
@@ -375,21 +375,8 @@ export default function FormCreationCattle() {
               </select>
             </div>
 
-            {/* ESTADO */}
-            <div>
-              <label htmlFor="active" className="block text-sm font-medium text-gray-700 mb-1">Estado:</label>
-              <select
-                id="active"
-                name="active"
-                value={formData.active}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043] bg-white"
-              >
-                <option value="">Seleccione un estado</option>
-                <option value="Activo">Activo</option>
-                <option value="Inactivo">Inactivo</option>
-              </select>
-            </div>
+            {/* 👇 CAMBIO: se eliminó el <select> de ESTADO */}
+            {/* El estado ahora siempre se envía como "Activo" */}
 
             {/* FOTO */}
             <div>

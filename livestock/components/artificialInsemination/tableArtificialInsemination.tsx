@@ -68,8 +68,7 @@ export default function TableArtificialInsemination({ actions }: TableArtificial
         <DataTable
           columns={columns}
           data={inseminations}
-          filterColumnId="id_madre"
-          filterPlaceholder="Filtrar por ID de madre..."
+          filterPlaceholder="Buscar en todos los campos..."
           toolbar={actions}
         />
       </div>

@@ -171,7 +171,7 @@ CREATE TABLE `cattles` (
 
 LOCK TABLES `cattles` WRITE;
 /*!40000 ALTER TABLE `cattles` DISABLE KEYS */;
-INSERT INTO `cattles` VALUES (1,'Taurus','1','Macho','2026-10-14 00:00:00',NULL,NULL,'2026-10-14 00:00:00',NULL,7001,'Carne',1,'2026-10-14 12:10:34','2026-10-22 03:19:02'),(2,'Juanita','2','Hembra','2026-10-14 00:00:00',NULL,NULL,'2026-10-14 00:00:00',NULL,600,'Lechero',1,'2026-10-14 12:24:07','2026-10-24 23:26:05'),(3,'Tomasa','4','Hembra','2026-10-15 00:00:00',NULL,NULL,'2025-10-15 00:00:00',NULL,900,'Lechero',1,'2026-10-15 12:27:11','2026-10-22 03:27:19'),(4,'Roberta','3','Hembra','2026-10-01 00:00:00',NULL,NULL,'2025-02-15 00:00:00',NULL,500,'Lechero',1,'2026-10-15 13:13:08','2026-10-15 13:13:08'),(5,'paquita','3','Hembra','2026-10-14 00:00:00',NULL,NULL,'2026-10-14 00:00:00',NULL,400,'Lechero',0,'2026-10-15 17:59:15','2026-10-15 17:59:15'),(6,'lola','6','Hembra','2026-10-15 00:00:00',NULL,NULL,'2025-02-15 00:00:00',NULL,322,'Lechero',1,'2026-10-15 19:19:05','2026-10-22 03:26:46'),(304,'lolita','2','Hembra','2026-10-21 00:00:00',NULL,NULL,'2026-10-21 00:00:00',NULL,700,'Carne',1,'2026-10-22 01:49:42','2026-10-22 01:49:42'),(305,'Tex','3','Macho','2026-10-21 00:00:00',NULL,NULL,'2026-10-21 00:00:00',NULL,444,'Toro',1,'2026-10-22 02:19:54','2026-10-22 03:26:27'),(307,'juaco','4','Macho','2026-10-21 00:00:00',4,1,'2026-10-21 00:00:00',NULL,800,'Ternero',1,'2026-10-22 02:20:54','2026-10-22 03:25:35'),(407,'pedro','5','Macho','2026-10-22 00:00:00',5,305,'2026-10-22 00:00:00',NULL,500,'Ternero',1,'2026-10-22 12:02:16','2026-10-23 12:35:05');
+INSERT INTO `cattles` VALUES (1,'Taurus','1','Macho','2026-10-14 00:00:00',NULL,NULL,'2026-10-14 00:00:00',NULL,7001,'Carne',1,'2026-10-14 12:10:34','2026-10-22 03:19:02'),(2,'Juanita','2','Hembra','2026-10-14 00:00:00',NULL,NULL,'2026-10-14 00:00:00',NULL,600,'Lechero',1,'2026-10-14 12:24:07','2026-10-24 23:26:05'),(3,'Tomasa','4','Hembra','2026-10-15 00:00:00',NULL,NULL,'2025-10-15 00:00:00',NULL,900,'Lechero',1,'2026-10-15 12:27:11','2026-10-22 03:27:19'),(4,'Roberta','3','Hembra','2026-10-01 00:00:00',NULL,NULL,'2025-02-15 00:00:00',NULL,500,'Lechero',1,'2026-10-15 13:13:08','2026-10-15 13:13:08'),(5,'paquita','3','Hembra','2026-10-14 00:00:00',NULL,NULL,'2026-10-14 00:00:00',NULL,400,'Lechero',0,'2026-10-15 17:59:15','2026-10-15 17:59:15'),(6,'lola','6','Hembra','2026-10-15 00:00:00',NULL,NULL,'2025-02-15 00:00:00',NULL,322,'Lechero',1,'2026-10-15 19:19:05','2026-10-22 03:26:46'),(304,'lolita','2','Hembra','2026-10-21 00:00:00',NULL,NULL,'2026-10-21 00:00:00',NULL,700,'Carne',1,'2026-10-22 01:49:42','2026-10-22 01:49:42'),(305,'Tex','3','Macho','2026-10-21 00:00:00',NULL,NULL,'2026-10-21 00:00:00',NULL,444,'Toro',1,'2026-10-22 02:19:54','2026-10-22 03:26:27'),(307,'juaco','4','Macho','2026-10-21 00:00:00',4,1,'2026-10-21 00:00:00',NULL,800,'Ternero',1,'2026-10-22 02:20:54','2026-10-22 03:25:35'),(407,'pedro','5','Macho','2026-10-22 00:00:00',5,305,'2026-10-22 00:00:00',NULL,500,'Ternero',1,'2026-10-22 12:02:16','2026-10-23 12:35:05'),(7002,'Valeria','4','Hembra','2026-10-25 00:00:00',3,1,'2026-10-25 00:00:00',NULL,100,'Novilla levante',1,'2026-10-25 14:57:05','2026-10-25 14:57:05');
 /*!40000 ALTER TABLE `cattles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -418,7 +418,7 @@ CREATE TABLE `responsibles` (
   `updatedAt` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización del registro',
   PRIMARY KEY (`idResponsible`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Tabla para registrar responsables del sistema';
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Tabla para registrar responsables del sistema';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -427,7 +427,7 @@ CREATE TABLE `responsibles` (
 
 LOCK TABLES `responsibles` WRITE;
 /*!40000 ALTER TABLE `responsibles` DISABLE KEYS */;
-INSERT INTO `responsibles` VALUES (1,'Dr. Juan Pérez','Veterinario','juan.perez@livestock.com','3001234567','Active','2026-08-05 07:12:18','2026-08-05 07:12:18'),(2,'Dra. María Gómez','Veterinaria','maria.gomez@livestock.com','3007654321','Active','2026-08-05 07:12:18','2026-08-05 07:12:18'),(3,'Carlos Rodríguez','Operario','carlos.rodriguez@livestock.com','3109876543','Active','2026-08-05 07:12:18','2026-08-05 07:12:18'),(4,'Ana Martínez','Administrador','ana.martinez@livestock.com','3204567890','Active','2026-08-05 07:12:18','2026-08-05 07:12:18'),(5,'Luis Fernández','Veterinario','luis.fernandez@livestock.com','3009876543','Inactive','2026-08-05 07:12:18','2026-08-05 07:12:18'),(8,'Dr. Juan Pérez','Veterinario','juanpablo@livestock.com','3001234567','Active','2026-08-05 12:14:19','2026-08-05 12:14:19'),(10,'Euclides','Asistente','euclides@gmail.com','34567890','Active','2026-09-25 04:06:13','2026-09-25 04:06:13'),(11,'andres','Asistente','andresdylan@gmail.com','12345678','Active','2026-10-15 19:39:39','2026-10-15 19:39:39');
+INSERT INTO `responsibles` VALUES (1,'Dr. Juan Pérez','Veterinario','juan.perez@livestock.com','3001234567','Active','2026-08-05 07:12:18','2026-08-05 07:12:18'),(2,'Dra. María Gómez','Veterinaria','maria.gomez@livestock.com','3007654321','Active','2026-08-05 07:12:18','2026-08-05 07:12:18'),(3,'Carlos Rodríguez','Operario','carlos.rodriguez@livestock.com','3109876543','Active','2026-08-05 07:12:18','2026-08-05 07:12:18'),(4,'Ana Martínez','Administrador','ana.martinez@livestock.com','3204567890','Active','2026-08-05 07:12:18','2026-08-05 07:12:18'),(5,'Luis Fernández','Veterinario','luis.fernandez@livestock.com','3009876543','Inactive','2026-08-05 07:12:18','2026-08-05 07:12:18'),(8,'Dr. Juan Pérez','Veterinario','juanpablo@livestock.com','3001234567','Active','2026-08-05 12:14:19','2026-08-05 12:14:19'),(10,'Euclides','Asistente','euclides@gmail.com','34567890','Active','2026-09-25 04:06:13','2026-09-25 04:06:13'),(11,'andres','Asistente','andresdylan@gmail.com','12345678','Active','2026-10-15 19:39:39','2026-10-15 19:39:39'),(12,'Pablo Fernandez','Asistente','pablo@gmail.com','2222222222','Active','2026-10-25 17:08:02','2026-10-25 17:08:02');
 /*!40000 ALTER TABLE `responsibles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -574,7 +574,7 @@ CREATE TABLE `users` (
   PRIMARY KEY (`userId`),
   KEY `fk_id_roll_idx` (`id_roll`),
   CONSTRAINT `fk_users_roll` FOREIGN KEY (`id_roll`) REFERENCES `roll` (`id_roll`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -583,7 +583,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'sebastian','acef07d2-f9e8-459d-82c9-571e339742e2','sebastiancalderon5204@gmail.com','$2b$10$84Pemyy.6RaNmBCvoJKNWuei5u1b0Qa2muhqHG1VR4jij2EKT90x.','$2b$10$CITODoZ5SeIRDe.mkfQIBO','123456789','Administrador',NULL,1,1,NULL,0,NULL,'2026-09-25 16:18:18','2026-10-23 02:10:33'),(2,'Arnold','3a8891d7-ba16-450d-b10a-d23f8311141e','arnoldandresvasquez@gmail.com','$2b$10$Uqd.GEGj5WLK8JEkjCW9ZOnQHLMSklSCXKYADTTW0fTYgjx0Jr4Ga','$2b$10$Uqd.GEGj5WLK8JEkjCW9ZO','12345678','operario',NULL,1,1,NULL,0,NULL,'2026-09-25 19:26:00','2026-09-25 19:26:00'),(3,'Stefany','0d1b4b3a-4cbf-4116-b4d7-5fc730674d2d','vasquezstefany182@gmail.com','$2b$10$R2IOIAOk/QaeNLuzSbwuEexn.NtNPqwMzXMfV46D5lu1MlqCjdu.6','$2b$10$R2IOIAOk/QaeNLuzSbwuEe','2134567890\'','administrador',NULL,1,1,NULL,0,NULL,'2026-10-05 12:07:33','2026-10-05 12:07:33'),(6,'Dylan','207c525e-e950-4e2d-be66-c21ac98d725c','dylan@gmail.com','$2b$10$aFo.B0SqjtTuhtwaq8PzUO4KbbiccUwARipC9MQHX0Oxxc45IzFPi','$2b$10$aFo.B0SqjtTuhtwaq8PzUO','1234568','asistente',NULL,1,1,NULL,0,NULL,'2026-10-05 12:19:07','2026-10-05 12:19:07'),(7,'tatiana','5c6625d1-d9b9-4e4c-a83c-88fc69dcf891','caperatatiana822@gmail.com','$2b$10$MY8vrF0sylmu.CLMm3KBhuJRs2EHw3U9PaBq65gUyEKhVN0WNKBzS','$2b$10$MY8vrF0sylmu.CLMm3KBhu','9876543','asistente',NULL,1,1,NULL,0,NULL,'2026-10-15 19:38:04','2026-10-15 19:38:04');
+INSERT INTO `users` VALUES (1,'Sebastian','acef07d2-f9e8-459d-82c9-571e339742e2','sebastiancalderon5204@gmail.com','$2b$10$C5yXVOdLCe9CNiPUg6UyFOkF9WEvWWtbwWPzREN28pxQ/K7Cwhafq','$2b$10$CITODoZ5SeIRDe.mkfQIBO','1033333333','Super administrador',NULL,1,1,NULL,0,NULL,'2026-09-25 16:18:18','2026-10-25 17:09:02'),(2,'Arnold','3a8891d7-ba16-450d-b10a-d23f8311141e','arnoldandresvasquez@gmail.com','$2b$10$Uqd.GEGj5WLK8JEkjCW9ZOnQHLMSklSCXKYADTTW0fTYgjx0Jr4Ga','$2b$10$Uqd.GEGj5WLK8JEkjCW9ZO','12345678','operario',NULL,1,1,NULL,0,NULL,'2026-09-25 19:26:00','2026-09-25 19:26:00'),(3,'Stefany','0d1b4b3a-4cbf-4116-b4d7-5fc730674d2d','vasquezstefany182@gmail.com','$2b$10$R2IOIAOk/QaeNLuzSbwuEexn.NtNPqwMzXMfV46D5lu1MlqCjdu.6','$2b$10$R2IOIAOk/QaeNLuzSbwuEe','2134567890','administrador',NULL,1,1,NULL,0,NULL,'2026-10-05 12:07:33','2026-10-05 12:07:33'),(6,'Dylan','207c525e-e950-4e2d-be66-c21ac98d725c','dylan@gmail.com','$2b$10$aFo.B0SqjtTuhtwaq8PzUO4KbbiccUwARipC9MQHX0Oxxc45IzFPi','$2b$10$aFo.B0SqjtTuhtwaq8PzUO','1234568','asistente',NULL,1,1,NULL,0,NULL,'2026-10-05 12:19:07','2026-10-05 12:19:07'),(7,'tatiana','5c6625d1-d9b9-4e4c-a83c-88fc69dcf891','caperatatiana822@gmail.com','$2b$10$MY8vrF0sylmu.CLMm3KBhuJRs2EHw3U9PaBq65gUyEKhVN0WNKBzS','$2b$10$MY8vrF0sylmu.CLMm3KBhu','9876543','asistente',NULL,1,1,NULL,0,NULL,'2026-10-15 19:38:04','2026-10-15 19:38:04'),(8,'Sebastian Calderon','d10ee218-2947-43dc-a762-76cd41d57c69','sebastiancalderonlozano@gmail.com','$2b$10$d6MHvCNp6GasIAUXyO9Is.ZKmsfGrQ.kkxaC.jveDsAueeofRwYr.','$2b$10$d6MHvCNp6GasIAUXyO9Is.','1111111111','administrador',NULL,1,1,NULL,0,NULL,'2026-10-25 16:57:46','2026-10-25 16:57:46');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -663,4 +663,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-10-25  9:24:00
+-- Dump completed on 2026-10-25 12:09:50

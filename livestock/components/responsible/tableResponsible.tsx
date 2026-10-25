@@ -53,8 +53,7 @@ export default function TableResponsible({ actions }: TableResponsibleProps) {
         <DataTable
           columns={columns}
           data={responsibles}
-          filterColumnId="fullName"
-          filterPlaceholder="Filtrar por nombre..."
+          filterPlaceholder="Buscar en todos los campos..."
           toolbar={actions}
         />
       </div>

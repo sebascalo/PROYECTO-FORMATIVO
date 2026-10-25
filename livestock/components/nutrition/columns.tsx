@@ -1,9 +1,6 @@
 "use client";
 
 import { createColumnHelper } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { type SharedTableFeatures } from "@/components/ui/data-table-features";
 
@@ -32,7 +29,7 @@ export type Nutrition = {
   quantity: string;
   frequency: string;
   idResponsible: number;
-  active: boolean; // 👈 NUEVO
+  active: boolean;
   cattleData?: CattleData | null;
   foodData?: FoodData | null;
   responsibleData?: ResponsibleData | null;
@@ -59,28 +56,14 @@ const foodTypeStyles: Record<string, string> = {
 const columnHelper = createColumnHelper<SharedTableFeatures, Nutrition>();
 
 export const columns = columnHelper.columns([
-  columnHelper.accessor("id_nutrition", {
-    header: "ID",
-    cell: ({ getValue }) => (
-      <span className="text-[#6B6459]">{getValue()}</span>
-    ),
-  }),
+  // 👇 ID BOVINO (antes "Bovino", ahora muestra el id_Bovine)
   columnHelper.accessor("cattleData", {
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="h-auto p-0 font-semibold uppercase tracking-wide text-xs text-[#6B6459] hover:bg-transparent hover:text-[#2B2A26]"
-      >
-        Bovino
-        <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
-      </Button>
-    ),
+    header: "ID BOVINO",
     cell: ({ getValue }) => {
       const cattle = getValue();
       return (
         <span className="font-medium text-[#2B2A26]">
-          {cattle?.name ?? "Sin bovino"}
+          {cattle?.id_Bovine ?? "-"}
         </span>
       );
     },
@@ -137,7 +120,6 @@ export const columns = columnHelper.columns([
       );
     },
   }),
-  // 👇 NUEVA COLUMNA ESTADO
   columnHelper.accessor("active", {
     header: "Estado",
     cell: ({ getValue }) => {

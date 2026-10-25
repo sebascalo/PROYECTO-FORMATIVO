@@ -44,8 +44,7 @@ export default function TableRace({ actions }: TableRaceProps) {
         <DataTable
           columns={columns}
           data={races}
-          filterColumnId="name_race"
-          filterPlaceholder="Filtrar por nombre de raza..."
+          filterPlaceholder="Buscar en todos los campos..."
           toolbar={actions}
         />
       </div>

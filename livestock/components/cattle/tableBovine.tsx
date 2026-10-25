@@ -71,8 +71,7 @@ export default function TableCattle({ actions }: TableCattleProps) {
         <DataTable
           columns={columns}
           data={cattles}
-          filterColumnId="name"
-          filterPlaceholder="Filtrar por nombre..."
+          filterPlaceholder="Buscar en todos los campos..."
           toolbar={actions}
         />
       </div>

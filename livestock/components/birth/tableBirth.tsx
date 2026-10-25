@@ -90,8 +90,7 @@ export default function TableBirth({ actions }: TableBirthProps) {
         <DataTable
           columns={columns}
           data={births}
-          filterColumnId="id_Bovine"
-          filterPlaceholder="Filtrar por ID de madre..."
+          filterPlaceholder="Buscar en todos los campos..."
           toolbar={actions}
         />
       </div>

@@ -1,9 +1,6 @@
 "use client";
 
 import { createColumnHelper } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { type SharedTableFeatures } from "@/components/ui/data-table-features";
 
@@ -55,16 +52,7 @@ const columnHelper = createColumnHelper<SharedTableFeatures, Weighing>();
 
 export const columns = columnHelper.columns([
   columnHelper.accessor("id_Bovine", {
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="h-auto p-0 font-semibold uppercase tracking-wide text-xs text-[#6B6459] hover:bg-transparent hover:text-[#2B2A26]"
-      >
-        ID Bovino
-        <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
-      </Button>
-    ),
+    header: "ID Bovino",
     cell: ({ getValue }) => (
       <span className="font-medium text-[#2B2A26]">{getValue()}</span>
     ),

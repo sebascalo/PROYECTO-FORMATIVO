@@ -31,6 +31,20 @@ export default function FormCreationUser() {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
+
+    // 👇 VALIDACIÓN SOLO PARA EL DOCUMENTO
+    if (name === "documentId") {
+      // Reemplaza cualquier cosa que no sea un número del 0 al 9 por un string vacío
+      const soloNumeros = value.replace(/\D/g, "");
+      // Corta el string a máximo 10 caracteres
+      const recortado = soloNumeros.slice(0, 10);
+      
+      setFormData((prev) => ({ ...prev, [name]: recortado }));
+      if (error) setError(null);
+      return; 
+    }
+
+    // Comportamiento normal para los demás campos
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (error) setError(null);
   };
@@ -50,6 +64,11 @@ export default function FormCreationUser() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    // 👇 Validación extra al enviar
+    if (formData.documentId.length === 0) {
+      return setError("El documento es obligatorio");
+    }
 
     setIsSubmitting(true);
     try {
@@ -210,8 +229,10 @@ export default function FormCreationUser() {
                 name="documentId"
                 value={formData.documentId}
                 onChange={handleChange}
+                inputMode="numeric" // 👈 Abre teclado numérico en móviles
+                maxLength={10}      // 👈 Límite estricto de 10 caracteres
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043]"
-                placeholder="Ej: 123456789"
+                placeholder="Ej: 1234567890"
               />
             </div>
 
