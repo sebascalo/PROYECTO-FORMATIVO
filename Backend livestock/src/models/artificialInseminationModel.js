@@ -2,38 +2,36 @@ const { DataTypes } = require("sequelize");
 const db = require("../config/conectionDB");
 
 const artificialInsemination = db.define("artificialInsemination", {
-  id_artifInse: {
+  id_artifInse: { // ID de inseminación
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
-  id_madre: {
+  id_madre: { // Madre
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
       model: "cattles",
       key: "id_Bovine",
     },
-    comment: "Vaca que recibe la inseminación",
   },
-  id_toro: {
+  id_toro: { // Toro
     type: DataTypes.INTEGER,
     allowNull: true,
     references: {
       model: "cattles",
       key: "id_Bovine",
     },
-    comment: "Toro donante o padre",
   },
-  inseminationDate: {
+  inseminationDate: { // Fecha de inseminación
     type: DataTypes.DATEONLY,
     allowNull: false,
   },
-  semenID: {
+  semenID: { // Código de pajilla
     type: DataTypes.STRING(100),
     allowNull: false,
   },
-  id_race: {
+  id_race: { // Raza
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
@@ -41,15 +39,15 @@ const artificialInsemination = db.define("artificialInsemination", {
       key: "id_race",
     },
   },
-  servicio: { // 👈 NUEVO CAMPO
+  servicio: { // Servicio
     type: DataTypes.STRING(100),
     allowNull: true,
   },
-  observations: {
+  observations: { // Observaciones
     type: DataTypes.TEXT,
     allowNull: true,
   },
-  idResponsible: {
+  idResponsible: { // Responsable
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
@@ -57,11 +55,15 @@ const artificialInsemination = db.define("artificialInsemination", {
       key: "idResponsible",
     },
   },
-  createdAt: {
+  active: { // Estado
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
+  },
+  createdAt: { // Fecha de creación
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
   },
-  updatedAt: {
+  updatedAt: { // Fecha de actualización
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
   },

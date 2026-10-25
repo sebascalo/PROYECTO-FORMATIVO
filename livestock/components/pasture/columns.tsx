@@ -15,7 +15,8 @@ export type Pasture = {
   currentStatus: string;
   cattleEntryDate: string | null;
   cattleExitDate: string | null;
-  observations: string; // 👈 NUEVO
+  observations: string;
+  active: boolean; // 👈 NUEVO
 };
 
 const formatDate = (dateString?: string | null) => {
@@ -52,7 +53,7 @@ export const columns = columnHelper.columns([
     cell: ({ getValue }) => <span className="text-[#2B2A26]">{getValue()}</span>,
   }),
   columnHelper.accessor("currentStatus", {
-    header: "Estado",
+    header: "Estado Actual",
     cell: ({ getValue }) => {
       const value = getValue();
       return <Badge className={statusStyles[value] ?? "bg-[#8C8266] text-white"}>{value}</Badge>;
@@ -66,9 +67,27 @@ export const columns = columnHelper.columns([
     header: "Salida",
     cell: ({ getValue }) => formatDate(getValue()),
   }),
-  // 👇 OBSERVACIONES (Antes Último Químico)
   columnHelper.accessor("observations", {
     header: "Observaciones",
     cell: ({ getValue }) => <span className="text-[#6B6459] text-sm">{getValue() || "-"}</span>,
+  }),
+  // 👇 NUEVA COLUMNA ESTADO
+  columnHelper.accessor("active", {
+    header: "Estado",
+    cell: ({ getValue }) => {
+      const isActive = getValue() === true;
+      return (
+        <span className="inline-flex items-center gap-1.5 text-sm">
+          <span
+            className={`h-1.5 w-1.5 rounded-full ${
+              isActive ? "bg-[#4B6043]" : "bg-[#B0A896]"
+            }`}
+          />
+          <span className={isActive ? "text-[#2B2A26]" : "text-[#6B6459]"}>
+            {isActive ? "Activo" : "Inactivo"}
+          </span>
+        </span>
+      );
+    },
   }),
 ]);

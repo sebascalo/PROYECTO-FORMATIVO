@@ -28,6 +28,7 @@ export type Weighing = {
   bodycondition: string;
   observations: string;
   idResponsible: number | null;
+  active: boolean; // 👈 NUEVO
   cattleData?: CattleData | null;
   responsibleData?: ResponsibleData | null;
 };
@@ -42,7 +43,6 @@ const formatDate = (dateString?: string | null) => {
   });
 };
 
-// 👇 Estilos actualizados para las nuevas condiciones
 const bodyConditionStyles: Record<string, string> = {
   "1 - Flaco": "bg-[#A9744F] text-white hover:bg-[#94623F]",
   "2 - Delgado": "bg-[#8C8266] text-white hover:bg-[#77704F]",
@@ -54,7 +54,6 @@ const bodyConditionStyles: Record<string, string> = {
 const columnHelper = createColumnHelper<SharedTableFeatures, Weighing>();
 
 export const columns = columnHelper.columns([
-  // ID BOVINO
   columnHelper.accessor("id_Bovine", {
     header: ({ column }) => (
       <Button
@@ -102,7 +101,6 @@ export const columns = columnHelper.columns([
       );
     },
   }),
-  // 👇 CONDICIÓN CORPORAL
   columnHelper.accessor("bodycondition", {
     header: "Condición Corporal",
     cell: ({ getValue }) => {
@@ -122,7 +120,6 @@ export const columns = columnHelper.columns([
       <span className="text-[#6B6459] text-sm">{getValue() || "-"}</span>
     ),
   }),
-  // 👇 RESPONSABLE
   columnHelper.accessor("responsibleData", {
     header: "Responsable",
     cell: ({ getValue }) => {
@@ -135,6 +132,25 @@ export const columns = columnHelper.columns([
           </span>
           <span className="text-xs text-[#6B6459]">{responsible.role}</span>
         </div>
+      );
+    },
+  }),
+  // 👇 NUEVA COLUMNA ESTADO
+  columnHelper.accessor("active", {
+    header: "Estado",
+    cell: ({ getValue }) => {
+      const isActive = getValue() === true;
+      return (
+        <span className="inline-flex items-center gap-1.5 text-sm">
+          <span
+            className={`h-1.5 w-1.5 rounded-full ${
+              isActive ? "bg-[#4B6043]" : "bg-[#B0A896]"
+            }`}
+          />
+          <span className={isActive ? "text-[#2B2A26]" : "text-[#6B6459]"}>
+            {isActive ? "Activo" : "Inactivo"}
+          </span>
+        </span>
       );
     },
   }),

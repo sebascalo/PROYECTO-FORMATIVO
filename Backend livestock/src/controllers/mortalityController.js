@@ -34,7 +34,6 @@ const getAllMortalitiesById = async (req, res) => {
 
 const createMortality = async (req, res) => {
     try {
-        // 👈 Recibimos id_Bovine
         const { id_Bovine, dateofExit, exitReason, idResponsible, observations } = req.body;
         var errors = [];
         
@@ -48,7 +47,8 @@ const createMortality = async (req, res) => {
             return res.status(400).json(new Response("Error al crear la salida", null, errors).json);
         }
         
-        const data = { id_Bovine, dateofExit, exitReason, idResponsible, observations };
+        // 👇 Forzamos active: true por defecto
+        const data = { id_Bovine, dateofExit, exitReason, idResponsible, observations, active: true };
         const exit = await mortalityCreate(data);
         res.status(201).json(new Response("Salida creada exitosamente", exit, null).json);
     } catch (error) {
@@ -60,7 +60,8 @@ const createMortality = async (req, res) => {
 const updateMortality = async (req, res) => {
     try {
         const { id_mortality } = req.params;
-        const { id_Bovine, dateofExit, exitReason, idResponsible, observations } = req.body;
+        // 👇 Recibimos active
+        const { id_Bovine, dateofExit, exitReason, idResponsible, observations, active } = req.body;
         var errors = [];
         
         if (!id_mortality) errors.push("El ID es obligatorio");
@@ -73,7 +74,16 @@ const updateMortality = async (req, res) => {
             return res.status(400).json(new Response("Error al actualizar la salida", null, errors).json);
         }
         
-        const data = { id_Bovine, dateofExit, exitReason, idResponsible, observations };
+        // 👇 Actualizamos active solo si viene
+        const data = { 
+            id_Bovine, 
+            dateofExit, 
+            exitReason, 
+            idResponsible, 
+            observations,
+            ...(active !== undefined && { active }) 
+        };
+        
         const exit = await mortalityUpdate(id_mortality, data);
         res.status(200).json(new Response(`Salida ${id_mortality} actualizada exitosamente`, exit, null).json);
     } catch (error) {

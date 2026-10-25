@@ -20,6 +20,7 @@ export type Mount = {
   serviceNumber: number;
   observations: string;
   idResponsible: number;
+  active: boolean; // 👈 NUEVO
   responsibleData?: ResponsibleData | null;
 };
 
@@ -36,9 +37,6 @@ const formatDate = (dateString?: string | null) => {
 const columnHelper = createColumnHelper<SharedTableFeatures, Mount>();
 
 export const columns = columnHelper.columns([
-  // ❌ COLUMNA ID ELIMINADA
-
-  // 👇 ID MADRE (Vaca)
   columnHelper.accessor("id_cow", {
     header: ({ column }) => (
       <Button
@@ -58,7 +56,6 @@ export const columns = columnHelper.columns([
     ),
   }),
 
-  // 👇 ID PADRE (Toro)
   columnHelper.accessor("id_bull", {
     header: "ID Padre",
     cell: ({ getValue }) => (
@@ -71,7 +68,6 @@ export const columns = columnHelper.columns([
     cell: ({ getValue }) => formatDate(getValue()),
   }),
 
-  // 👇 SERVICIO CON BADGE
   columnHelper.accessor("serviceNumber", {
     header: "Servicio",
     cell: ({ getValue }) => {
@@ -106,5 +102,25 @@ export const columns = columnHelper.columns([
     cell: ({ getValue }) => (
       <span className="text-[#6B6459] text-sm">{getValue() || "-"}</span>
     ),
+  }),
+
+  // 👇 NUEVA COLUMNA ESTADO
+  columnHelper.accessor("active", {
+    header: "Estado",
+    cell: ({ getValue }) => {
+      const isActive = getValue() === true;
+      return (
+        <span className="inline-flex items-center gap-1.5 text-sm">
+          <span
+            className={`h-1.5 w-1.5 rounded-full ${
+              isActive ? "bg-[#4B6043]" : "bg-[#B0A896]"
+            }`}
+          />
+          <span className={isActive ? "text-[#2B2A26]" : "text-[#6B6459]"}>
+            {isActive ? "Activo" : "Inactivo"}
+          </span>
+        </span>
+      );
+    },
   }),
 ]);

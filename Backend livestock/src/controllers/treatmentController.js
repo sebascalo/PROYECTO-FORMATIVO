@@ -29,7 +29,6 @@ const getAllTreatmentsById = async (req, res) => {
 
 const createTreatment = async (req, res) => {
     try {
-        // 👇 Agregamos vaccine_lot y withdrawal_time
         const { id_Bovine, treatment_date, medication_used, vaccine_lot, applied_dose, application_route, associated_diagnosis, treatment_duration, withdrawal_time, observations, idResponsible } = req.body;
         var errors = [];
         
@@ -44,7 +43,22 @@ const createTreatment = async (req, res) => {
 
         if (errors.length > 0) return res.status(400).json(new Response("Error al crear el tratamiento", null, errors).json);
         
-        const data = { id_Bovine, treatment_date, medication_used, vaccine_lot, applied_dose, application_route, associated_diagnosis, treatment_duration, withdrawal_time, observations, idResponsible };
+        // 👇 Forzamos active: true por defecto
+        const data = { 
+            id_Bovine, 
+            treatment_date, 
+            medication_used, 
+            vaccine_lot, 
+            applied_dose, 
+            application_route, 
+            associated_diagnosis, 
+            treatment_duration, 
+            withdrawal_time, 
+            observations, 
+            idResponsible,
+            active: true
+        };
+        
         const treatment = await treatmentCreate(data);
         res.status(201).json(new Response("Tratamiento creado exitosamente", treatment, null).json);
     } catch (error) {
@@ -56,7 +70,7 @@ const createTreatment = async (req, res) => {
 const updateTreatment = async (req, res) => {
     try {
         const { id_treatment } = req.params;
-        const { id_Bovine, treatment_date, medication_used, vaccine_lot, applied_dose, application_route, associated_diagnosis, treatment_duration, withdrawal_time, observations, idResponsible } = req.body;
+        const { id_Bovine, treatment_date, medication_used, vaccine_lot, applied_dose, application_route, associated_diagnosis, treatment_duration, withdrawal_time, observations, idResponsible, active } = req.body;
         var errors = [];
         
         if (!id_treatment) errors.push("El ID del tratamiento es obligatorio");
@@ -71,7 +85,22 @@ const updateTreatment = async (req, res) => {
 
         if (errors.length > 0) return res.status(400).json(new Response("Error al actualizar el tratamiento", null, errors).json);
         
-        const data = { id_Bovine, treatment_date, medication_used, vaccine_lot, applied_dose, application_route, associated_diagnosis, treatment_duration, withdrawal_time, observations, idResponsible };
+        // 👇 Actualizamos active solo si viene
+        const data = { 
+            id_Bovine, 
+            treatment_date, 
+            medication_used, 
+            vaccine_lot, 
+            applied_dose, 
+            application_route, 
+            associated_diagnosis, 
+            treatment_duration, 
+            withdrawal_time, 
+            observations, 
+            idResponsible,
+            ...(active !== undefined && { active })
+        };
+        
         const treatment = await treatmentUpdate(id_treatment, data);
         res.status(200).json(new Response(`Tratamiento ${id_treatment} actualizado exitosamente`, treatment, null).json);
     } catch (error) {

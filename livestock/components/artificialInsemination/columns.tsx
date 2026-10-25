@@ -22,6 +22,7 @@ export type ArtificialInsemination = {
   servicio: string;
   observations: string;
   idResponsible: number;
+  active: boolean; // 👈 NUEVO
   raceData?: { name_race: string } | null;
   responsibleData?: ResponsibleData | null;
 };
@@ -38,7 +39,6 @@ const formatDate = (dateString?: string | null) => {
 const columnHelper = createColumnHelper<SharedTableFeatures, ArtificialInsemination>();
 
 export const columns = columnHelper.columns([
-  // 👇 ID MADRE
   columnHelper.accessor("id_madre", {
     header: ({ column }) => (
       <Button
@@ -58,7 +58,6 @@ export const columns = columnHelper.columns([
     ),
   }),
 
-  // 👇 ID TORO
   columnHelper.accessor("id_toro", {
     header: "ID Toro",
     cell: ({ getValue }) => (
@@ -106,7 +105,6 @@ export const columns = columnHelper.columns([
     },
   }),
 
-  // 👇 SERVICIO CON BADGE
   columnHelper.accessor("servicio", {
     header: "Servicio",
     cell: ({ getValue }) => {
@@ -125,5 +123,25 @@ export const columns = columnHelper.columns([
     cell: ({ getValue }) => (
       <span className="text-[#6B6459] text-sm">{getValue() || "-"}</span>
     ),
+  }),
+
+  // 👇 NUEVA COLUMNA ESTADO
+  columnHelper.accessor("active", {
+    header: "Estado",
+    cell: ({ getValue }) => {
+      const isActive = getValue() === true;
+      return (
+        <span className="inline-flex items-center gap-1.5 text-sm">
+          <span
+            className={`h-1.5 w-1.5 rounded-full ${
+              isActive ? "bg-[#4B6043]" : "bg-[#B0A896]"
+            }`}
+          />
+          <span className={isActive ? "text-[#2B2A26]" : "text-[#6B6459]"}>
+            {isActive ? "Activo" : "Inactivo"}
+          </span>
+        </span>
+      );
+    },
   }),
 ]);

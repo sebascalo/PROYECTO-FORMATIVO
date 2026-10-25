@@ -32,6 +32,7 @@ export type Nutrition = {
   quantity: string;
   frequency: string;
   idResponsible: number;
+  active: boolean; // 👈 NUEVO
   cattleData?: CattleData | null;
   foodData?: FoodData | null;
   responsibleData?: ResponsibleData | null;
@@ -64,7 +65,6 @@ export const columns = columnHelper.columns([
       <span className="text-[#6B6459]">{getValue()}</span>
     ),
   }),
-  // 👇 BOVINO con nombre
   columnHelper.accessor("cattleData", {
     header: ({ column }) => (
       <Button
@@ -85,7 +85,6 @@ export const columns = columnHelper.columns([
       );
     },
   }),
-  // 👇 ALIMENTO con nombre + badge del tipo
   columnHelper.accessor("foodData", {
     header: "Alimento",
     cell: ({ getValue }) => {
@@ -123,7 +122,6 @@ export const columns = columnHelper.columns([
       );
     },
   }),
-  // 👇 RESPONSABLE con nombre + rol
   columnHelper.accessor("responsibleData", {
     header: "Responsable",
     cell: ({ getValue }) => {
@@ -136,6 +134,25 @@ export const columns = columnHelper.columns([
           </span>
           <span className="text-xs text-[#6B6459]">{responsible.role}</span>
         </div>
+      );
+    },
+  }),
+  // 👇 NUEVA COLUMNA ESTADO
+  columnHelper.accessor("active", {
+    header: "Estado",
+    cell: ({ getValue }) => {
+      const isActive = getValue() === true;
+      return (
+        <span className="inline-flex items-center gap-1.5 text-sm">
+          <span
+            className={`h-1.5 w-1.5 rounded-full ${
+              isActive ? "bg-[#4B6043]" : "bg-[#B0A896]"
+            }`}
+          />
+          <span className={isActive ? "text-[#2B2A26]" : "text-[#6B6459]"}>
+            {isActive ? "Activo" : "Inactivo"}
+          </span>
+        </span>
       );
     },
   }),

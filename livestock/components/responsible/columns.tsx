@@ -30,12 +30,6 @@ const roleStyles: Record<string, string> = {
 const columnHelper = createColumnHelper<SharedTableFeatures, Responsible>();
 
 export const columns = columnHelper.columns([
-  columnHelper.accessor("idResponsible", {
-    header: "ID",
-    cell: ({ getValue }) => (
-      <span className="text-[#6B6459]">{getValue()}</span>
-    ),
-  }),
   columnHelper.accessor("fullName", {
     header: ({ column }) => (
       <Button

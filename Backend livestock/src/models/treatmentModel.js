@@ -2,52 +2,52 @@ const { DataTypes } = require("sequelize");
 const db = require("../config/conectionDB");
 
 const treatment = db.define("treatment", {
-    id_treatment: {
+    id_treatment: { // ID del tratamiento
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
-    id_Bovine: {
+    id_Bovine: { // Bovino
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    treatment_date: {
+    treatment_date: { // Fecha del tratamiento
         type: DataTypes.DATE,
         allowNull: false
     },
-    medication_used: {
+    medication_used: { // Medicamento
         type: DataTypes.STRING,
         allowNull: false
     },
-    vaccine_lot: { // 👈 NUEVO CAMPO
+    vaccine_lot: { // Lote
         type: DataTypes.STRING,
         allowNull: true
     },
-    applied_dose: {
+    applied_dose: { // Dosis
         type: DataTypes.STRING,
         allowNull: false
     },
-    application_route: {
+    application_route: { // Vía
         type: DataTypes.STRING,
         allowNull: false
     },
-    associated_diagnosis: {
+    associated_diagnosis: { // Diagnóstico
         type: DataTypes.STRING,
         allowNull: false
     },
-    treatment_duration: {
+    treatment_duration: { // Duración
         type: DataTypes.STRING,
         allowNull: false
     },
-    withdrawal_time: { // 👈 NUEVO CAMPO
+    withdrawal_time: { // Tiempo de retiro
         type: DataTypes.STRING,
         allowNull: true
     },
-    observations: {
+    observations: { // Observaciones
         type: DataTypes.STRING,
         allowNull: true
     },
-    idResponsible: {
+    idResponsible: { // Responsable
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -55,11 +55,15 @@ const treatment = db.define("treatment", {
             key: 'idResponsible'
         }
     },
-    createdAt: {
+    active: { // Estado
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
+    },
+    createdAt: { // Fecha de creación
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
     },
-    updatedAt: {
+    updatedAt: { // Fecha de actualización
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
     }

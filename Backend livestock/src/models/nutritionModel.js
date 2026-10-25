@@ -2,28 +2,28 @@ const { DataTypes } = require('sequelize');
 const db = require('../config/ConectionDB');
 
 const nutrition = db.define('nutrition', {
-    id_nutrition: {
+    id_nutrition: { // ID de nutrición
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
-    id_Bovine: { // Número de arete o identificador único del animal
+    id_Bovine: { // Bovino
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    id_food: { // Código del alimento del catálogo de alimentos
+    id_food: { // Alimento
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    quantity: { // Cantidad en kg, litros según el tipo de alimento
+    quantity: { // Cantidad
         type: DataTypes.STRING,
         allowNull: false
     },
-    frequency: { // Frecuencia de alimentación (mañana, tarde, noche)
+    frequency: { // Frecuencia
         type: DataTypes.STRING,
         allowNull: false
     },
-    idResponsible: { // Nombre del responsable de la nutrición
+    idResponsible: { // Responsable
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -31,11 +31,15 @@ const nutrition = db.define('nutrition', {
             key: 'idResponsible'
         }
     },
-    createdAt: { // Fecha de creación del registro
+    active: { // Estado
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
+    },
+    createdAt: { // Fecha de creación
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
     },
-    updatedAt: { // Fecha de última actualización del registro
+    updatedAt: { // Fecha de actualización
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
     }

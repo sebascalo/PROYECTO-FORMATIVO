@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { type SharedTableFeatures } from "@/components/ui/data-table-features";
 
-// 👇 Tipos del JOIN (Quitamos CattleData)
 export type ResponsibleData = {
   idResponsible: number;
   fullName: string;
@@ -21,6 +20,7 @@ export type Mortality = {
   exitReason: string;
   idResponsible: number | null;
   observations: string;
+  active: boolean; // 👈 NUEVO
   responsibleData?: ResponsibleData | null;
 };
 
@@ -45,7 +45,6 @@ const exitReasonStyles: Record<string, string> = {
 const columnHelper = createColumnHelper<SharedTableFeatures, Mortality>();
 
 export const columns = columnHelper.columns([
-  // COLUMNA BOVINO (Muestra el ID)
   columnHelper.accessor("id_Bovine", {
     header: ({ column }) => (
       <Button
@@ -53,11 +52,10 @@ export const columns = columnHelper.columns([
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         className="h-auto p-0 font-semibold uppercase tracking-wide text-xs text-[#6B6459] hover:bg-transparent hover:text-[#2B2A26]"
       >
-        ID BOVINO
+        ID Bovino
         <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
       </Button>
     ),
-    // 👇 Filtro para que el buscador funcione con el número del ID
     filterFn: (row, id, value) => {
       return String(row.getValue(id)).toLowerCase().includes(value.toLowerCase());
     },
@@ -106,5 +104,24 @@ export const columns = columnHelper.columns([
     cell: ({ getValue }) => (
       <span className="text-[#6B6459] text-sm">{getValue() || "-"}</span>
     ),
+  }),
+  // 👇 NUEVA COLUMNA ESTADO
+  columnHelper.accessor("active", {
+    header: "Estado",
+    cell: ({ getValue }) => {
+      const isActive = getValue() === true;
+      return (
+        <span className="inline-flex items-center gap-1.5 text-sm">
+          <span
+            className={`h-1.5 w-1.5 rounded-full ${
+              isActive ? "bg-[#4B6043]" : "bg-[#B0A896]"
+            }`}
+          />
+          <span className={isActive ? "text-[#2B2A26]" : "text-[#6B6459]"}>
+            {isActive ? "Activo" : "Inactivo"}
+          </span>
+        </span>
+      );
+    },
   }),
 ]);

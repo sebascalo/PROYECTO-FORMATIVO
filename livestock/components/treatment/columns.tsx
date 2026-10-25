@@ -18,14 +18,15 @@ export type Treatment = {
   id_Bovine: number;
   treatment_date: string;
   medication_used: string;
-  vaccine_lot: string; // 👈 NUEVO
+  vaccine_lot: string; 
   applied_dose: string;
   application_route: string;
   associated_diagnosis: string;
   treatment_duration: string;
-  withdrawal_time: string; // 👈 NUEVO
+  withdrawal_time: string; 
   observations: string;
   idResponsible: number;
+  active: boolean;
   responsibleData?: ResponsibleData | null;
 };
 
@@ -46,9 +47,6 @@ const routeStyles: Record<string, string> = {
 const columnHelper = createColumnHelper<SharedTableFeatures, Treatment>();
 
 export const columns = columnHelper.columns([
-  // ❌ COLUMNA ID ELIMINADA
-
-  // 👇 ID BOVINO
   columnHelper.accessor("id_Bovine", {
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} className="h-auto p-0 font-semibold uppercase tracking-wide text-xs text-[#6B6459] hover:bg-transparent hover:text-[#2B2A26]">
@@ -64,17 +62,16 @@ export const columns = columnHelper.columns([
     cell: ({ getValue }) => formatDate(getValue()),
   }),
 
-  // 👇 MEDICAMENTO Y LOTE
   columnHelper.accessor("medication_used", {
     header: "Medicamento",
     cell: ({ getValue }) => <span className="text-[#2B2A26]">{getValue() || "-"}</span>,
   }),
+  
   columnHelper.accessor("vaccine_lot", {
     header: "Lote",
     cell: ({ getValue }) => <span className="text-[#6B6459]">{getValue() || "-"}</span>,
   }),
 
-  // 👇 DOSIS (ML)
   columnHelper.accessor("applied_dose", {
     header: "Dosis (ml)",
     cell: ({ getValue }) => {
@@ -95,10 +92,14 @@ export const columns = columnHelper.columns([
 
   columnHelper.accessor("associated_diagnosis", {
     header: "Diagnóstico",
-    cell: ({ getValue }) => <span className="text-[#6B6459]">{getValue() || "-"}</span>,
+    // 👇 Limitamos el ancho máximo para que no estire la tabla
+    cell: ({ getValue }) => (
+      <span className="text-[#6B6459] block max-w-[120px] truncate" title={getValue() || ""}>
+        {getValue() || "-"}
+      </span>
+    ),
   }),
 
-  // 👇 DURACIÓN Y TIEMPO DE RETIRO
   columnHelper.accessor("treatment_duration", {
     header: "Duración (días)",
     cell: ({ getValue }) => {
@@ -132,6 +133,30 @@ export const columns = columnHelper.columns([
 
   columnHelper.accessor("observations", {
     header: "Observaciones",
-    cell: ({ getValue }) => <span className="text-[#6B6459] text-sm">{getValue() || "-"}</span>,
+    // 👇 Limitamos el ancho máximo para que no estire la tabla
+    cell: ({ getValue }) => (
+      <span className="text-[#6B6459] text-sm block max-w-[150px] truncate" title={getValue() || ""}>
+        {getValue() || "-"}
+      </span>
+    ),
+  }),
+
+  columnHelper.accessor("active", {
+    header: "Estado",
+    cell: ({ getValue }) => {
+      const isActive = getValue() === true;
+      return (
+        <span className="inline-flex items-center gap-1.5 text-sm">
+          <span
+            className={`h-1.5 w-1.5 rounded-full ${
+              isActive ? "bg-[#4B6043]" : "bg-[#B0A896]"
+            }`}
+          />
+          <span className={isActive ? "text-[#2B2A26]" : "text-[#6B6459]"}>
+            {isActive ? "Activo" : "Inactivo"}
+          </span>
+        </span>
+      );
+    },
   }),
 ]);

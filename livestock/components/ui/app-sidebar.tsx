@@ -29,6 +29,8 @@ import {
 import { Cow, Grains } from "@phosphor-icons/react";
 import { Collapsible } from "@/components/ui/collapsible";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
+import entireCow from "@/public/cow-animals-svgrepo-com.svg";
 
 const activeClasses =
   "rounded-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 data-[active=true]:bg-gray-100 data-[active=true]:text-gray-900 data-[active=true]:font-semibold relative data-[active=true]:before:absolute data-[active=true]:before:left-0 data-[active=true]:before:top-1/2 data-[active=true]:before:-translate-y-1/2 data-[active=true]:before:h-5 data-[active=true]:before:w-[3px] data-[active=true]:before:rounded-full data-[active=true]:before:bg-blue-600";
@@ -46,12 +48,17 @@ export function AppSidebar() {
         collapsible="icon"
         className="border-r bg-white text-gray-800"
       >
-        {/* 👇 pt-4 para que no choque con el logo */}
-        <SidebarContent className="flex min-h-0 text-gray-800 px-2 pt-15 group-data-[collapsible=icon]:px-0 overflow-y-auto">
+        <SidebarContent className="flex min-h-0 text-gray-800 px-2 pt-15 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center overflow-y-auto">
           {/* ================= SECCIÓN 1: GESTIÓN DE BOVINOS ================= */}
           <div className="px-3 py-2 mt-2 group-data-[collapsible=icon]:px-0">
             <div className="flex items-center gap-2 text-xs font-bold text-gray-500 uppercase tracking-wider group-data-[collapsible=icon]:justify-center">
-              <Cow size={14} />
+              <Image 
+                src={entireCow} 
+                alt="Vaca entera" 
+                width={16} 
+                height={16} 
+                className="opacity-70" 
+              />
               <span className="group-data-[collapsible=icon]:hidden">
                 Gestión de Bovinos
               </span>

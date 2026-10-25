@@ -106,8 +106,8 @@ export default function TableNutrition({ actions }: TableNutritionProps) {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white px-6 py-8">
-      <div className="mx-auto max-w-6xl space-y-6">
+    <div className="w-full bg-white px-4 py-8">
+      <div className="mx-auto w-full space-y-6">
         <div>
           <h1 className="text-2xl font-semibold text-[#2B2A26]">
             Nutriciones

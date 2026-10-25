@@ -30,12 +30,6 @@ const postJobStyles: Record<string, string> = {
 const columnHelper = createColumnHelper<SharedTableFeatures, User>();
 
 export const columns = columnHelper.columns([
-  columnHelper.accessor("userId", {
-    header: "ID",
-    cell: ({ getValue }) => (
-      <span className="text-[#6B6459]">{getValue()}</span>
-    ),
-  }),
   columnHelper.accessor("name", {
     header: ({ column }) => (
       <Button

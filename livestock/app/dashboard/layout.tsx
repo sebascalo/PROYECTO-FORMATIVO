@@ -39,7 +39,7 @@ export default function DashboardLayout({
   if (isAuthenticated === null) return null;
 
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={false}>
       <div className="flex min-h-screen w-full flex-col">
         <NavBarDashboard />
         <div className="flex flex-1">

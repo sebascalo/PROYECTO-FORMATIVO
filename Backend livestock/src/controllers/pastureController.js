@@ -27,7 +27,6 @@ const getAllPasturesById = async (req, res) => {
 
 const createPasture = async (req, res) => {
     try {
-        // 👇 Cambiamos lastChemicalApplication por observations
         const { name, extension, forageCapacity, pastureType, cattleEntryDate, cattleExitDate, currentStatus, observations } = req.body;
         var errors = [];
         
@@ -39,7 +38,19 @@ const createPasture = async (req, res) => {
         
         if (errors.length > 0) return res.status(400).json(new Response("Error al crear el potrero", null, errors).json);
 
-        const data = { name, extension, forageCapacity, pastureType, cattleEntryDate, cattleExitDate, currentStatus, observations };
+        // 👇 Forzamos active: true por defecto
+        const data = { 
+            name, 
+            extension, 
+            forageCapacity, 
+            pastureType, 
+            cattleEntryDate, 
+            cattleExitDate, 
+            currentStatus, 
+            observations,
+            active: true 
+        };
+        
         const pasture = await pastureCreate(data);
         res.status(201).json(new Response("Potrero creado exitosamente", pasture, null).json);
     } catch (error) {
@@ -51,7 +62,8 @@ const createPasture = async (req, res) => {
 const updatePasture = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, extension, forageCapacity, pastureType, cattleEntryDate, cattleExitDate, currentStatus, observations } = req.body;
+        // 👇 Recibimos active
+        const { name, extension, forageCapacity, pastureType, cattleEntryDate, cattleExitDate, currentStatus, observations, active } = req.body;
         var errors = [];
         
         if (!id) errors.push("El ID del potrero es obligatorio");
@@ -63,7 +75,19 @@ const updatePasture = async (req, res) => {
         
         if (errors.length > 0) return res.status(400).json(new Response("Error al actualizar el potrero", null, errors).json);
 
-        const data = { name, extension, forageCapacity, pastureType, cattleEntryDate, cattleExitDate, currentStatus, observations };
+        // 👇 Actualizamos active solo si viene
+        const data = { 
+            name, 
+            extension, 
+            forageCapacity, 
+            pastureType, 
+            cattleEntryDate, 
+            cattleExitDate, 
+            currentStatus, 
+            observations,
+            ...(active !== undefined && { active })
+        };
+        
         const pasture = await pastureUpdate(id, data);
         res.status(200).json(new Response(`Potrero ${id} actualizado exitosamente`, pasture, null).json);
     } catch (error) {

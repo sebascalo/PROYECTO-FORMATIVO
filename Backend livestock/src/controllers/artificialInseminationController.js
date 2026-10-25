@@ -38,7 +38,19 @@ const createArtificialInsemination = async (req, res) => {
 
         if (errors.length > 0) return res.status(400).json(new Response("Error al crear", null, errors).json);
         
-        const data = { id_madre, id_toro: id_toro ? Number(id_toro) : null, inseminationDate, semenID, id_race, servicio, observations, idResponsible };
+        // 👇 Forzamos active: true por defecto
+        const data = { 
+            id_madre, 
+            id_toro: id_toro ? Number(id_toro) : null, 
+            inseminationDate, 
+            semenID, 
+            id_race, 
+            servicio, 
+            observations, 
+            idResponsible,
+            active: true
+        };
+        
         const artificialInsemination = await artificialInseminationCreate(data);
         res.status(201).json(new Response("Inseminación creada exitosamente", artificialInsemination, null).json);
     } catch (error) {
@@ -50,7 +62,7 @@ const createArtificialInsemination = async (req, res) => {
 const updateArtificialInsemination = async (req, res) => {
     try {
         const { id_artifInse } = req.params;
-        const { id_madre, id_toro, inseminationDate, semenID, id_race, servicio, observations, idResponsible } = req.body;
+        const { id_madre, id_toro, inseminationDate, semenID, id_race, servicio, observations, idResponsible, active } = req.body;
         var errors = [];
         
         if (!id_artifInse) errors.push("El ID es obligatorio");
@@ -62,7 +74,19 @@ const updateArtificialInsemination = async (req, res) => {
 
         if (errors.length > 0) return res.status(400).json(new Response("Error al actualizar", null, errors).json);
         
-        const data = { id_madre, id_toro: id_toro ? Number(id_toro) : null, inseminationDate, semenID, id_race, servicio, observations, idResponsible };
+        // 👇 Actualizamos active solo si viene
+        const data = { 
+            id_madre, 
+            id_toro: id_toro ? Number(id_toro) : null, 
+            inseminationDate, 
+            semenID, 
+            id_race, 
+            servicio, 
+            observations, 
+            idResponsible,
+            ...(active !== undefined && { active })
+        };
+        
         const artificialInsemination = await artificialInseminationUpdate(id_artifInse, data);
         res.status(200).json(new Response(`Inseminación actualizada`, artificialInsemination, null).json);
     } catch (error) {

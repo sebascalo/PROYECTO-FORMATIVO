@@ -58,8 +58,8 @@ export default function TableArtificialInsemination({ actions }: TableArtificial
   }, []);
 
   return (
-    <div className="min-h-screen bg-white px-6 py-8">
-      <div className="mx-auto max-w-6xl space-y-6">
+    <div className="w-full bg-white px-4 py-8">
+      <div className="mx-auto w-full space-y-6">
         <div>
           <h1 className="text-2xl font-semibold text-[#2B2A26]">Inseminaciones Artificiales</h1>
           <p className="text-sm text-[#6B6459]">{inseminations.length} {inseminations.length === 1 ? "inseminación registrada" : "inseminaciones registradas"}.</p>

@@ -2,57 +2,52 @@ const { DataTypes } = require('sequelize');
 const db = require('../config/conectionDB');
 
 const pasture = db.define('pasture', {
-    id_pasture: {
+    id_pasture: { // ID del potrero
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
-    // Nombre del potrero
-    name: {
+    name: { // Nombre
         type: DataTypes.STRING,
         allowNull: false
     },
-    // Extensión del terreno (hectáreas o m²)
-    extension: {
+    extension: { // Extensión
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false
     },
-    // Capacidad máxima de animales que soporta el potrero
-    forageCapacity: { 
+    forageCapacity: { // Aforo
         type: DataTypes.INTEGER,
-        allowNull: false,
-        comment: 'Aforo: Capacidad máxima de animales que soporta el potrero'
+        allowNull: false
     },
-    // Tipo de pasto o forraje
-    pastureType: {
+    pastureType: { // Tipo de pastura
         type: DataTypes.STRING,
         allowNull: false
     },
-    // Fecha de ingreso del ganado al potrero
-    cattleEntryDate: {
+    cattleEntryDate: { // Ingreso del ganado
         type: DataTypes.DATE,
         allowNull: true
     },
-    // Fecha de salida del ganado del potrero
-    cattleExitDate: {
+    cattleExitDate: { // Salida del ganado
         type: DataTypes.DATE,
         allowNull: true
     },
-    // Estado actual (ej: Descanso, Ocupado, Enmalecido)
-    currentStatus: {
+    currentStatus: { // Estado actual
         type: DataTypes.STRING,
         allowNull: false
     },
-    // Observaciones sobre el potrero
-    observations: { // 👈 CAMBIO: antes lastChemicalApplication
+    observations: { // Observaciones
         type: DataTypes.STRING,
         allowNull: true
     },
-    createdAt: {
+    active: { // Estado
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
+    },
+    createdAt: { // Fecha de creación
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
     },
-    updatedAt: {
+    updatedAt: { // Fecha de actualización
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
     }

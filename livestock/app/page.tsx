@@ -44,9 +44,9 @@ export default function App() {
 
               <div className="flex gap-4">
                 <Login
-  Textbutton="Empezar Ahora"
-  style="cursor-pointer px-8 py-8 tracking-wider bg-[#2B7FFF] text-white font-bold rounded-2xl text-base hover:bg-[#1E63CC] transition-colors duration-300"
-/>
+                  Textbutton="Empezar Ahora"
+                  style="cursor-pointer px-8 py-8 tracking-wider bg-[#2B7FFF] text-white font-bold rounded-2xl text-xl hover:bg-[#1E63CC] transition-colors duration-300"
+                />
               </div>
             </div>
 

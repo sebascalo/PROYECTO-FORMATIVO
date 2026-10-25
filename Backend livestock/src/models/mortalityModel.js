@@ -2,12 +2,12 @@ const { DataTypes } = require("sequelize");
 const db = require("../config/conectionDB");
 
 const exit = db.define("exit", {
-    id_mortality: { // Mantenemos este nombre para no romper la PK
+    id_mortality: { // ID de salida
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
-    id_Bovine: {
+    id_Bovine: { // Bovino
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -15,15 +15,15 @@ const exit = db.define("exit", {
             key: 'id_Bovine'
         }
     },
-    dateofExit: { // Fecha de salida del bovino
+    dateofExit: { // Fecha de salida
         type: DataTypes.DATE,
         allowNull: false
     },
-    exitReason: { // Razón de la salida del bovino (muerte, venta, sacrificio, etc.)
+    exitReason: { // Motivo de salida
         type: DataTypes.STRING,
         allowNull: false
     },
-    idResponsible: {
+    idResponsible: { // Responsable
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -31,15 +31,19 @@ const exit = db.define("exit", {
             key: 'idResponsible'
         }
     },
-    observations: {
+    observations: { // Observaciones
         type: DataTypes.STRING,
         allowNull: true
     },
-    createdAt: {
+    active: { // Estado
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
+    },
+    createdAt: { // Fecha de creación
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
     },
-    updatedAt: {
+    updatedAt: { // Fecha de actualización
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
     }

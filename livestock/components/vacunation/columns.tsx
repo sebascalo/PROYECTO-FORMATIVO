@@ -6,7 +6,6 @@ import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { type SharedTableFeatures } from "@/components/ui/data-table-features";
 
-// 👇 Tipos del JOIN
 export type ResponsibleData = {
   idResponsible: number;
   fullName: string;
@@ -22,6 +21,7 @@ export type Vacunation = {
   medicine_name: string;
   idResponsible: number;
   observations: string;
+  active: boolean; // 👈 NUEVO
   responsibleData?: ResponsibleData | null;
 };
 
@@ -38,7 +38,6 @@ const formatDate = (dateString?: string | null) => {
 const columnHelper = createColumnHelper<SharedTableFeatures, Vacunation>();
 
 export const columns = columnHelper.columns([
-  // 👇 ID BOVINO
   columnHelper.accessor("id_Bovine", {
     header: ({ column }) => (
       <Button
@@ -59,19 +58,15 @@ export const columns = columnHelper.columns([
       </span>
     ),
   }),
-
   columnHelper.accessor("vaccination_date", {
     header: "Fecha",
     cell: ({ getValue }) => formatDate(getValue()),
   }),
-
-  // 👇 DOSIS (ML)
   columnHelper.accessor("applied_dose", {
     header: "Dosis (ml)",
     cell: ({ getValue }) => {
       const value = getValue();
       if (!value) return <span className="text-[#6B6459]">-</span>;
-      // Si el valor ya trae "ml", lo dejamos así, si no, se lo agregamos
       return (
         <span className="text-[#2B2A26] tabular-nums">
           {value.toLowerCase().includes("ml") ? value : `${value} ml`}
@@ -79,22 +74,18 @@ export const columns = columnHelper.columns([
       );
     },
   }),
-
   columnHelper.accessor("vaccine_lot", {
     header: "Lote",
     cell: ({ getValue }) => (
       <span className="text-[#6B6459]">{getValue() || "-"}</span>
     ),
   }),
-
   columnHelper.accessor("medicine_name", {
     header: "Medicamento",
     cell: ({ getValue }) => (
       <span className="text-[#2B2A26]">{getValue() || "-"}</span>
     ),
   }),
-
-  // 👇 RESPONSABLE con nombre + rol
   columnHelper.accessor("responsibleData", {
     header: "Responsable",
     cell: ({ getValue }) => {
@@ -110,11 +101,29 @@ export const columns = columnHelper.columns([
       );
     },
   }),
-
   columnHelper.accessor("observations", {
     header: "Observaciones",
     cell: ({ getValue }) => (
       <span className="text-[#6B6459] text-sm">{getValue() || "-"}</span>
     ),
+  }),
+  // 👇 NUEVA COLUMNA ESTADO
+  columnHelper.accessor("active", {
+    header: "Estado",
+    cell: ({ getValue }) => {
+      const isActive = getValue() === true;
+      return (
+        <span className="inline-flex items-center gap-1.5 text-sm">
+          <span
+            className={`h-1.5 w-1.5 rounded-full ${
+              isActive ? "bg-[#4B6043]" : "bg-[#B0A896]"
+            }`}
+          />
+          <span className={isActive ? "text-[#2B2A26]" : "text-[#6B6459]"}>
+            {isActive ? "Activo" : "Inactivo"}
+          </span>
+        </span>
+      );
+    },
   }),
 ]);

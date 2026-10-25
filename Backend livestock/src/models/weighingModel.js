@@ -2,36 +2,36 @@ const { DataTypes } = require('sequelize');
 const db = require('../config/conectionDB');
 
 const weighing = db.define('weighing', {
-    id_weighing: {
+    id_weighing: { // ID del pesaje
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
-    id_Bovine: { // Identificación del bovino
+    id_Bovine: { // Bovino
         type: DataTypes.STRING,
         allowNull: true
     },
-    weighingdate: { // Fecha del pesaje del bovino
+    weighingdate: { // Fecha del pesaje
         type: DataTypes.DATE,
         allowNull: true
     },
-    currentweight: { // Peso actual del bovino
+    currentweight: { // Peso actual
         type: DataTypes.FLOAT,
         allowNull: true
     },
-    profitorloss: { // Ganancia o pérdida de peso del bovino desde el último pesaje
+    profitorloss: { // Ganancia o pérdida
         type: DataTypes.FLOAT,
         allowNull: true
     },
-    bodycondition: { // Condición corporal del bovino (delgado, normal, gordo)
+    bodycondition: { // Condición corporal
         type: DataTypes.STRING,
         allowNull: true
     },
-    observations: { // Observaciones adicionales sobre el pesaje del bovino
+    observations: { // Observaciones
         type: DataTypes.STRING,
         allowNull: true
     },
-    idResponsible: { // Responsable del registro del pesaje del bovino
+    idResponsible: { // Responsable
         type: DataTypes.INTEGER,
         allowNull: true,
         references: {
@@ -39,11 +39,15 @@ const weighing = db.define('weighing', {
             key: 'idResponsible'
         }
     },
-    createdAt: { // Fecha de creación del registro
+    active: { // Estado
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
+    },
+    createdAt: { // Fecha de creación
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
     },
-    updatedAt: { // Fecha de última actualización del registro
+    updatedAt: { // Fecha de actualización
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
     }

@@ -2,42 +2,40 @@ const { DataTypes } = require("sequelize");
 const db = require("../config/conectionDB");
 
 const mount = db.define("mount", {
-  id_mount: {
+  id_mount: { // ID de la monta
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
-  id_cow: {
+  id_cow: { // Vaca
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
       model: "cattles",
       key: "id_Bovine",
     },
-    comment: "Vaca que recibe el servicio",
   },
-  id_bull: {
+  id_bull: { // Toro
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
       model: "cattles",
       key: "id_Bovine",
     },
-    comment: "Toro que realiza el servicio",
   },
-  breedingDate: {
+  breedingDate: { // Fecha de monta
     type: DataTypes.DATEONLY,
     allowNull: false,
   },
-  serviceNumber: {
+  serviceNumber: { // Número de servicio
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  observations: {
+  observations: { // Observaciones
     type: DataTypes.TEXT,
     allowNull: true,
   },
-  idResponsible: {
+  idResponsible: { // Responsable
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
@@ -45,11 +43,15 @@ const mount = db.define("mount", {
       key: "idResponsible",
     },
   },
-  createdAt: {
+  active: { // Estado
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
+  },
+  createdAt: { // Fecha de creación
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
   },
-  updatedAt: {
+  updatedAt: { // Fecha de actualización
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
   },

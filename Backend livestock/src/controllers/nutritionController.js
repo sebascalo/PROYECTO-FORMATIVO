@@ -39,7 +39,7 @@ const getAllNutritionsById = async (req, res) => {
         }
         const nutrition = await getNutritionById(id_nutrition);
         var response = new Response(`Registro de nutrición ${id_nutrition} obtenido exitosamente`, nutrition, null);
-        res.status(201);
+        res.status(200);
         res.json(response.json);
     } catch (error) {
         console.error("Error en getAllNutritionsById:", error);
@@ -53,29 +53,18 @@ const getAllNutritionsById = async (req, res) => {
 
 const createNutrition = async (req, res) => {
     try {
-        console.log("📥 [BACK] Body recibido:", req.body);
         const { id_Bovine, id_food, quantity, frequency, idResponsible } = req.body;
         var errors = [];
         
         // Validaciones
-        if (!id_Bovine || String(id_Bovine).trim() === "") {
-            errors.push("La identificación del bovino es obligatoria");
-        }
-        if (!id_food || String(id_food).trim() === "") {
-            errors.push("El código del alimento es obligatorio");
-        }
-        if (!quantity || String(quantity).trim() === "") {
-            errors.push("La cantidad de alimento es obligatoria");
-        }
-        if (!frequency || String(frequency).trim() === "") {
-            errors.push("La frecuencia de alimentación es obligatoria");
-        }
+        if (!id_Bovine || String(id_Bovine).trim() === "") errors.push("La identificación del bovino es obligatoria");
+        if (!id_food || String(id_food).trim() === "") errors.push("El código del alimento es obligatorio");
+        if (!quantity || String(quantity).trim() === "") errors.push("La cantidad de alimento es obligatoria");
+        if (!frequency || String(frequency).trim() === "") errors.push("La frecuencia de alimentación es obligatoria");
         if (frequency && !["Mañana", "Tarde", "Noche", "Mañana y Tarde", "Mañana, Tarde y Noche"].includes(frequency)) {
             errors.push("La frecuencia no es válida");
         }
-        if (!idResponsible || String(idResponsible).trim() === "") {
-            errors.push("El responsable de la nutrición es obligatorio");
-        }
+        if (!idResponsible || String(idResponsible).trim() === "") errors.push("El responsable de la nutrición es obligatorio");
 
         if (errors.length > 0) {
             var response = new Response("Error al crear el registro de nutrición", null, errors)
@@ -84,8 +73,8 @@ const createNutrition = async (req, res) => {
             return;
         }
         
-        const data = { id_Bovine, id_food, quantity, frequency, idResponsible };
-        console.log("📥 [BACK] data a guardar:", data);
+        // 👇 Forzamos active: true por defecto
+        const data = { id_Bovine, id_food, quantity, frequency, idResponsible, active: true };
         const nutrition = await nutritionCreate(data);
         var response = new Response("Registro de nutrición creado exitosamente", nutrition, null);
         res.status(201);
@@ -103,30 +92,19 @@ const createNutrition = async (req, res) => {
 const updateNutrition = async (req, res) => {
     try {
         const { id_nutrition } = req.params;
-        const { id_Bovine, id_food, quantity, frequency, idResponsible } = req.body;
+        // 👇 Recibimos active
+        const { id_Bovine, id_food, quantity, frequency, idResponsible, active } = req.body;
         var errors = [];
         
-        if (!id_nutrition) {
-            errors.push("El ID del registro de nutrición es obligatorio");
-        }
-        if (!id_Bovine || String(id_Bovine).trim() === "") {
-            errors.push("La identificación del bovino es obligatoria");
-        }
-        if (!id_food || String(id_food).trim() === "") {
-            errors.push("El código del alimento es obligatorio");
-        }
-        if (!quantity || String(quantity).trim() === "") {
-            errors.push("La cantidad de alimento es obligatoria");
-        }
-        if (!frequency || String(frequency).trim() === "") {
-            errors.push("La frecuencia de alimentación es obligatoria");
-        }
+        if (!id_nutrition) errors.push("El ID del registro de nutrición es obligatorio");
+        if (!id_Bovine || String(id_Bovine).trim() === "") errors.push("La identificación del bovino es obligatoria");
+        if (!id_food || String(id_food).trim() === "") errors.push("El código del alimento es obligatorio");
+        if (!quantity || String(quantity).trim() === "") errors.push("La cantidad de alimento es obligatoria");
+        if (!frequency || String(frequency).trim() === "") errors.push("La frecuencia de alimentación es obligatoria");
         if (frequency && !["Mañana", "Tarde", "Noche", "Mañana y Tarde", "Mañana, Tarde y Noche"].includes(frequency)) {
             errors.push("La frecuencia no es válida");
         }
-        if (!idResponsible || String(idResponsible).trim() === "") {
-            errors.push("El responsable de la nutrición es obligatorio");
-        }
+        if (!idResponsible || String(idResponsible).trim() === "") errors.push("El responsable de la nutrición es obligatorio");
 
         if (errors.length > 0) {
             var response = new Response("Error al actualizar el registro de nutrición", null, errors)
@@ -135,7 +113,15 @@ const updateNutrition = async (req, res) => {
             return;
         }
         
-        const data = { id_Bovine, id_food, quantity, frequency, idResponsible };
+        // 👇 Actualizamos active solo si viene
+        const data = { 
+            id_Bovine, 
+            id_food, 
+            quantity, 
+            frequency, 
+            idResponsible,
+            ...(active !== undefined && { active })
+        };
         const nutrition = await nutritionUpdate(id_nutrition, data);
         var response = new Response(`Registro de nutrición ${id_nutrition} actualizado exitosamente`, nutrition, null);
         res.status(200);
@@ -153,19 +139,11 @@ const updateNutrition = async (req, res) => {
 const deleteNutrition = async (req, res) => {
     try {
         const { id_nutrition } = req.params;
-        var errors = [];
-        if (!id_nutrition) {
-            errors.push("El ID del registro de nutrición es obligatorio");
-        }
-        if (errors.length > 0) {
-            var response = new Response("Error al eliminar el registro de nutrición", null, errors)
-            res.status(400)
-            res.json(response.json);
-            return;
-        }
-        const nutrition = await nutritionDelete(id_nutrition);
+        if (!id_nutrition) return res.status(400).json(new Response("Error al eliminar el registro de nutrición", null, ["El ID es obligatorio"]).json);
+        
+        await nutritionDelete(id_nutrition);
         var response = new Response(`Registro de nutrición ${id_nutrition} eliminado exitosamente`, { id_nutrition }, null);
-        res.status(201);
+        res.status(200);
         res.json(response.json);
     } catch (error) {
         console.error("Error en deleteNutrition:", error);

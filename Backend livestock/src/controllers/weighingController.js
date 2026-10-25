@@ -1,6 +1,6 @@
 const { weighingCreate, weighingUpdate, weighingDelete, getWeighingById, weighingsGetAll } = require("../services/weighingService");
 const Response = require("../functions/response");
-const Cattle = require("../models/cattleModel"); // 👈 Importamos el modelo de bovinos
+const Cattle = require("../models/cattleModel"); 
 
 // Obtener todos los registros de pesajes
 const getAllWeighings = async (req, res) => {
@@ -62,7 +62,6 @@ const createWeighing = async (req, res) => {
         if (!weighingdate || String(weighingdate).trim() === "") errors.push("La fecha del pesaje es obligatoria");
         if (!currentweight || String(currentweight).trim() === "" || isNaN(currentweight)) errors.push("El peso actual es obligatorio y debe ser un número");
         
-        // 👇 Validación actualizada con los nuevos valores del select
         if (bodycondition && String(bodycondition).trim() !== "" && !["1 - Flaco", "2 - Delgado", "3 - Ideal", "4 - Gordo", "5 - Obeso"].includes(bodycondition)) {
             errors.push("La condición corporal no es válida");
         }
@@ -77,10 +76,21 @@ const createWeighing = async (req, res) => {
             return;
         }
         
-        const data = { id_Bovine, weighingdate, currentweight, profitorloss, bodycondition, observations, idResponsible }
+        // 👇 Forzamos active: true por defecto al crear
+        const data = { 
+            id_Bovine, 
+            weighingdate, 
+            currentweight, 
+            profitorloss, 
+            bodycondition, 
+            observations, 
+            idResponsible,
+            active: true 
+        };
+        
         const weighing = await weighingCreate(data)
 
-        // 👇 NUEVO: Actualizar el peso del bovino en la tabla 'cattles'
+        // Actualizar el peso del bovino en la tabla 'cattles'
         if (id_Bovine && currentweight) {
             await Cattle.update(
                 { currentweight: currentweight },
@@ -104,7 +114,7 @@ const createWeighing = async (req, res) => {
 const updateWeighing = async (req, res) => {
     try {
         const { id_weighing } = req.params;
-        const { id_Bovine, weighingdate, currentweight, profitorloss, bodycondition, observations, idResponsible } = req.body;
+        const { id_Bovine, weighingdate, currentweight, profitorloss, bodycondition, observations, idResponsible, active } = req.body;
         var errors = [];
         
         if (!id_weighing) errors.push("El ID del pesaje es obligatorio");
@@ -123,10 +133,20 @@ const updateWeighing = async (req, res) => {
             return;
         }
         
-        const data = { id_Bovine, weighingdate, currentweight, profitorloss, bodycondition, observations, idResponsible }
+        // Si active no viene, mantenemos el que ya tenía en la base de datos
+        const data = { 
+            id_Bovine, 
+            weighingdate, 
+            currentweight, 
+            profitorloss, 
+            bodycondition, 
+            observations, 
+            idResponsible,
+            ...(active !== undefined && { active }) // 👈 Solo actualiza si envían el campo
+        };
+        
         const weighing = await weighingUpdate(id_weighing, data)
 
-        // 👇 NUEVO: Actualizar el peso del bovino también si se edita el pesaje
         if (id_Bovine && currentweight) {
             await Cattle.update(
                 { currentweight: currentweight },
@@ -148,7 +168,6 @@ const updateWeighing = async (req, res) => {
 }
 
 const deleteWeighing = async (req, res) => {
-    // ... (se queda igual)
     try {
         const { id_weighing } = req.params;
         var errors = [];
