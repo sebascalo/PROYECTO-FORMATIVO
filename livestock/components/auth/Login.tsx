@@ -17,6 +17,7 @@ import ResetPassword from "@/components/auth/ResetPassword";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeClosed } from "lucide-react";
+import { toast } from "@/components/ui/toast"
 
 interface LoginProps {
   Textbutton?: string;
@@ -45,8 +46,26 @@ export default function Login({ Textbutton = "", style = "" }: LoginProps) {
     }
   };
 
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!email) {
+      toast.add({
+        title: "Corregir",
+        description: "Por favor, ingrese su correo electronico.",
+        type: "error",
+      });
+      return;
+    }
+    if (!password) {
+      toast.add({
+        title: "Corregir",
+        description: "Por favor, ingrese su contraseña.",
+        type: "error",
+      });
+      return;
+    }
 
     const data = {
       email: email,
@@ -67,6 +86,12 @@ export default function Login({ Textbutton = "", style = "" }: LoginProps) {
           const token = data.info.token;
           localStorage.setItem("token", token);
           localStorage.setItem("userId", String(data.info.userId));
+          toast.add({
+            title: "Éxito",
+            description: "Inicio de sesión exitoso.",
+            type: "success",
+          });
+          setOpenDialog(false);
           router.push("/dashboard");
         } else {
           alert(data.message);
