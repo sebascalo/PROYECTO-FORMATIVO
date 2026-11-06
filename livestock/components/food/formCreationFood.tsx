@@ -1,18 +1,33 @@
+
 "use client";
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
-  DialogTrigger,
   DialogTitle,
 } from "../ui/dialog";
-import ButtonCreate from "../ui/buttonCreate";
 
-export default function FormCreationFood() {
-  const [open, setOpen] = useState(false);
+import { type Food } from "./columns";
+
+interface FormCreationFoodProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess: () => void;
+  foodToEdit?: Food | null;
+}
+
+export default function FormCreationFood({
+  isOpen,
+  onClose,
+  onSuccess,
+  foodToEdit = null,
+}: FormCreationFoodProps): React.JSX.Element | null {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
   const [formData, setFormData] = useState({
     food_name: "",
     food_type: "",
@@ -22,13 +37,40 @@ export default function FormCreationFood() {
     supplier: "",
   });
 
+  // Detectar si estamos editando
+  const isEditing = Boolean(foodToEdit);
+
+  // Cargar los datos del alimento seleccionado
+  useEffect(() => {
+    if (foodToEdit) {
+      setFormData({
+        food_name: foodToEdit.food_name ?? "",
+        food_type: foodToEdit.food_type ?? "",
+        unit_measure: foodToEdit.unit_measure ?? "",
+        stock_quantity:
+          foodToEdit.stock_quantity != null
+            ? String(foodToEdit.stock_quantity)
+            : "",
+        cost_per_unit:
+          foodToEdit.cost_per_unit != null
+            ? String(foodToEdit.cost_per_unit)
+            : "",
+        supplier: foodToEdit.supplier ?? "",
+      });
+    } else {
+      limpiarFormulario();
+    }
+  }, [foodToEdit, isOpen]);
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >,
   ) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({ ...prev, [name]: value }));
+
     if (error) setError(null);
   };
 
@@ -41,6 +83,7 @@ export default function FormCreationFood() {
       cost_per_unit: "",
       supplier: "",
     });
+
     setError(null);
   };
 
@@ -62,24 +105,31 @@ export default function FormCreationFood() {
     };
 
     setIsSubmitting(true);
+
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(
-        "http://localhost:3000/api/food/CreateFood",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(datosEnviar),
+
+      const url = isEditing
+        ? `http://localhost:3000/api/food/UpdateFood/${foodToEdit?.id_food}`
+        : "http://localhost:3000/api/food/CreateFood";
+
+      const method = isEditing ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-      );
+        body: JSON.stringify(datosEnviar),
+      });
 
       if (!response.ok) {
         let backendMessage = "";
+
         try {
           const errorBody = await response.json();
+
           if (Array.isArray(errorBody?.errors)) {
             backendMessage = errorBody.errors
               .map((e: { message?: string } | string) =>
@@ -95,16 +145,19 @@ export default function FormCreationFood() {
         } catch {
           backendMessage = await response.text();
         }
+
         throw new Error(
           `El servidor respondió ${response.status}: ${backendMessage || "sin detalle"}`,
         );
       }
 
       limpiarFormulario();
-      setOpen(false);
+      onSuccess();
+      onClose();
       window.location.reload();
     } catch (error) {
       console.error("Error:", error);
+
       setError(
         error instanceof Error
           ? error.message
@@ -116,25 +169,26 @@ export default function FormCreationFood() {
   };
 
   const handleOpenChange = (newOpen: boolean) => {
-    if (!newOpen) limpiarFormulario();
-    setOpen(newOpen);
+    if (!newOpen) {
+      limpiarFormulario();
+      onClose();
+    }
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <ButtonCreate>Agregar Alimento</ButtonCreate>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[425px] md:max-w-[800px]">
         <DialogTitle className="font-bold text-2xl text-center">
-          Crear Alimento
+          {isEditing ? "Editar Alimento" : "Crear Alimento"}
         </DialogTitle>
+
         <form
           id="food-create-form"
           onSubmit={handleSubmit}
           className="space-y-4"
         >
           <div className="grid grid-cols-2 gap-4">
+            {/* NOMBRE */}
             <div>
               <label
                 htmlFor="food_name"
@@ -142,6 +196,7 @@ export default function FormCreationFood() {
               >
                 Nombre del Alimento:
               </label>
+
               <input
                 type="text"
                 id="food_name"
@@ -153,6 +208,7 @@ export default function FormCreationFood() {
               />
             </div>
 
+            {/* TIPO */}
             <div>
               <label
                 htmlFor="food_type"
@@ -160,6 +216,7 @@ export default function FormCreationFood() {
               >
                 Tipo de Alimento:
               </label>
+
               <select
                 id="food_type"
                 name="food_type"
@@ -178,6 +235,7 @@ export default function FormCreationFood() {
               </select>
             </div>
 
+            {/* UNIDAD */}
             <div>
               <label
                 htmlFor="unit_measure"
@@ -185,6 +243,7 @@ export default function FormCreationFood() {
               >
                 Unidad de Medida:
               </label>
+
               <select
                 id="unit_measure"
                 name="unit_measure"
@@ -204,6 +263,7 @@ export default function FormCreationFood() {
               </select>
             </div>
 
+            {/* STOCK */}
             <div>
               <label
                 htmlFor="stock_quantity"
@@ -211,6 +271,7 @@ export default function FormCreationFood() {
               >
                 Cantidad en Stock:
               </label>
+
               <input
                 type="number"
                 id="stock_quantity"
@@ -224,6 +285,7 @@ export default function FormCreationFood() {
               />
             </div>
 
+            {/* COSTO */}
             <div>
               <label
                 htmlFor="cost_per_unit"
@@ -231,6 +293,7 @@ export default function FormCreationFood() {
               >
                 Costo por Unidad ($):
               </label>
+
               <input
                 type="number"
                 id="cost_per_unit"
@@ -244,6 +307,7 @@ export default function FormCreationFood() {
               />
             </div>
 
+            {/* PROVEEDOR */}
             <div>
               <label
                 htmlFor="supplier"
@@ -251,6 +315,7 @@ export default function FormCreationFood() {
               >
                 Proveedor:
               </label>
+
               <input
                 type="text"
                 id="supplier"
@@ -264,10 +329,14 @@ export default function FormCreationFood() {
           </div>
         </form>
 
-        {/* 👇 Descripción arriba a la izquierda */}
         <p className="text-sm text-gray-600 -mt-2">
-          Complete los campos para crear un nuevo alimento.
+          Complete los campos para {isEditing ? "actualizar" : "crear"} un
+          alimento.
         </p>
+
+        <DialogDescription className="sr-only">
+          Formulario para crear o editar un alimento.
+        </DialogDescription>
 
         <DialogFooter className="flex-col gap-2 sm:flex-col">
           {error && (
@@ -275,22 +344,31 @@ export default function FormCreationFood() {
               ⚠️ {error}
             </p>
           )}
+
           <div className="flex flex-row gap-2 w-full">
             <button
               type="button"
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                limpiarFormulario();
+                onClose();
+              }}
               disabled={isSubmitting}
               className="flex-1 cursor-pointer border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 font-medium py-2 px-4 rounded-md transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               Cancelar
             </button>
+
             <button
               type="submit"
               form="food-create-form"
               disabled={isSubmitting}
               className="flex-1 bg-green-600 text-white font-medium py-2 px-4 rounded-md hover:bg-green-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500/40 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? "Guardando..." : "Guardar Alimento"}
+              {isSubmitting
+                ? "Guardando..."
+                : isEditing
+                  ? "Actualizar Alimento"
+                  : "Guardar Alimento"}
             </button>
           </div>
         </DialogFooter>

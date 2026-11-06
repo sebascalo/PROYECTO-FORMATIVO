@@ -1,12 +1,12 @@
+
 "use client";
 import { useEffect, useState } from "react";
 
 import { DataTable } from "@/components/ui/data-table";
-import { columns, type Mortality } from "./columns";
+import { getColumns, type Mortality } from "./columns";
 
-interface TableMortalityProps {
-  actions?: React.ReactNode;
-}
+import ButtonCreate from "../ui/buttonCreate";
+import FormCreationMortality from "./formCreationMortality";
 
 interface Responsible {
   idResponsible: number;
@@ -14,8 +14,12 @@ interface Responsible {
   role: string;
 }
 
-export default function TableMortality({ actions }: TableMortalityProps) {
+export default function TableMortality() {
   const [mortalidades, setMortalidades] = useState<Mortality[]>([]);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedMortality, setSelectedMortality] =
+    useState<Mortality | null>(null);
 
   useEffect(() => {
     const fetchMortalidades = async () => {
@@ -23,10 +27,15 @@ export default function TableMortality({ actions }: TableMortalityProps) {
         const token = localStorage.getItem("token");
         const headers = { Authorization: `Bearer ${token}` };
 
-        // 👇 Solo hacemos 2 fetch (salidas y responsables)
         const [mortalityRes, responsibleRes] = await Promise.all([
-          fetch("http://localhost:3000/api/mortality/MortalityAll?limit=500", { headers }),
-          fetch("http://localhost:3000/api/responsible/ResponsibleAll?limit=500", { headers }),
+          fetch(
+            "http://localhost:3000/api/mortality/MortalityAll?limit=500",
+            { headers },
+          ),
+          fetch(
+            "http://localhost:3000/api/responsible/ResponsibleAll?limit=500",
+            { headers },
+          ),
         ]);
 
         const [mortalityJson, responsibleJson] = await Promise.all([
@@ -34,7 +43,10 @@ export default function TableMortality({ actions }: TableMortalityProps) {
           responsibleRes.json(),
         ]);
 
-        const mortalityList: Mortality[] = Array.isArray(mortalityJson.info) ? mortalityJson.info : [];
+        const mortalityList: Mortality[] = Array.isArray(mortalityJson.info)
+          ? mortalityJson.info
+          : [];
+
         const responsibles: Responsible[] = responsibleJson.info ?? [];
 
         const mortalidadesFormatted: Mortality[] = mortalityList.map((m) => {
@@ -54,15 +66,30 @@ export default function TableMortality({ actions }: TableMortalityProps) {
           };
         });
 
-        // Invertimos para que salga el más nuevo primero
         setMortalidades([...mortalidadesFormatted].reverse());
       } catch (error) {
         console.error("Error:", error);
         setMortalidades([]);
       }
     };
+
     fetchMortalidades();
   }, []);
+
+  const handleOpenCreate = () => {
+    setSelectedMortality(null);
+    setIsModalOpen(true);
+  };
+
+  const handleOpenEdit = (mortality: Mortality) => {
+    setSelectedMortality(mortality);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedMortality(null);
+  };
 
   return (
     <div className="w-full bg-white px-4 py-8">
@@ -81,10 +108,21 @@ export default function TableMortality({ actions }: TableMortalityProps) {
         </div>
 
         <DataTable
-          columns={columns}
+          columns={getColumns(handleOpenEdit)}
           data={mortalidades}
           filterPlaceholder="Buscar en todos los campos..."
-          toolbar={actions}
+          toolbar={
+            <ButtonCreate onClick={handleOpenCreate}>
+              Crear Salida
+            </ButtonCreate>
+          }
+        />
+
+        <FormCreationMortality
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onSuccess={handleCloseModal}
+          mortalityToEdit={selectedMortality}
         />
       </div>
     </div>

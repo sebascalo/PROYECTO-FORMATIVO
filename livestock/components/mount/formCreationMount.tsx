@@ -1,14 +1,15 @@
+
 "use client";
+
 import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
-  DialogTrigger,
   DialogTitle,
 } from "../ui/dialog";
-import ButtonCreate from "../ui/buttonCreate";
+import { type Mount } from "./columns";
 
 interface Cattle {
   id_Bovine: number;
@@ -24,8 +25,19 @@ interface Responsible {
   status: "Active" | "Inactive";
 }
 
-export default function FormCreationMount() {
-  const [open, setOpen] = useState(false);
+interface FormCreationMountProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess: () => void;
+  mountToEdit?: Mount | null;
+}
+
+export default function FormCreationMount({
+  isOpen,
+  onClose,
+  onSuccess,
+  mountToEdit = null,
+}: FormCreationMountProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -35,9 +47,7 @@ export default function FormCreationMount() {
 
   const [responsibles, setResponsibles] = useState<Responsible[]>([]);
   const [loadingResponsibles, setLoadingResponsibles] = useState(true);
-  const [responsiblesError, setResponsiblesError] = useState<string | null>(
-    null,
-  );
+  const [responsiblesError, setResponsiblesError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     id_cow: "",
@@ -48,7 +58,25 @@ export default function FormCreationMount() {
     idResponsible: "",
   });
 
-  // 👇 Cargar bovinos
+  const isEditing = Boolean(mountToEdit);
+
+  useEffect(() => {
+    if (mountToEdit) {
+      setFormData({
+        id_cow: String(mountToEdit.id_cow ?? ""),
+        id_bull: String(mountToEdit.id_bull ?? ""),
+        breedingDate: mountToEdit.breedingDate
+          ? new Date(mountToEdit.breedingDate).toISOString().split("T")[0]
+          : "",
+        serviceNumber: String(mountToEdit.serviceNumber ?? ""),
+        observations: mountToEdit.observations ?? "",
+        idResponsible: String(mountToEdit.idResponsible ?? ""),
+      });
+    } else {
+      limpiarFormulario();
+    }
+  }, [mountToEdit, isOpen]);
+
   useEffect(() => {
     const fetchCattles = async () => {
       try {
@@ -76,7 +104,6 @@ export default function FormCreationMount() {
     fetchCattles();
   }, []);
 
-  // 👇 Cargar responsables
   useEffect(() => {
     const fetchResponsibles = async () => {
       try {
@@ -107,7 +134,6 @@ export default function FormCreationMount() {
     fetchResponsibles();
   }, []);
 
-  // 👇 Filtros por sexo
   const femaleCattles = cattles.filter((c) => c.sex === "Hembra");
   const maleCattles = cattles.filter((c) => c.sex === "Macho");
 
@@ -137,7 +163,6 @@ export default function FormCreationMount() {
     e.preventDefault();
     setError(null);
 
-    // 👇 Validaciones previas
     if (!formData.id_cow) return setError("Debes seleccionar una vaca");
     if (!formData.id_bull) return setError("Debes seleccionar un toro");
     if (formData.id_cow === formData.id_bull)
@@ -161,19 +186,22 @@ export default function FormCreationMount() {
     };
 
     setIsSubmitting(true);
+
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(
-        "http://localhost:3000/api/mount/CreateMount",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(datosEnviar),
+
+      const url = isEditing
+        ? `http://localhost:3000/api/mount/UpdateMount/${mountToEdit?.id_mount}`
+        : "http://localhost:3000/api/mount/CreateMount";
+
+      const response = await fetch(url, {
+        method: isEditing ? "PUT" : "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-      );
+        body: JSON.stringify(datosEnviar),
+      });
 
       if (!response.ok) {
         let backendMessage = "";
@@ -200,7 +228,8 @@ export default function FormCreationMount() {
       }
 
       limpiarFormulario();
-      setOpen(false);
+      onSuccess();
+      onClose();
       window.location.reload();
     } catch (error) {
       console.error("Error:", error);
@@ -215,31 +244,27 @@ export default function FormCreationMount() {
   };
 
   const handleOpenChange = (newOpen: boolean) => {
-    if (!newOpen) limpiarFormulario();
-    setOpen(newOpen);
+    if (!newOpen) {
+      limpiarFormulario();
+      onClose();
+    }
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <ButtonCreate>Agregar Monta</ButtonCreate>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[425px] md:max-w-[800px]">
         <DialogTitle className="font-bold text-2xl text-center">
-          Crear Monta Natural
+          {isEditing ? "Editar Monta Natural" : "Crear Monta Natural"}
         </DialogTitle>
+
         <form
           id="mount-create-form"
           onSubmit={handleSubmit}
           className="space-y-4"
         >
           <div className="grid grid-cols-2 gap-4">
-            {/* VACA */}
             <div>
-              <label
-                htmlFor="id_cow"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+              <label htmlFor="id_cow" className="block text-sm font-medium text-gray-700 mb-1">
                 Vaca (Hembra):
               </label>
               <select
@@ -251,9 +276,7 @@ export default function FormCreationMount() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043] bg-white disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <option value="">
-                  {loadingCattles
-                    ? "Cargando vacas..."
-                    : "Seleccione una vaca"}
+                  {loadingCattles ? "Cargando vacas..." : "Seleccione una vaca"}
                 </option>
                 {femaleCattles.map((c) => (
                   <option key={c.id_Bovine} value={c.id_Bovine}>
@@ -266,12 +289,8 @@ export default function FormCreationMount() {
               )}
             </div>
 
-            {/* TORO */}
             <div>
-              <label
-                htmlFor="id_bull"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+              <label htmlFor="id_bull" className="block text-sm font-medium text-gray-700 mb-1">
                 Toro (Macho):
               </label>
               <select
@@ -283,9 +302,7 @@ export default function FormCreationMount() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043] bg-white disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <option value="">
-                  {loadingCattles
-                    ? "Cargando toros..."
-                    : "Seleccione un toro"}
+                  {loadingCattles ? "Cargando toros..." : "Seleccione un toro"}
                 </option>
                 {maleCattles.map((c) => (
                   <option key={c.id_Bovine} value={c.id_Bovine}>
@@ -295,12 +312,8 @@ export default function FormCreationMount() {
               </select>
             </div>
 
-            {/* FECHA */}
             <div>
-              <label
-                htmlFor="breedingDate"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+              <label htmlFor="breedingDate" className="block text-sm font-medium text-gray-700 mb-1">
                 Fecha de Monta:
               </label>
               <input
@@ -314,12 +327,8 @@ export default function FormCreationMount() {
               />
             </div>
 
-            {/* SERVICIO */}
             <div>
-              <label
-                htmlFor="serviceNumber"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+              <label htmlFor="serviceNumber" className="block text-sm font-medium text-gray-700 mb-1">
                 Número de Servicio:
               </label>
               <input
@@ -334,12 +343,8 @@ export default function FormCreationMount() {
               />
             </div>
 
-            {/* RESPONSABLE */}
             <div>
-              <label
-                htmlFor="idResponsible"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+              <label htmlFor="idResponsible" className="block text-sm font-medium text-gray-700 mb-1">
                 Responsable:
               </label>
               <select
@@ -364,19 +369,13 @@ export default function FormCreationMount() {
                 ))}
               </select>
               {responsiblesError && (
-                <p className="text-xs text-red-600 mt-1">
-                  {responsiblesError}
-                </p>
+                <p className="text-xs text-red-600 mt-1">{responsiblesError}</p>
               )}
             </div>
           </div>
 
-          {/* OBSERVACIONES */}
           <div>
-            <label
-              htmlFor="observations"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
+            <label htmlFor="observations" className="block text-sm font-medium text-gray-700 mb-1">
               Observaciones:
             </label>
             <div className="relative">
@@ -411,7 +410,7 @@ export default function FormCreationMount() {
                     strokeLinejoin="round"
                   >
                     <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                    <line x1="6" y1="18" x2="18" y2="6"></line>
                   </svg>
                 </button>
               )}
@@ -427,7 +426,6 @@ export default function FormCreationMount() {
           </div>
         </form>
 
-        {/* 👇 Oculto para accesibilidad */}
         <DialogDescription className="sr-only">
           Complete los campos para crear una nueva monta natural.
         </DialogDescription>
@@ -441,7 +439,10 @@ export default function FormCreationMount() {
           <div className="flex flex-row gap-2 w-full">
             <button
               type="button"
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                limpiarFormulario();
+                onClose();
+              }}
               disabled={isSubmitting}
               className="flex-1 cursor-pointer border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 font-medium py-2 px-4 rounded-md transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
             >
@@ -453,7 +454,11 @@ export default function FormCreationMount() {
               disabled={isSubmitting}
               className="flex-1 bg-green-600 text-white font-medium py-2 px-4 rounded-md hover:bg-green-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500/40 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? "Guardando..." : "Guardar Monta"}
+              {isSubmitting
+                ? "Guardando..."
+                : isEditing
+                  ? "Actualizar Monta"
+                  : "Guardar Monta"}
             </button>
           </div>
         </DialogFooter>

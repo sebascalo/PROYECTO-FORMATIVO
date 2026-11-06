@@ -1,12 +1,12 @@
+
 "use client";
 import { useEffect, useState } from "react";
 
 import { DataTable } from "@/components/ui/data-table";
-import { columns, type Weighing } from "./columns";
+import { getColumns, type Weighing } from "./columns";
 
-interface TableWeighingProps {
-  actions?: React.ReactNode;
-}
+import ButtonCreate from "../ui/buttonCreate";
+import FormCreationWeighing from "./formCreationWeighing";
 
 interface Responsible {
   idResponsible: number;
@@ -14,8 +14,11 @@ interface Responsible {
   role: string;
 }
 
-export default function TableWeighing({ actions }: TableWeighingProps) {
+export default function TableWeighing() {
   const [weighings, setWeighings] = useState<Weighing[]>([]);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedWeighing, setSelectedWeighing] = useState<Weighing | null>(null);
 
   useEffect(() => {
     const fetchWeighings = async () => {
@@ -23,7 +26,6 @@ export default function TableWeighing({ actions }: TableWeighingProps) {
         const token = localStorage.getItem("token");
         const headers = { Authorization: `Bearer ${token}` };
 
-        // Ya no pedimos los bovinos, solo pesajes y responsables
         const [weighingRes, responsibleRes] = await Promise.all([
           fetch("http://localhost:3000/api/weighing/WeighingAll?limit=500", { headers }),
           fetch("http://localhost:3000/api/responsible/ResponsibleAll?limit=500", { headers }),
@@ -54,15 +56,30 @@ export default function TableWeighing({ actions }: TableWeighingProps) {
           };
         });
 
-        // Invertimos para que el más nuevo salga primero
         setWeighings([...weighingsFormatted].reverse());
       } catch (error) {
         console.error("Error:", error);
         setWeighings([]);
       }
     };
+
     fetchWeighings();
   }, []);
+
+  const handleOpenCreate = () => {
+    setSelectedWeighing(null);
+    setIsModalOpen(true);
+  };
+
+  const handleOpenEdit = (weighing: Weighing) => {
+    setSelectedWeighing(weighing);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedWeighing(null);
+  };
 
   return (
     <div className="w-full bg-white px-4 py-8">
@@ -79,10 +96,21 @@ export default function TableWeighing({ actions }: TableWeighingProps) {
         </div>
 
         <DataTable
-          columns={columns}
+          columns={getColumns(handleOpenEdit)}
           data={weighings}
           filterPlaceholder="Buscar en todos los campos..."
-          toolbar={actions}
+          toolbar={
+            <ButtonCreate onClick={handleOpenCreate}>
+              Crear Pesaje
+            </ButtonCreate>
+          }
+        />
+
+        <FormCreationWeighing
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onSuccess={handleCloseModal}
+          weighingToEdit={selectedWeighing}
         />
       </div>
     </div>

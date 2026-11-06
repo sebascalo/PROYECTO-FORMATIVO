@@ -2,14 +2,20 @@
 import { useEffect, useState } from "react";
 
 import { DataTable } from "@/components/ui/data-table";
-import { columns, type User } from "./columns";
+import { getColumns, type User } from "./columns";
 
-interface TableUserProps {
-  actions?: React.ReactNode;
-}
+import ButtonCreate from "../ui/buttonCreate";
+import FormCreationUser from "./formCreationUser";
 
-export default function TableUser({ actions }: TableUserProps) {
+// interface TableUserProps {
+//   actions?: React.ReactNode;
+// }
+
+export default function TableUser() {
   const [users, setUsers] = useState<User[]>([]);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -38,6 +44,23 @@ export default function TableUser({ actions }: TableUserProps) {
     fetchUsers();
   }, []);
 
+  const handleOpenCreate = () => {
+    // Implementation for opening create user form
+    setSelectedUser(null);
+    setIsModalOpen(true);
+  };
+
+  const handleOpenEdit = (user: User) => {
+    // Implementation for opening edit user form
+    setSelectedUser(user);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedUser(null);
+  }
+
   return (
     <div className="w-full bg-white px-4 py-8">
       <div className="mx-auto w-full space-y-6">
@@ -53,10 +76,20 @@ export default function TableUser({ actions }: TableUserProps) {
         </div>
 
         <DataTable
-          columns={columns}
+          columns={getColumns(handleOpenEdit)}
           data={users}
           filterPlaceholder="Buscar en todos los campos..."
-          toolbar={actions}
+          toolbar={
+            <ButtonCreate onClick={handleOpenCreate}>
+              Crear Usuario
+            </ButtonCreate>
+          }
+        />
+        <FormCreationUser
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSuccess = {handleCloseModal}
+        userToEdit={selectedUser}
         />
       </div>
     </div>

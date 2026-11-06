@@ -1,10 +1,11 @@
+
 "use client";
 
 import { createColumnHelper } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { type SharedTableFeatures } from "@/components/ui/data-table-features";
+import { Pencil } from "lucide-react";
 
-// 👇 Tipos del JOIN
 export type CattleData = {
   id_Bovine: number;
   name: string;
@@ -25,7 +26,7 @@ export type Weighing = {
   bodycondition: string;
   observations: string;
   idResponsible: number | null;
-  active: boolean; // 👈 NUEVO
+  active: boolean;
   cattleData?: CattleData | null;
   responsibleData?: ResponsibleData | null;
 };
@@ -50,96 +51,125 @@ const bodyConditionStyles: Record<string, string> = {
 
 const columnHelper = createColumnHelper<SharedTableFeatures, Weighing>();
 
-export const columns = columnHelper.columns([
-  columnHelper.accessor("id_Bovine", {
-    header: "ID Bovino",
-    cell: ({ getValue }) => (
-      <span className="font-medium text-[#2B2A26]">{getValue()}</span>
-    ),
-  }),
-  columnHelper.accessor("weighingdate", {
-    header: "Fecha",
-    cell: ({ getValue }) => formatDate(getValue()),
-  }),
-  columnHelper.accessor("currentweight", {
-    header: () => <div className="text-right">Peso (kg)</div>,
-    cell: ({ getValue }) => (
-      <div className="text-right tabular-nums">{getValue()} kg</div>
-    ),
-  }),
-  columnHelper.accessor("profitorloss", {
-    header: () => <div className="text-right">Ganancia/Pérdida</div>,
-    cell: ({ getValue }) => {
-      const value = getValue();
-      const isPositive = value > 0;
-      const isNegative = value < 0;
-      return (
-        <div
-          className={`text-right tabular-nums font-medium ${
-            isPositive
-              ? "text-[#4B6043]"
-              : isNegative
-                ? "text-[#A9744F]"
-                : "text-[#6B6459]"
-          }`}
-        >
-          {isPositive ? "+" : ""}
-          {value} kg
-        </div>
-      );
-    },
-  }),
-  columnHelper.accessor("bodycondition", {
-    header: "Condición Corporal",
-    cell: ({ getValue }) => {
-      const value = getValue();
-      return (
-        <Badge
-          className={bodyConditionStyles[value] ?? "bg-[#8C8266] text-white"}
-        >
-          {value}
-        </Badge>
-      );
-    },
-  }),
-  columnHelper.accessor("observations", {
-    header: "Observaciones",
-    cell: ({ getValue }) => (
-      <span className="text-[#6B6459] text-sm">{getValue() || "-"}</span>
-    ),
-  }),
-  columnHelper.accessor("responsibleData", {
-    header: "Responsable",
-    cell: ({ getValue }) => {
-      const responsible = getValue();
-      if (!responsible) return <span className="text-[#6B6459]">-</span>;
-      return (
-        <div className="flex flex-col">
-          <span className="text-[#2B2A26] font-medium">
-            {responsible.fullName}
-          </span>
-          <span className="text-xs text-[#6B6459]">{responsible.role}</span>
-        </div>
-      );
-    },
-  }),
-  // 👇 NUEVA COLUMNA ESTADO
-  columnHelper.accessor("active", {
-    header: "Estado",
-    cell: ({ getValue }) => {
-      const isActive = getValue() === true;
-      return (
-        <span className="inline-flex items-center gap-1.5 text-sm">
-          <span
-            className={`h-1.5 w-1.5 rounded-full ${
-              isActive ? "bg-[#4B6043]" : "bg-[#B0A896]"
+export const getColumns = (handleOpenEdit: (weighing: Weighing) => void) =>
+  columnHelper.columns([
+    columnHelper.accessor("id_Bovine", {
+      header: "ID Bovino",
+      cell: ({ getValue }) => (
+        <span className="font-medium text-[#2B2A26]">{getValue()}</span>
+      ),
+    }),
+
+    columnHelper.accessor("weighingdate", {
+      header: "Fecha",
+      cell: ({ getValue }) => formatDate(getValue()),
+    }),
+
+    columnHelper.accessor("currentweight", {
+      header: () => <div className="text-right">Peso (kg)</div>,
+      cell: ({ getValue }) => (
+        <div className="text-right tabular-nums">{getValue()} kg</div>
+      ),
+    }),
+
+    columnHelper.accessor("profitorloss", {
+      header: () => <div className="text-right">Ganancia/Pérdida</div>,
+      cell: ({ getValue }) => {
+        const value = getValue();
+        const isPositive = value > 0;
+        const isNegative = value < 0;
+
+        return (
+          <div
+            className={`text-right tabular-nums font-medium ${
+              isPositive
+                ? "text-[#4B6043]"
+                : isNegative
+                  ? "text-[#A9744F]"
+                  : "text-[#6B6459]"
             }`}
-          />
-          <span className={isActive ? "text-[#2B2A26]" : "text-[#6B6459]"}>
-            {isActive ? "Activo" : "Inactivo"}
+          >
+            {isPositive ? "+" : ""}
+            {value} kg
+          </div>
+        );
+      },
+    }),
+
+    columnHelper.accessor("bodycondition", {
+      header: "Condición Corporal",
+      cell: ({ getValue }) => {
+        const value = getValue();
+
+        return (
+          <Badge
+            className={bodyConditionStyles[value] ?? "bg-[#8C8266] text-white"}
+          >
+            {value}
+          </Badge>
+        );
+      },
+    }),
+
+    columnHelper.accessor("observations", {
+      header: "Observaciones",
+      cell: ({ getValue }) => (
+        <span className="text-[#6B6459] text-sm">{getValue() || "-"}</span>
+      ),
+    }),
+
+    columnHelper.accessor("responsibleData", {
+      header: "Responsable",
+      cell: ({ getValue }) => {
+        const responsible = getValue();
+
+        if (!responsible) return <span className="text-[#6B6459]">-</span>;
+
+        return (
+          <div className="flex flex-col">
+            <span className="text-[#2B2A26] font-medium">
+              {responsible.fullName}
+            </span>
+            <span className="text-xs text-[#6B6459]">
+              {responsible.role}
+            </span>
+          </div>
+        );
+      },
+    }),
+
+    columnHelper.accessor("active", {
+      header: "Estado",
+      cell: ({ getValue }) => {
+        const isActive = getValue() === true;
+
+        return (
+          <span className="inline-flex items-center gap-1.5 text-sm">
+            <span
+              className={`h-1.5 w-1.5 rounded-full ${
+                isActive ? "bg-[#4B6043]" : "bg-[#B0A896]"
+              }`}
+            />
+            <span className={isActive ? "text-[#2B2A26]" : "text-[#6B6459]"}>
+              {isActive ? "Activo" : "Inactivo"}
+            </span>
           </span>
-        </span>
-      );
-    },
-  }),
-]);
+        );
+      },
+    }),
+
+    columnHelper.display({
+      id: "actions",
+      header: "Acciones",
+      cell: ({ row }) => (
+        <button
+          type="button"
+          onClick={() => handleOpenEdit(row.original)}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#4B6043] bg-[#4B6043]/10 hover:bg-[#4B6043]/20 rounded-md transition-colors cursor-pointer"
+        >
+          <Pencil size={14} />
+          Editar
+        </button>
+      ),
+    }),
+  ]);

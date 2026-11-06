@@ -2,7 +2,22 @@
 
 import React, { useState } from "react";
 import NavBar from "@/components/layout/NavBar";
-import FormCreationUser from "@/components/users/formCreation";
+import FormCreationUser from "@/components/user/formCreationUser";
+import { API_USER_URL } from "@/api/config";
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  documentId: string;
+  postJob: string;
+  verifyEmail: boolean;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+
 
 export default function AdminUsuariosPage(): React.JSX.Element {
   // Estados típicos del contenedor

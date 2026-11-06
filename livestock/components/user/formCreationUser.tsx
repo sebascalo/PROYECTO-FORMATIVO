@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,11 +10,44 @@ import {
 } from "../ui/dialog";
 import ButtonCreate from "../ui/buttonCreate";
 import { Eye, EyeClosed } from "lucide-react";
+import { API_USER_URL } from "@/api/config";
 
-export default function FormCreationUser() {
-  const [open, setOpen] = useState(false);
+// import {User} from "@/app/admin/usuarios/page";
+import { type User } from "./columns";
+
+// 1. tipo para los cargos permitidos 
+export type UserRole = "administrador" | "instructor" | "pasante" | "gerente";
+
+// 2. interfaz de los datos que se envian al backend
+interface UserPayload {
+  name: string;
+  email: string;
+  password: string; //opcional con '?', ya que al editar no siempre se cambia
+  documentId: string;
+  postJob: UserRole;
+  verifyEmail: boolean;
+  active: boolean;
+}
+
+// 4. interfaz de los props del componente
+interface FormCreationUserProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess: () => void;
+  userToEdit?: User | null; //si viene null es crear, si viene objeto es EDITAR
+}
+
+// 5.Retorno tipado: React.jsx.Element | null
+export default function FormCreationUser({
+  isOpen,
+  onClose,
+  onSuccess,
+  userToEdit = null, //valor por defecto 
+}: FormCreationUserProps): React.JSX.Element | null {
+  // const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -27,6 +60,25 @@ export default function FormCreationUser() {
   const [showPassword, setShowPassword] = useState(false);
   const typePassword = showPassword ? "text" : "password";
 
+  //Detectar si estamos en modo edición 
+  const isEditing = Boolean(userToEdit);
+
+  useEffect(() => {
+
+    if (userToEdit) {
+      setFormData({
+        name: userToEdit.name ?? "",
+        email: userToEdit.email ?? "",
+        password: "",
+        documentId: userToEdit.documentId ?? "",
+        postJob: userToEdit.postJob ?? "",
+      });
+    } else {
+      limpiarFormulario();
+    }
+
+  }, [userToEdit, isOpen]);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
@@ -38,10 +90,10 @@ export default function FormCreationUser() {
       const soloNumeros = value.replace(/\D/g, "");
       // Corta el string a máximo 10 caracteres
       const recortado = soloNumeros.slice(0, 10);
-      
+
       setFormData((prev) => ({ ...prev, [name]: recortado }));
       if (error) setError(null);
-      return; 
+      return;
     }
 
     // Comportamiento normal para los demás campos
@@ -73,15 +125,31 @@ export default function FormCreationUser() {
     setIsSubmitting(true);
     try {
       const token = localStorage.getItem("token");
+
+      const url = isEditing
+        ? `http://localhost:3000/api/user/UpdateUser/${userToEdit?.userId}`
+        : `http://localhost:3000/api/user/CreateUser`;
+
+      const method = isEditing ? "PUT" : "POST";
+
+      const payload = isEditing
+        ? {
+          name: formData.name,
+          email: formData.email,
+          documentId: formData.documentId,
+          postJob: formData.postJob,
+        }
+        : formData;
+
       const response = await fetch(
-        "http://localhost:3000/api/user/CreateUser",
+        url,
         {
-          method: "POST",
+          method: method,
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(payload),
         },
       );
 
@@ -110,7 +178,9 @@ export default function FormCreationUser() {
       }
 
       limpiarFormulario();
-      setOpen(false);
+      // setOpen(false);
+      onSuccess();
+      onClose();
       window.location.reload();
     } catch (error) {
       console.error("Error:", error);
@@ -125,18 +195,23 @@ export default function FormCreationUser() {
   };
 
   const handleOpenChange = (newOpen: boolean) => {
-    if (!newOpen) limpiarFormulario();
-    setOpen(newOpen);
+    if (!newOpen) {
+      limpiarFormulario();
+      // setOpen(newOpen);
+      onClose();
+    }
+
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+      {/* <DialogTrigger asChild>
         <ButtonCreate>Agregar Usuario</ButtonCreate>
-      </DialogTrigger>
+      </DialogTrigger> */}
       <DialogContent className="sm:max-w-[425px] md:max-w-[800px]">
         <DialogTitle className="font-bold text-2xl text-center">
-          Crear Usuario
+          {/* Crear Usuario */}
+          {isEditing ? "Editar Usuario" : "Crear Usuario"}
         </DialogTitle>
         <form
           id="user-create-form"
@@ -281,7 +356,11 @@ export default function FormCreationUser() {
           <div className="flex flex-row gap-2 w-full">
             <button
               type="button"
-              onClick={() => setOpen(false)}
+              // onClick={() => setOpen(false)}
+              onClick={() => {
+                limpiarFormulario(), onClose()
+              }}
+
               disabled={isSubmitting}
               className="flex-1 cursor-pointer border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 font-medium py-2 px-4 rounded-md transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
             >
@@ -293,7 +372,11 @@ export default function FormCreationUser() {
               disabled={isSubmitting}
               className="flex-1 bg-green-600 text-white font-medium py-2 px-4 rounded-md hover:bg-green-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500/40 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? "Guardando..." : "Guardar Usuario"}
+              {isSubmitting ? "Guardando..." :
+                isEditing
+                  ? "Actualizar Usuario"
+                  :
+                  "Guardar Usuario"}
             </button>
           </div>
         </DialogFooter>

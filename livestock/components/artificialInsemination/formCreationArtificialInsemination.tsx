@@ -1,14 +1,15 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
-  DialogTrigger,
   DialogTitle,
 } from "../ui/dialog";
-import ButtonCreate from "../ui/buttonCreate";
+
+import type { ArtificialInsemination } from "./columns";
 
 interface Cattle {
   id_Bovine: number;
@@ -30,24 +31,37 @@ interface Responsible {
   status: "Active" | "Inactive";
 }
 
-export default function FormCreationArtificialInsemination() {
-  const [open, setOpen] = useState(false);
+interface FormCreationArtificialInseminationProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess: () => void;
+  inseminationToEdit?: ArtificialInsemination | null;
+}
+
+const initialFormData = {
+  id_madre: "",
+  id_toro: "",
+  inseminationDate: new Date().toISOString().split("T")[0],
+  semenID: "",
+  id_race: "",
+  servicio: "",
+  observations: "",
+  idResponsible: "",
+};
+
+export default function FormCreationArtificialInsemination({
+  isOpen,
+  onClose,
+  onSuccess,
+  inseminationToEdit,
+}: FormCreationArtificialInseminationProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
-    id_madre: "",
-    id_toro: "",
-    inseminationDate: new Date().toISOString().split("T")[0],
-    semenID: "",
-    id_race: "",
-    servicio: "",
-    observations: "",
-    idResponsible: "",
-  });
+
+  const [formData, setFormData] = useState(initialFormData);
 
   const [cattles, setCattles] = useState<Cattle[]>([]);
   const [loadingCattles, setLoadingCattles] = useState(true);
-  const [cattlesError, setCattlesError] = useState<string | null>(null);
 
   const [races, setRaces] = useState<Race[]>([]);
   const [loadingRaces, setLoadingRaces] = useState(true);
@@ -55,83 +69,144 @@ export default function FormCreationArtificialInsemination() {
   const [responsibles, setResponsibles] = useState<Responsible[]>([]);
   const [loadingResponsibles, setLoadingResponsibles] = useState(true);
 
-  // 👇 Cargar bovinos
+  const isEditing = !!inseminationToEdit;
+
+  // Cargar bovinos
   useEffect(() => {
     const fetchCattles = async () => {
       try {
         const token = localStorage.getItem("token");
+
         const response = await fetch(
           "http://localhost:3000/api/cattle/CattleAll?limit=500",
-          { headers: { Authorization: `Bearer ${token}` } },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
         );
+
         const resJson = await response.json();
-        if (!response.ok) throw new Error(resJson?.message || "Error bovinos");
+
+        if (!response.ok) {
+          throw new Error(resJson?.message || "Error bovinos");
+        }
 
         const activeCattles = (resJson.info ?? []).filter(
-          (c: Cattle) => c.active === true || Number(c.active) === 1,
+          (c: Cattle) =>
+            c.active === true || Number(c.active) === 1,
         );
+
         setCattles(activeCattles);
       } catch (err) {
-        setCattlesError(
-          err instanceof Error ? err.message : "No se pudieron cargar bovinos",
-        );
+        console.error("Error al cargar bovinos:", err);
       } finally {
         setLoadingCattles(false);
       }
     };
+
     fetchCattles();
   }, []);
 
-  // 👇 Cargar razas
+  // Cargar razas
   useEffect(() => {
     const fetchRaces = async () => {
       try {
         const token = localStorage.getItem("token");
+
         const response = await fetch(
           "http://localhost:3000/api/race/RaceAll?limit=100",
-          { headers: { Authorization: `Bearer ${token}` } },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
         );
+
         const resJson = await response.json();
-        if (!response.ok) throw new Error(resJson?.message || "Error razas");
+
+        if (!response.ok) {
+          throw new Error(resJson?.message || "Error razas");
+        }
+
         const activeRaces = (resJson.info ?? []).filter(
           (r: Race) => r.active === "Active",
         );
+
         setRaces(activeRaces);
       } catch (err) {
-        console.error("Error razas:", err);
+        console.error("Error al cargar razas:", err);
       } finally {
         setLoadingRaces(false);
       }
     };
+
     fetchRaces();
   }, []);
 
-  // 👇 Cargar responsables
+  // Cargar responsables
   useEffect(() => {
     const fetchResponsibles = async () => {
       try {
         const token = localStorage.getItem("token");
+
         const response = await fetch(
           "http://localhost:3000/api/responsible/ResponsibleAll?limit=200",
-          { headers: { Authorization: `Bearer ${token}` } },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
         );
+
         const resJson = await response.json();
-        if (!response.ok) throw new Error(resJson?.message || "Error responsables");
-        
+
+        if (!response.ok) {
+          throw new Error(
+            resJson?.message || "Error responsables",
+          );
+        }
+
         const activeResponsibles = (resJson.info ?? []).filter(
           (r: Responsible) => r.status === "Active",
         );
+
         setResponsibles(activeResponsibles);
       } catch (err) {
-        console.error("Error responsables:", err);
+        console.error("Error al cargar responsables:", err);
       } finally {
         setLoadingResponsibles(false);
       }
     };
+
     fetchResponsibles();
   }, []);
 
-  // Filtros para los selects de madre y toro
+  // Cargar los datos cuando se selecciona una inseminación
+  useEffect(() => {
+    if (isOpen && inseminationToEdit) {
+      const numeroServicio = inseminationToEdit.servicio
+        ?.replace(/^Servicio\s*/i, "")
+        .trim();
+
+      setFormData({
+        id_madre: String(inseminationToEdit.id_madre ?? ""),
+        id_toro: inseminationToEdit.id_toro
+          ? String(inseminationToEdit.id_toro)
+          : "",
+        inseminationDate: inseminationToEdit.inseminationDate
+          ? inseminationToEdit.inseminationDate.split("T")[0]
+          : "",
+        semenID: inseminationToEdit.semenID ?? "",
+        id_race: String(inseminationToEdit.id_race ?? ""),
+        servicio: numeroServicio ?? "",
+        observations: inseminationToEdit.observations ?? "",
+        idResponsible: String(
+          inseminationToEdit.idResponsible ?? "",
+        ),
+      });
+
+      setError(null);
+    } else if (isOpen && !inseminationToEdit) {
+      limpiarFormulario();
+    }
+  }, [isOpen, inseminationToEdit]);
+
+  // Filtros para madre y toro
   const mothers = cattles.filter((c) => c.sex === "Hembra");
   const bulls = cattles.filter((c) => c.sex === "Macho");
 
@@ -141,21 +216,21 @@ export default function FormCreationArtificialInsemination() {
     >,
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
     if (error) setError(null);
   };
 
   const limpiarFormulario = () => {
     setFormData({
-      id_madre: "",
-      id_toro: "",
+      ...initialFormData,
       inseminationDate: new Date().toISOString().split("T")[0],
-      semenID: "",
-      id_race: "",
-      servicio: "",
-      observations: "",
-      idResponsible: "",
     });
+
     setError(null);
   };
 
@@ -163,92 +238,133 @@ export default function FormCreationArtificialInsemination() {
     e.preventDefault();
     setError(null);
 
-    // 👇 Validaciones
-    if (!formData.id_madre) return setError("Debes seleccionar una madre");
-    if (!formData.inseminationDate) return setError("La fecha es obligatoria");
-    if (!formData.semenID.trim()) return setError("El código de pajilla es obligatorio");
-    if (!formData.id_race) return setError("Debes seleccionar una raza");
-    if (!formData.idResponsible) return setError("Debes seleccionar un responsable");
+    if (!formData.id_madre) {
+      return setError("Debes seleccionar una madre");
+    }
 
-    if (new Date(formData.inseminationDate) > new Date())
+    if (!formData.inseminationDate) {
+      return setError("La fecha es obligatoria");
+    }
+
+    if (!formData.semenID.trim()) {
+      return setError("El código de pajilla es obligatorio");
+    }
+
+    if (!formData.id_race) {
+      return setError("Debes seleccionar una raza");
+    }
+
+    if (!formData.idResponsible) {
+      return setError("Debes seleccionar un responsable");
+    }
+
+    if (new Date(formData.inseminationDate) > new Date()) {
       return setError("La fecha no puede ser futura");
+    }
 
     const datosEnviar = {
       id_madre: Number(formData.id_madre),
-      id_toro: formData.id_toro ? Number(formData.id_toro) : null,
+      id_toro: formData.id_toro
+        ? Number(formData.id_toro)
+        : null,
       inseminationDate: formData.inseminationDate,
       semenID: formData.semenID,
       id_race: Number(formData.id_race),
-      // 👇 Agregamos "Servicio " automáticamente
-      servicio: formData.servicio ? `Servicio ${formData.servicio}` : null,
+      servicio: formData.servicio
+        ? `Servicio ${formData.servicio}`
+        : null,
       observations: formData.observations || null,
       idResponsible: Number(formData.idResponsible),
     };
 
     setIsSubmitting(true);
+
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(
-        "http://localhost:3000/api/artificialInsemination/CreateArtificialInsemination",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(datosEnviar),
+
+      const url = isEditing
+        ? `http://localhost:3000/api/artificialInsemination/UpdateArtificialInsemination/${inseminationToEdit?.id_artifInse}`
+        : "http://localhost:3000/api/artificialInsemination/CreateArtificialInsemination";
+
+      const response = await fetch(url, {
+        method: isEditing ? "PUT" : "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-      );
+        body: JSON.stringify(datosEnviar),
+      });
+
+      const responseJson = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        const errorBody = await response.json().catch(() => ({}));
-        throw new Error(errorBody?.message || "Error al guardar");
+        throw new Error(
+          responseJson?.message ||
+            (isEditing
+              ? "Error al actualizar la inseminación"
+              : "Error al guardar la inseminación"),
+        );
       }
 
       limpiarFormulario();
-      setOpen(false);
-      window.location.reload();
-    } catch (error) {
-      setError(error instanceof Error ? error.message : "No se pudo guardar.");
+      onClose();
+      onSuccess();
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "No se pudo guardar la información.",
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleOpenChange = (newOpen: boolean) => {
-    if (!newOpen) limpiarFormulario();
-    setOpen(newOpen);
+    if (!newOpen && !isSubmitting) {
+      limpiarFormulario();
+      onClose();
+    }
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <ButtonCreate>Agregar Inseminación</ButtonCreate>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[425px] md:max-w-[800px]">
-        <DialogTitle className="font-bold text-2xl text-center">
-          Crear Inseminación Artificial
+        <DialogTitle className="text-center text-2xl font-bold">
+          {isEditing
+            ? "Editar Inseminación Artificial"
+            : "Crear Inseminación Artificial"}
         </DialogTitle>
+
         <form
-          id="insemination-create-form"
+          id="insemination-form"
           onSubmit={handleSubmit}
           className="space-y-4"
         >
           <div className="grid grid-cols-2 gap-4">
             {/* ID MADRE */}
             <div>
-              <label htmlFor="id_madre" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="id_madre"
+                className="mb-1 block text-sm font-medium text-gray-700"
+              >
                 ID Madre:
               </label>
+
               <select
                 id="id_madre"
                 name="id_madre"
                 value={formData.id_madre}
                 onChange={handleChange}
                 disabled={loadingCattles}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white disabled:opacity-60"
+                className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 disabled:opacity-60"
               >
-                <option value="">{loadingCattles ? "Cargando..." : "Seleccione una madre"}</option>
+                <option value="">
+                  {loadingCattles
+                    ? "Cargando..."
+                    : "Seleccione una madre"}
+                </option>
+
                 {mothers.map((c) => (
                   <option key={c.id_Bovine} value={c.id_Bovine}>
                     {c.id_Bovine} - {c.name}
@@ -259,18 +375,27 @@ export default function FormCreationArtificialInsemination() {
 
             {/* ID TORO */}
             <div>
-              <label htmlFor="id_toro" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="id_toro"
+                className="mb-1 block text-sm font-medium text-gray-700"
+              >
                 ID Toro (donante):
               </label>
+
               <select
                 id="id_toro"
                 name="id_toro"
                 value={formData.id_toro}
                 onChange={handleChange}
                 disabled={loadingCattles}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white disabled:opacity-60"
+                className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 disabled:opacity-60"
               >
-                <option value="">{loadingCattles ? "Cargando..." : "Seleccione un toro"}</option>
+                <option value="">
+                  {loadingCattles
+                    ? "Cargando..."
+                    : "Seleccione un toro"}
+                </option>
+
                 {bulls.map((c) => (
                   <option key={c.id_Bovine} value={c.id_Bovine}>
                     {c.id_Bovine} - {c.name}
@@ -281,9 +406,13 @@ export default function FormCreationArtificialInsemination() {
 
             {/* FECHA */}
             <div>
-              <label htmlFor="inseminationDate" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="inseminationDate"
+                className="mb-1 block text-sm font-medium text-gray-700"
+              >
                 Fecha de Inseminación:
               </label>
+
               <input
                 type="date"
                 id="inseminationDate"
@@ -291,40 +420,53 @@ export default function FormCreationArtificialInsemination() {
                 value={formData.inseminationDate}
                 onChange={handleChange}
                 max={new Date().toISOString().split("T")[0]}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                className="w-full rounded-md border border-gray-300 px-3 py-2"
               />
             </div>
 
             {/* CÓDIGO SEMEN */}
             <div>
-              <label htmlFor="semenID" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="semenID"
+                className="mb-1 block text-sm font-medium text-gray-700"
+              >
                 Código o Lote de la Pajilla:
               </label>
+
               <input
                 type="text"
                 id="semenID"
                 name="semenID"
                 value={formData.semenID}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                className="w-full rounded-md border border-gray-300 px-3 py-2"
                 placeholder="Ej: T-001"
               />
             </div>
 
             {/* RAZA */}
             <div>
-              <label htmlFor="id_race" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="id_race"
+                className="mb-1 block text-sm font-medium text-gray-700"
+              >
                 Raza de la Pajilla:
               </label>
+
               <select
                 id="id_race"
                 name="id_race"
                 value={formData.id_race}
                 onChange={handleChange}
                 disabled={loadingRaces}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white disabled:opacity-60"
+                className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 disabled:opacity-60"
               >
-                <option value="">Seleccione una raza</option>
+                <option value="">
+                  {loadingRaces
+                    ? "Cargando..."
+                    : "Seleccione una raza"}
+                </option>
+
                 {races.map((r) => (
                   <option key={r.id_race} value={r.id_race}>
                     {r.name_race}
@@ -333,11 +475,15 @@ export default function FormCreationArtificialInsemination() {
               </select>
             </div>
 
-            {/* SERVICIO (Solo número) */}
+            {/* SERVICIO */}
             <div>
-              <label htmlFor="servicio" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="servicio"
+                className="mb-1 block text-sm font-medium text-gray-700"
+              >
                 Número de Servicio:
               </label>
+
               <input
                 type="number"
                 id="servicio"
@@ -345,27 +491,39 @@ export default function FormCreationArtificialInsemination() {
                 value={formData.servicio}
                 onChange={handleChange}
                 min="1"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                className="w-full rounded-md border border-gray-300 px-3 py-2"
                 placeholder="Ej: 1"
               />
             </div>
 
             {/* RESPONSABLE */}
             <div className="col-span-2">
-              <label htmlFor="idResponsible" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="idResponsible"
+                className="mb-1 block text-sm font-medium text-gray-700"
+              >
                 Responsable:
               </label>
+
               <select
                 id="idResponsible"
                 name="idResponsible"
                 value={formData.idResponsible}
                 onChange={handleChange}
                 disabled={loadingResponsibles}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white disabled:opacity-60"
+                className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 disabled:opacity-60"
               >
-                <option value="">{loadingResponsibles ? "Cargando..." : "Seleccione un responsable"}</option>
+                <option value="">
+                  {loadingResponsibles
+                    ? "Cargando..."
+                    : "Seleccione un responsable"}
+                </option>
+
                 {responsibles.map((r) => (
-                  <option key={r.idResponsible} value={r.idResponsible}>
+                  <option
+                    key={r.idResponsible}
+                    value={r.idResponsible}
+                  >
                     {r.fullName} - {r.role}
                   </option>
                 ))}
@@ -375,9 +533,13 @@ export default function FormCreationArtificialInsemination() {
 
           {/* OBSERVACIONES */}
           <div>
-            <label htmlFor="observations" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="observations"
+              className="mb-1 block text-sm font-medium text-gray-700"
+            >
               Observaciones:
             </label>
+
             <div className="relative">
               <textarea
                 id="observations"
@@ -386,18 +548,32 @@ export default function FormCreationArtificialInsemination() {
                 onChange={handleChange}
                 rows={2}
                 maxLength={100}
-                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-md bg-white resize-none"
+                className="w-full resize-none rounded-md border border-gray-300 bg-white px-4 py-3 pr-12"
                 placeholder="Escribe tus observaciones..."
               />
+
               {formData.observations.length > 0 && (
                 <button
                   type="button"
-                  onClick={() => setFormData((prev) => ({ ...prev, observations: "" }))}
-                  className="absolute top-3 right-3 flex items-center justify-center w-6 h-6 rounded-full bg-gray-300 hover:bg-gray-400 text-white"
+                  onClick={() =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      observations: "",
+                    }))
+                  }
+                  className="absolute right-3 top-3 flex h-6 w-6 items-center justify-center rounded-full bg-gray-300 text-white hover:bg-gray-400"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                  >
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
                   </svg>
                 </button>
               )}
@@ -406,27 +582,40 @@ export default function FormCreationArtificialInsemination() {
         </form>
 
         <DialogDescription className="sr-only">
-          Complete los campos para crear una inseminación.
+          Complete los campos para crear o editar una inseminación.
         </DialogDescription>
 
         <DialogFooter className="flex-col gap-2 sm:flex-col">
-          {error && <p className="text-sm text-red-600 text-center font-medium">⚠️ {error}</p>}
-          <div className="flex flex-row gap-2 w-full">
+          {error && (
+            <p className="text-center text-sm font-medium text-red-600">
+              ⚠️ {error}
+            </p>
+          )}
+
+          <div className="flex w-full flex-row gap-2">
             <button
               type="button"
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                limpiarFormulario();
+                onClose();
+              }}
               disabled={isSubmitting}
-              className="flex-1 cursor-pointer border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 font-medium py-2 px-4 rounded-md"
+              className="flex-1 cursor-pointer rounded-md border border-gray-300 bg-white px-4 py-2 font-medium text-gray-700 hover:bg-gray-100"
             >
               Cancelar
             </button>
+
             <button
               type="submit"
-              form="insemination-create-form"
+              form="insemination-form"
               disabled={isSubmitting}
-              className="flex-1 bg-green-600 text-white font-medium py-2 px-4 rounded-md hover:bg-green-700"
+              className="flex-1 rounded-md bg-green-600 px-4 py-2 font-medium text-white hover:bg-green-700 disabled:opacity-60"
             >
-              {isSubmitting ? "Guardando..." : "Guardar Inseminación"}
+              {isSubmitting
+                ? "Guardando..."
+                : isEditing
+                  ? "Actualizar Inseminación"
+                  : "Guardar Inseminación"}
             </button>
           </div>
         </DialogFooter>

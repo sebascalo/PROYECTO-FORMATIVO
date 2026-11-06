@@ -1,8 +1,10 @@
+
 "use client";
 
 import { createColumnHelper } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { type SharedTableFeatures } from "@/components/ui/data-table-features";
+import { Pencil } from "lucide-react";
 
 export type ResponsibleData = {
   idResponsible: number;
@@ -18,7 +20,7 @@ export type Mount = {
   serviceNumber: number;
   observations: string;
   idResponsible: number;
-  active: boolean; // 👈 NUEVO
+  active: boolean;
   responsibleData?: ResponsibleData | null;
 };
 
@@ -34,12 +36,11 @@ const formatDate = (dateString?: string | null) => {
 
 const columnHelper = createColumnHelper<SharedTableFeatures, Mount>();
 
-export const columns = columnHelper.columns([
+export const getColumns = (handleOpenEdit: (mount: Mount) => void) => columnHelper.columns([
   columnHelper.accessor("id_cow", {
     header: "ID Madre",
-    filterFn: (row, id, value) => {
-      return String(row.getValue(id)).toLowerCase().includes(value.toLowerCase());
-    },
+    filterFn: (row, id, value) =>
+      String(row.getValue(id)).toLowerCase().includes(value.toLowerCase()),
     cell: ({ getValue }) => (
       <span className="font-medium text-[#2B2A26]">{getValue() ?? "-"}</span>
     ),
@@ -93,7 +94,6 @@ export const columns = columnHelper.columns([
     ),
   }),
 
-  // 👇 NUEVA COLUMNA ESTADO
   columnHelper.accessor("active", {
     header: "Estado",
     cell: ({ getValue }) => {
@@ -111,5 +111,20 @@ export const columns = columnHelper.columns([
         </span>
       );
     },
+  }),
+
+  columnHelper.display({
+    id: "actions",
+    header: "Acciones",
+    cell: ({ row }) => (
+      <button
+        type="button"
+        onClick={() => handleOpenEdit(row.original)}
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#4B6043] bg-[#4B6043]/10 hover:bg-[#4B6043]/20 rounded-md transition-colors cursor-pointer"
+      >
+        <Pencil size={14} />
+        Editar
+      </button>
+    ),
   }),
 ]);

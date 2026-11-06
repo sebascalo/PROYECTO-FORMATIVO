@@ -1,8 +1,10 @@
+
 "use client";
 
 import { createColumnHelper } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { type SharedTableFeatures } from "@/components/ui/data-table-features";
+import { Pencil } from "lucide-react";
 
 // Forma de los datos que devuelve tu API (/api/food/FoodAll)
 export type Food = {
@@ -31,6 +33,7 @@ const foodTypeStyles: Record<string, string> = {
 // Formatear moneda en pesos colombianos
 const formatCurrency = (value?: number | null) => {
   if (value === null || value === undefined) return "-";
+
   return new Intl.NumberFormat("es-CO", {
     style: "currency",
     currency: "COP",
@@ -40,67 +43,95 @@ const formatCurrency = (value?: number | null) => {
 
 const columnHelper = createColumnHelper<SharedTableFeatures, Food>();
 
-export const columns = columnHelper.columns([
-  columnHelper.accessor("food_name", {
-    header: "Nombre",
-    cell: ({ getValue }) => (
-      <span className="font-medium text-[#2B2A26]">{getValue()}</span>
-    ),
-  }),
-  columnHelper.accessor("food_type", {
-    header: "Tipo",
-    cell: ({ getValue }) => {
-      const value = getValue();
-      if (!value) return <span className="text-[#6B6459]">-</span>;
-      return (
-        <Badge className={foodTypeStyles[value] ?? "bg-[#8C8266] text-white"}>
-          {value}
-        </Badge>
-      );
-    },
-  }),
-  columnHelper.accessor("unit_measure", {
-    header: "Unidad",
-    cell: ({ getValue }) => (
-      <span className="text-[#6B6459]">{getValue() || "-"}</span>
-    ),
-  }),
-  columnHelper.accessor("stock_quantity", {
-    header: () => <div className="text-right">Stock</div>,
-    cell: ({ getValue }) => (
-      <div className="text-right tabular-nums">{getValue() ?? "-"}</div>
-    ),
-  }),
-  columnHelper.accessor("cost_per_unit", {
-    header: () => <div className="text-right">Costo/Unidad</div>,
-    cell: ({ getValue }) => (
-      <div className="text-right tabular-nums">
-        {formatCurrency(getValue())}
-      </div>
-    ),
-  }),
-  columnHelper.accessor("supplier", {
-    header: "Proveedor",
-    cell: ({ getValue }) => (
-      <span className="text-[#2B2A26]">{getValue() || "-"}</span>
-    ),
-  }),
-  columnHelper.accessor("active", {
-    header: "Estado",
-    cell: ({ getValue }) => {
-      const isActive = getValue() === true;
-      return (
-        <span className="inline-flex items-center gap-1.5 text-sm">
-          <span
-            className={`h-1.5 w-1.5 rounded-full ${
-              isActive ? "bg-[#4B6043]" : "bg-[#B0A896]"
-            }`}
-          />
-          <span className={isActive ? "text-[#2B2A26]" : "text-[#6B6459]"}>
-            {isActive ? "Activo" : "Inactivo"}
+export const getColumns = (handleOpenEdit: (food: Food) => void) =>
+  columnHelper.columns([
+    columnHelper.accessor("food_name", {
+      header: "Nombre",
+      cell: ({ getValue }) => (
+        <span className="font-medium text-[#2B2A26]">{getValue()}</span>
+      ),
+    }),
+
+    columnHelper.accessor("food_type", {
+      header: "Tipo",
+      cell: ({ getValue }) => {
+        const value = getValue();
+
+        if (!value) return <span className="text-[#6B6459]">-</span>;
+
+        return (
+          <Badge
+            className={foodTypeStyles[value] ?? "bg-[#8C8266] text-white"}
+          >
+            {value}
+          </Badge>
+        );
+      },
+    }),
+
+    columnHelper.accessor("unit_measure", {
+      header: "Unidad",
+      cell: ({ getValue }) => (
+        <span className="text-[#6B6459]">{getValue() || "-"}</span>
+      ),
+    }),
+
+    columnHelper.accessor("stock_quantity", {
+      header: () => <div className="text-right">Stock</div>,
+      cell: ({ getValue }) => (
+        <div className="text-right tabular-nums">{getValue() ?? "-"}</div>
+      ),
+    }),
+
+    columnHelper.accessor("cost_per_unit", {
+      header: () => <div className="text-right">Costo/Unidad</div>,
+      cell: ({ getValue }) => (
+        <div className="text-right tabular-nums">
+          {formatCurrency(getValue())}
+        </div>
+      ),
+    }),
+
+    columnHelper.accessor("supplier", {
+      header: "Proveedor",
+      cell: ({ getValue }) => (
+        <span className="text-[#2B2A26]">{getValue() || "-"}</span>
+      ),
+    }),
+
+    columnHelper.accessor("active", {
+      header: "Estado",
+      cell: ({ getValue }) => {
+        const isActive = getValue() === true;
+
+        return (
+          <span className="inline-flex items-center gap-1.5 text-sm">
+            <span
+              className={`h-1.5 w-1.5 rounded-full ${
+                isActive ? "bg-[#4B6043]" : "bg-[#B0A896]"
+              }`}
+            />
+
+            <span className={isActive ? "text-[#2B2A26]" : "text-[#6B6459]"}>
+              {isActive ? "Activo" : "Inactivo"}
+            </span>
           </span>
-        </span>
-      );
-    },
-  }),
-]);
+        );
+      },
+    }),
+
+    columnHelper.display({
+      id: "actions",
+      header: "Acciones",
+      cell: ({ row }) => (
+        <button
+          type="button"
+          onClick={() => handleOpenEdit(row.original)}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#4B6043] bg-[#4B6043]/10 hover:bg-[#4B6043]/20 rounded-md transition-colors cursor-pointer"
+        >
+          <Pencil size={14} />
+          Editar
+        </button>
+      ),
+    }),
+  ]);

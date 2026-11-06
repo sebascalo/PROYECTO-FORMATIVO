@@ -166,6 +166,7 @@ const updateUser = async (req, res) => {
             ]);
             return res.status(404).json(response.json);
         }
+        
         var response = new Response(`Usuario ${userId} actualizado exitosamente`, user, null); 
         res.status(201);
         res.json(response.json);

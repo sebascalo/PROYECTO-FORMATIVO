@@ -1,8 +1,10 @@
+
 "use client";
 
 import { createColumnHelper } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { type SharedTableFeatures } from "@/components/ui/data-table-features";
+import { Pencil } from "lucide-react";
 
 export type ResponsibleData = {
   idResponsible: number;
@@ -17,7 +19,7 @@ export type Mortality = {
   exitReason: string;
   idResponsible: number | null;
   observations: string;
-  active: boolean; // 👈 NUEVO
+  active: boolean;
   responsibleData?: ResponsibleData | null;
 };
 
@@ -41,7 +43,9 @@ const exitReasonStyles: Record<string, string> = {
 
 const columnHelper = createColumnHelper<SharedTableFeatures, Mortality>();
 
-export const columns = columnHelper.columns([
+export const getColumns = (
+  handleOpenEdit: (mortality: Mortality) => void,
+) => columnHelper.columns([
   columnHelper.accessor("id_Bovine", {
     header: "ID Bovino",
     filterFn: (row, id, value) => {
@@ -93,7 +97,6 @@ export const columns = columnHelper.columns([
       <span className="text-[#6B6459] text-sm">{getValue() || "-"}</span>
     ),
   }),
-  // 👇 NUEVA COLUMNA ESTADO
   columnHelper.accessor("active", {
     header: "Estado",
     cell: ({ getValue }) => {
@@ -111,5 +114,19 @@ export const columns = columnHelper.columns([
         </span>
       );
     },
+  }),
+  columnHelper.display({
+    id: "actions",
+    header: "Acciones",
+    cell: ({ row }) => (
+      <button
+        type="button"
+        onClick={() => handleOpenEdit(row.original)}
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#4B6043] bg-[#4B6043]/10 hover:bg-[#4B6043]/20 rounded-md transition-colors cursor-pointer"
+      >
+        <Pencil size={14} />
+        Editar
+      </button>
+    ),
   }),
 ]);

@@ -1,42 +1,68 @@
+
 "use client";
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
-  DialogTrigger,
   DialogTitle,
 } from "../ui/dialog";
-import ButtonCreate from "../ui/buttonCreate";
 
-export default function FormCreationResponsible() {
-  const [open, setOpen] = useState(false);
+import { type Responsible } from "./columns";
+
+interface FormCreationResponsibleProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess: () => void;
+  responsibleToEdit?: Responsible | null;
+}
+
+export default function FormCreationResponsible({
+  isOpen,
+  onClose,
+  onSuccess,
+  responsibleToEdit = null,
+}: FormCreationResponsibleProps): React.JSX.Element | null {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
   const [formData, setFormData] = useState({
     fullName: "",
     role: "",
     email: "",
     phoneNumber: "",
-    // 👇 Ya no necesitamos que el usuario elija, siempre será Activo
-    status: "Active", 
+    status: "Active",
   });
+
+  const isEditing = Boolean(responsibleToEdit);
+
+  useEffect(() => {
+    if (responsibleToEdit) {
+      setFormData({
+        fullName: responsibleToEdit.fullName ?? "",
+        role: responsibleToEdit.role ?? "",
+        email: responsibleToEdit.email ?? "",
+        phoneNumber: responsibleToEdit.phoneNumber ?? "",
+        status: responsibleToEdit.status ?? "Active",
+      });
+    } else {
+      limpiarFormulario();
+    }
+  }, [responsibleToEdit, isOpen]);
 
   const handleChange = (
     e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+      HTMLInputElement | HTMLSelectElement
     >,
   ) => {
     const { name, value } = e.target;
 
-    // 👇 VALIDACIÓN SOLO PARA EL TELÉFONO
     if (name === "phoneNumber") {
-      // Remueve todo lo que no sea un número
       const soloNumeros = value.replace(/\D/g, "");
-      // Corta a un máximo de 10 dígitos
       const recortado = soloNumeros.slice(0, 10);
-      
+
       setFormData((prev) => ({ ...prev, [name]: recortado }));
       if (error) setError(null);
       return;
@@ -52,8 +78,9 @@ export default function FormCreationResponsible() {
       role: "",
       email: "",
       phoneNumber: "",
-      status: "Active", // Siempre vuelve a Active
+      status: "Active",
     });
+
     setError(null);
   };
 
@@ -61,34 +88,44 @@ export default function FormCreationResponsible() {
     e.preventDefault();
     setError(null);
 
-    // 👇 Validación extra de seguridad
-    if (formData.phoneNumber.length < 10) {
-      return setError("El número de teléfono debe tener exactamente 10 dígitos");
+    if (formData.phoneNumber.length !== 10) {
+      return setError(
+        "El número de teléfono debe tener exactamente 10 dígitos",
+      );
     }
 
     setIsSubmitting(true);
+
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(
-        "http://localhost:3000/api/responsible/CreateResponsible",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(formData), // Envía status: "Active" automáticamente
+
+      const url = isEditing
+        ? `http://localhost:3000/api/responsible/UpdateResponsible/${responsibleToEdit?.idResponsible}`
+        : "http://localhost:3000/api/responsible/CreateResponsible";
+
+      const method = isEditing ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-      );
+        body: JSON.stringify(formData),
+      });
 
       if (!response.ok) {
         let backendMessage = "";
+
         try {
           const errorBody = await response.json();
+
           if (Array.isArray(errorBody?.errors)) {
             backendMessage = errorBody.errors
               .map((e: { message?: string } | string) =>
-                typeof e === "string" ? e : e.message ?? String(e),
+                typeof e === "string"
+                  ? e
+                  : e.message ?? String(e),
               )
               .join(" | ");
           } else {
@@ -100,16 +137,20 @@ export default function FormCreationResponsible() {
         } catch {
           backendMessage = await response.text();
         }
+
         throw new Error(
-          `El servidor respondió ${response.status}: ${backendMessage || "sin detalle"}`,
+          `El servidor respondió ${response.status}: ${
+            backendMessage || "sin detalle"
+          }`,
         );
       }
 
       limpiarFormulario();
-      setOpen(false);
-      window.location.reload();
+      onSuccess();
+      onClose();
     } catch (error) {
       console.error("Error:", error);
+
       setError(
         error instanceof Error
           ? error.message
@@ -121,19 +162,19 @@ export default function FormCreationResponsible() {
   };
 
   const handleOpenChange = (newOpen: boolean) => {
-    if (!newOpen) limpiarFormulario();
-    setOpen(newOpen);
+    if (!newOpen) {
+      limpiarFormulario();
+      onClose();
+    }
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <ButtonCreate>Agregar Responsable</ButtonCreate>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[425px] md:max-w-[800px]">
         <DialogTitle className="font-bold text-2xl text-center">
-          Crear Responsable
+          {isEditing ? "Editar Responsable" : "Crear Responsable"}
         </DialogTitle>
+
         <form
           id="responsible-create-form"
           onSubmit={handleSubmit}
@@ -148,6 +189,7 @@ export default function FormCreationResponsible() {
               >
                 Nombre Completo:
               </label>
+
               <input
                 type="text"
                 id="fullName"
@@ -167,6 +209,7 @@ export default function FormCreationResponsible() {
               >
                 Rol:
               </label>
+
               <select
                 id="role"
                 name="role"
@@ -192,6 +235,7 @@ export default function FormCreationResponsible() {
               >
                 Email:
               </label>
+
               <input
                 type="email"
                 id="email"
@@ -211,31 +255,28 @@ export default function FormCreationResponsible() {
               >
                 Teléfono:
               </label>
+
               <input
                 type="text"
                 id="phoneNumber"
                 name="phoneNumber"
                 value={formData.phoneNumber}
                 onChange={handleChange}
-                inputMode="numeric" // 👈 Teclado numérico en móviles
-                maxLength={10}      // 👈 Límite de 10
+                inputMode="numeric"
+                maxLength={10}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043]"
                 placeholder="Ej: 3001234567"
               />
             </div>
-
-            {/* 👇 EL SELECT DE ESTADO FUE ELIMINADO 👇 */}
           </div>
         </form>
 
-        {/* 👇 Descripción arriba a la izquierda */}
         <p className="text-sm text-gray-600 -mt-2">
-          Complete los campos para crear un nuevo responsable.
+          Complete los campos para {isEditing ? "actualizar" : "crear"} un responsable.
         </p>
 
-        {/* 👇 Oculto para accesibilidad */}
         <DialogDescription className="sr-only">
-          Complete los campos para crear un nuevo responsable.
+          Formulario para crear o editar un responsable.
         </DialogDescription>
 
         <DialogFooter className="flex-col gap-2 sm:flex-col">
@@ -244,22 +285,31 @@ export default function FormCreationResponsible() {
               ⚠️ {error}
             </p>
           )}
+
           <div className="flex flex-row gap-2 w-full">
             <button
               type="button"
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                limpiarFormulario();
+                onClose();
+              }}
               disabled={isSubmitting}
               className="flex-1 cursor-pointer border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 font-medium py-2 px-4 rounded-md transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               Cancelar
             </button>
+
             <button
               type="submit"
               form="responsible-create-form"
               disabled={isSubmitting}
               className="flex-1 bg-green-600 text-white font-medium py-2 px-4 rounded-md hover:bg-green-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500/40 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? "Guardando..." : "Guardar Responsable"}
+              {isSubmitting
+                ? "Guardando..."
+                : isEditing
+                  ? "Actualizar Responsable"
+                  : "Guardar Responsable"}
             </button>
           </div>
         </DialogFooter>
