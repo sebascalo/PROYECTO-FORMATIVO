@@ -42,12 +42,6 @@ const user = db.define('user', {
         min: 5,
         allowNull: false,
     },
-    postJob:{
-        type: DataTypes.STRING,
-        max: 50,
-        min: 7,
-        allowNull: false
-    },
     id_roll: {
         type: DataTypes.INTEGER,
         allowNull: true

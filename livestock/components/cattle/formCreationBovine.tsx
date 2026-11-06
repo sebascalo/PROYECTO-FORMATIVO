@@ -9,6 +9,7 @@ import {
   DialogTitle,
 } from "../ui/dialog";
 import ButtonCreate from "../ui/buttonCreate";
+import { toast } from "@/components/ui/toast";
 
 // 👇 Tipos
 interface Race {
@@ -23,7 +24,11 @@ interface CattleBase {
   sex: string;
 }
 
-export default function FormCreationCattle() {
+interface FormCreationCattleProps {
+  onCreated?: () => void;
+}
+
+export default function FormCreationCattle({ onCreated }: FormCreationCattleProps) {
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -119,30 +124,35 @@ export default function FormCreationCattle() {
     setError(null);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
+    // 👇 Helper para validaciones: muestra error inline Y toast
+    const showError = (msg: string) => {
+      setError(msg);
+      toast.add({ title: "Corregir", description: msg, type: "error" });
+    };
+
     // 👇 Validaciones
-    if (!formData.id_Bovine.trim()) return setError("El ID / Arete del bovino es obligatorio");
-    if (!formData.name.trim()) return setError("El nombre del bovino es obligatorio");
-    if (!formData.id_race) return setError("Debes seleccionar una raza");
-    if (!formData.sex) return setError("Debes seleccionar un sexo");
-    if (!formData.entrydate) return setError("La fecha de ingreso es obligatoria");
-    if (!formData.birthdate) return setError("La fecha de nacimiento es obligatoria");
+    if (!formData.id_Bovine.trim()) return showError("El ID / Arete del bovino es obligatorio");
+    if (!formData.name.trim()) return showError("El nombre del bovino es obligatorio");
+    if (!formData.id_race) return showError("Debes seleccionar una raza");
+    if (!formData.sex) return showError("Debes seleccionar un sexo");
+    if (!formData.entrydate) return showError("La fecha de ingreso es obligatoria");
+    if (!formData.birthdate) return showError("La fecha de nacimiento es obligatoria");
 
     const weight = parseFloat(formData.currentweight);
-    if (isNaN(weight) || weight <= 0) return setError("El peso debe ser un número mayor a 0");
+    if (isNaN(weight) || weight <= 0) return showError("El peso debe ser un número mayor a 0");
 
-    if (!formData.classificationbytype) return setError("Debes seleccionar una clasificación");
-    // 👈 CAMBIO: se elimina la validación de "active"
+    if (!formData.classificationbytype) return showError("Debes seleccionar una clasificación");
 
     if (new Date(formData.birthdate) > new Date(formData.entrydate)) {
-      return setError("La fecha de nacimiento no puede ser posterior a la de ingreso");
+      return showError("La fecha de nacimiento no puede ser posterior a la de ingreso");
     }
 
     if (new Date(formData.entrydate) > new Date()) {
-      return setError("La fecha de ingreso no puede ser futura");
+      return showError("La fecha de ingreso no puede ser futura");
     }
 
     const datosEnviar = {
@@ -157,7 +167,7 @@ export default function FormCreationCattle() {
       photo: formData.photo || null,
       currentweight: weight,
       classificationbytype: formData.classificationbytype,
-      active: "Activo", // 👈 CAMBIO: siempre se envía Activo al backend
+      active: "Activo",
     };
 
     setIsSubmitting(true);
@@ -178,10 +188,13 @@ export default function FormCreationCattle() {
           const errorBody = await response.json();
           if (Array.isArray(errorBody?.errors)) {
             backendMessage = errorBody.errors
-              .map((e: { message?: string } | string) => (typeof e === "string" ? e : e.message ?? String(e)))
+              .map((e: { message?: string } | string) =>
+                typeof e === "string" ? e : e.message ?? String(e)
+              )
               .join(" | ");
           } else {
-            backendMessage = errorBody?.message || errorBody?.error || JSON.stringify(errorBody);
+            backendMessage =
+              errorBody?.message || errorBody?.error || JSON.stringify(errorBody);
           }
         } catch {
           backendMessage = await response.text();
@@ -189,11 +202,24 @@ export default function FormCreationCattle() {
         throw new Error(`El servidor respondió ${response.status}: ${backendMessage}`);
       }
 
+      // ✅ ÉXITO
+      toast.add({
+        title: "¡Bovino creado!",
+        description: `El bovino "${formData.name}" se ha creado exitosamente.`,
+        type: "success",
+      });
+
       limpiarFormulario();
       setOpen(false);
-      window.location.reload();
+      onCreated?.(); // 👈 avisa al padre para refrescar la lista (sin reload)
     } catch (error) {
-      setError(error instanceof Error ? error.message : "No se pudo guardar el bovino.");
+      const msg = error instanceof Error ? error.message : "No se pudo guardar el bovino.";
+      setError(msg);
+      toast.add({
+        title: "Error al guardar",
+        description: msg,
+        type: "error",
+      });
     } finally {
       setIsSubmitting(false);
     }

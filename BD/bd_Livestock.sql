@@ -1,4 +1,4 @@
-CREATE DATABASE  IF NOT EXISTS `livestock` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+CREATE DATABASE  IF NOT EXISTS `livestock` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `livestock`;
 -- MySQL dump 10.13  Distrib 8.0.46, for Win64 (x86_64)
 --
@@ -16,60 +16,6 @@ USE `livestock`;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `app_routes`
---
-
-DROP TABLE IF EXISTS `app_routes`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `app_routes` (
-  `id_app_routes` int NOT NULL AUTO_INCREMENT,
-  `name_route` varchar(45) DEFAULT NULL,
-  `route` varchar(255) DEFAULT NULL,
-  `active` tinyint(1) DEFAULT NULL,
-  `icon` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`id_app_routes`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `app_routes`
---
-
-LOCK TABLES `app_routes` WRITE;
-/*!40000 ALTER TABLE `app_routes` DISABLE KEYS */;
-/*!40000 ALTER TABLE `app_routes` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `app_routes_roll`
---
-
-DROP TABLE IF EXISTS `app_routes_roll`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `app_routes_roll` (
-  `id_app_routes_roll` int NOT NULL AUTO_INCREMENT,
-  `id_app_routes` int DEFAULT NULL,
-  `id_roll` int DEFAULT NULL,
-  PRIMARY KEY (`id_app_routes_roll`),
-  KEY `id_roll_idx` (`id_app_routes`),
-  KEY `fk_app_routes_roll_roll` (`id_roll`),
-  CONSTRAINT `fk_app_routes_roll_app_routes` FOREIGN KEY (`id_app_routes`) REFERENCES `app_routes` (`id_app_routes`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_app_routes_roll_roll` FOREIGN KEY (`id_roll`) REFERENCES `roll` (`id_roll`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `app_routes_roll`
---
-
-LOCK TABLES `app_routes_roll` WRITE;
-/*!40000 ALTER TABLE `app_routes_roll` DISABLE KEYS */;
-/*!40000 ALTER TABLE `app_routes_roll` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `artificialinseminations`
@@ -126,7 +72,7 @@ CREATE TABLE `births` (
   `createdAt` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación del registro',
   `updatedAt` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización del registro',
   PRIMARY KEY (`id_birth`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Tabla para registrar nacimientos de bovinos';
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Tabla para registrar nacimientos de bovinos';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -135,7 +81,7 @@ CREATE TABLE `births` (
 
 LOCK TABLES `births` WRITE;
 /*!40000 ALTER TABLE `births` DISABLE KEYS */;
-INSERT INTO `births` VALUES (1,2,'2026-10-14 00:00:00','Macho',2,70,NULL,'YES',10,1,'2026-10-14 13:17:40','2026-10-14 13:17:40'),(2,2,'2026-10-14 00:00:00','Macho',1,46,NULL,'esta bueno ',3,1,'2026-10-14 13:20:29','2026-10-14 13:20:29'),(3,2,'2026-10-15 00:00:00','Hembra',2,400,NULL,'no nada',1,1,'2026-10-15 12:44:42','2026-10-15 12:44:42'),(4,6,'2026-10-15 00:00:00','Macho',1,100,NULL,'nacio hijo de lola',3,1,'2026-10-15 19:24:44','2026-10-15 19:24:44'),(5,304,'2026-10-23 00:00:00','Macho',6,700,NULL,'aefghjk',4,1,'2026-10-23 13:02:56','2026-10-23 13:02:56'),(6,6,'2026-10-23 00:00:00','Macho',2,56670,NULL,'aertykuioñ',8,1,'2026-10-23 13:03:17','2026-10-23 13:03:17');
+INSERT INTO `births` VALUES (1,2,'2026-10-14 00:00:00','Macho',2,70,NULL,'YES',10,1,'2026-10-14 13:17:40','2026-10-14 13:17:40'),(2,2,'2026-10-14 00:00:00','Macho',1,46,NULL,'esta bueno ',3,1,'2026-10-14 13:20:29','2026-10-14 13:20:29'),(3,2,'2026-10-15 00:00:00','Hembra',2,400,NULL,'no nada',1,1,'2026-10-15 12:44:42','2026-10-15 12:44:42'),(4,6,'2026-10-15 00:00:00','Macho',1,100,NULL,'nacio hijo de lola',3,1,'2026-10-15 19:24:44','2026-10-15 19:24:44'),(5,304,'2026-10-23 00:00:00','Macho',6,700,NULL,'aefghjk',4,1,'2026-10-23 13:02:56','2026-10-23 13:02:56'),(6,6,'2026-10-23 00:00:00','Macho',2,56670,NULL,'aertykuioñ',8,1,'2026-10-23 13:03:17','2026-10-23 13:03:17'),(7,506,'2026-10-26 00:00:00','Macho',9,100,NULL,'nacio bien',2,1,'2026-10-26 12:04:18','2026-10-26 12:04:18'),(8,3,'2026-10-26 00:00:00','Macho',2,90,NULL,NULL,4,1,'2026-10-26 17:11:11','2026-10-26 17:11:11'),(9,304,'2026-10-26 00:00:00','Macho',8,50,NULL,NULL,3,1,'2026-10-26 17:21:37','2026-10-26 17:21:37');
 /*!40000 ALTER TABLE `births` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -171,7 +117,7 @@ CREATE TABLE `cattles` (
 
 LOCK TABLES `cattles` WRITE;
 /*!40000 ALTER TABLE `cattles` DISABLE KEYS */;
-INSERT INTO `cattles` VALUES (1,'Taurus','1','Macho','2026-10-14 00:00:00',NULL,NULL,'2026-10-14 00:00:00',NULL,7001,'Carne',1,'2026-10-14 12:10:34','2026-10-22 03:19:02'),(2,'Juanita','2','Hembra','2026-10-14 00:00:00',NULL,NULL,'2026-10-14 00:00:00',NULL,600,'Lechero',1,'2026-10-14 12:24:07','2026-10-24 23:26:05'),(3,'Tomasa','4','Hembra','2026-10-15 00:00:00',NULL,NULL,'2025-10-15 00:00:00',NULL,900,'Lechero',1,'2026-10-15 12:27:11','2026-10-22 03:27:19'),(4,'Roberta','3','Hembra','2026-10-01 00:00:00',NULL,NULL,'2025-02-15 00:00:00',NULL,500,'Lechero',1,'2026-10-15 13:13:08','2026-10-15 13:13:08'),(5,'paquita','3','Hembra','2026-10-14 00:00:00',NULL,NULL,'2026-10-14 00:00:00',NULL,400,'Lechero',0,'2026-10-15 17:59:15','2026-10-15 17:59:15'),(6,'lola','6','Hembra','2026-10-15 00:00:00',NULL,NULL,'2025-02-15 00:00:00',NULL,322,'Lechero',1,'2026-10-15 19:19:05','2026-10-22 03:26:46'),(304,'lolita','2','Hembra','2026-10-21 00:00:00',NULL,NULL,'2026-10-21 00:00:00',NULL,700,'Carne',1,'2026-10-22 01:49:42','2026-10-22 01:49:42'),(305,'Tex','3','Macho','2026-10-21 00:00:00',NULL,NULL,'2026-10-21 00:00:00',NULL,444,'Toro',1,'2026-10-22 02:19:54','2026-10-22 03:26:27'),(307,'juaco','4','Macho','2026-10-21 00:00:00',4,1,'2026-10-21 00:00:00',NULL,800,'Ternero',1,'2026-10-22 02:20:54','2026-10-22 03:25:35'),(407,'pedro','5','Macho','2026-10-22 00:00:00',5,305,'2026-10-22 00:00:00',NULL,500,'Ternero',1,'2026-10-22 12:02:16','2026-10-23 12:35:05'),(7002,'Valeria','4','Hembra','2026-10-25 00:00:00',3,1,'2026-10-25 00:00:00',NULL,100,'Novilla levante',1,'2026-10-25 14:57:05','2026-10-25 14:57:05');
+INSERT INTO `cattles` VALUES (1,'Taurus','1','Macho','2026-10-14 00:00:00',NULL,NULL,'2026-10-14 00:00:00',NULL,7001,'Carne',1,'2026-10-14 12:10:34','2026-10-22 03:19:02'),(2,'Juanita','2','Hembra','2026-10-14 00:00:00',NULL,NULL,'2026-10-14 00:00:00',NULL,600,'Lechero',1,'2026-10-14 12:24:07','2026-10-24 23:26:05'),(3,'Tomasa','4','Hembra','2026-10-15 00:00:00',NULL,NULL,'2025-10-15 00:00:00',NULL,900,'Lechero',1,'2026-10-15 12:27:11','2026-10-22 03:27:19'),(4,'Roberta','3','Hembra','2026-10-01 00:00:00',NULL,NULL,'2025-02-15 00:00:00',NULL,500,'Lechero',1,'2026-10-15 13:13:08','2026-10-15 13:13:08'),(5,'paquita','3','Hembra','2026-10-14 00:00:00',NULL,NULL,'2026-10-14 00:00:00',NULL,400,'Lechero',0,'2026-10-15 17:59:15','2026-10-15 17:59:15'),(6,'lola','6','Hembra','2026-10-15 00:00:00',NULL,NULL,'2025-02-15 00:00:00',NULL,322,'Lechero',1,'2026-10-15 19:19:05','2026-10-22 03:26:46'),(88,'canela','3','Hembra','2026-10-26 00:00:00',5,305,'2026-05-26 00:00:00',NULL,100,'Ternero',1,'2026-10-26 16:52:57','2026-10-26 16:52:57'),(304,'lolita','2','Hembra','2026-10-21 00:00:00',NULL,NULL,'2026-10-21 00:00:00',NULL,700,'Carne',1,'2026-10-22 01:49:42','2026-10-22 01:49:42'),(305,'Tex','3','Macho','2026-10-21 00:00:00',NULL,NULL,'2026-10-21 00:00:00',NULL,444,'Toro',1,'2026-10-22 02:19:54','2026-10-22 03:26:27'),(307,'juaco','4','Macho','2026-10-21 00:00:00',4,1,'2026-10-21 00:00:00',NULL,800,'Ternero',1,'2026-10-22 02:20:54','2026-10-22 03:25:35'),(407,'pedro','5','Macho','2026-10-22 00:00:00',5,305,'2026-10-22 00:00:00',NULL,500,'Ternero',1,'2026-10-22 12:02:16','2026-10-23 12:35:05'),(456,'andres','4','Macho','2026-10-26 00:00:00',6,1,'2026-10-26 00:00:00',NULL,60,'Vaca',1,'2026-10-26 17:20:42','2026-10-26 17:20:42'),(506,'maria jose','9','Hembra','2026-10-26 00:00:00',3,1,'2026-09-26 00:00:00',NULL,300,'Ternero',1,'2026-10-26 11:59:41','2026-10-26 12:03:15'),(6765,'candy','2','Hembra','2026-10-26 00:00:00',506,407,'2026-10-26 00:00:00',NULL,80,'Ternero',1,'2026-10-26 17:04:59','2026-10-26 17:04:59'),(7002,'Valeria','4','Hembra','2026-10-25 00:00:00',3,1,'2026-10-25 00:00:00',NULL,100,'Novilla levante',1,'2026-10-25 14:57:05','2026-10-25 14:57:05'),(7003,'paca','5','Hembra','2026-10-26 00:00:00',2,305,'2026-10-26 00:00:00',NULL,70,'Novilla vientre',1,'2026-10-26 16:55:41','2026-10-26 16:55:41');
 /*!40000 ALTER TABLE `cattles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -197,7 +143,7 @@ CREATE TABLE `exits` (
   KEY `idResponsible` (`idResponsible`),
   CONSTRAINT `exits_ibfk_1` FOREIGN KEY (`id_Bovine`) REFERENCES `cattles` (`id_Bovine`),
   CONSTRAINT `exits_ibfk_2` FOREIGN KEY (`idResponsible`) REFERENCES `responsibles` (`idResponsible`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -206,7 +152,7 @@ CREATE TABLE `exits` (
 
 LOCK TABLES `exits` WRITE;
 /*!40000 ALTER TABLE `exits` DISABLE KEYS */;
-INSERT INTO `exits` VALUES (1,1,'2026-10-22','Muerte',2,'murio','2026-10-22 04:40:20','2026-10-22 04:40:20',1),(2,3,'2026-10-22','Muerte',2,'saskljaak','2026-10-22 04:40:36','2026-10-22 04:40:36',1),(3,6,'2026-10-22','Venta',4,'a agro industria','2026-10-22 04:50:05','2026-10-22 04:50:05',1),(4,407,'2026-10-22','Venta',4,'vedido por 40M','2026-10-22 12:03:55','2026-10-22 12:03:55',1),(5,6,'2026-10-24','Venta',3,'n,.lakja','2026-10-24 22:58:51','2026-10-24 22:58:51',1),(6,304,'2026-10-24','Traslado',2,'akjakjaslkjsk','2026-10-24 22:59:54','2026-10-24 22:59:54',1);
+INSERT INTO `exits` VALUES (1,1,'2026-10-22','Muerte',2,'murio','2026-10-22 04:40:20','2026-10-22 04:40:20',1),(2,3,'2026-10-22','Muerte',2,'saskljaak','2026-10-22 04:40:36','2026-10-22 04:40:36',1),(3,6,'2026-10-22','Venta',4,'a agro industria','2026-10-22 04:50:05','2026-10-22 04:50:05',1),(4,407,'2026-10-22','Venta',4,'vedido por 40M','2026-10-22 12:03:55','2026-10-22 12:03:55',1),(5,6,'2026-10-24','Venta',3,'n,.lakja','2026-10-24 22:58:51','2026-10-24 22:58:51',1),(6,304,'2026-10-24','Traslado',2,'akjakjaslkjsk','2026-10-24 22:59:54','2026-10-24 22:59:54',1),(7,506,'2026-10-26','Venta',1,'se vendio','2026-10-26 12:05:13','2026-10-26 12:05:13',1);
 /*!40000 ALTER TABLE `exits` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -326,7 +272,7 @@ CREATE TABLE `nutrition` (
   `updatedAt` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización del registro',
   `active` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id_nutrition`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Tabla para registrar nutrición de bovinos';
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Tabla para registrar nutrición de bovinos';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -335,7 +281,7 @@ CREATE TABLE `nutrition` (
 
 LOCK TABLES `nutrition` WRITE;
 /*!40000 ALTER TABLE `nutrition` DISABLE KEYS */;
-INSERT INTO `nutrition` VALUES (1,1,1,'1','Mañana',1,'2026-10-14 23:34:17','2026-10-14 23:34:17',1),(2,4,1,'7','Mañana y Tarde',2,'2026-10-15 19:27:35','2026-10-15 19:27:35',1),(3,4,2,'6','Mañana',10,'2026-10-19 12:17:54','2026-10-19 12:17:54',1);
+INSERT INTO `nutrition` VALUES (1,1,1,'1','Mañana',1,'2026-10-14 23:34:17','2026-10-14 23:34:17',1),(2,4,1,'7','Mañana y Tarde',2,'2026-10-15 19:27:35','2026-10-15 19:27:35',1),(3,4,2,'6','Mañana',10,'2026-10-19 12:17:54','2026-10-19 12:17:54',1),(4,506,2,'7','Mañana',1,'2026-10-26 12:06:13','2026-10-26 12:06:13',1);
 /*!40000 ALTER TABLE `nutrition` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -432,56 +378,31 @@ INSERT INTO `responsibles` VALUES (1,'Dr. Juan Pérez','Veterinario','juan.perez
 UNLOCK TABLES;
 
 --
--- Table structure for table `roll`
+-- Table structure for table `roles`
 --
 
-DROP TABLE IF EXISTS `roll`;
+DROP TABLE IF EXISTS `roles`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `roll` (
-  `id_roll` int NOT NULL AUTO_INCREMENT,
-  `slug` varchar(45) DEFAULT NULL,
-  `name_roll` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`id_roll`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `roles` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_roles_name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `roll`
+-- Dumping data for table `roles`
 --
 
-LOCK TABLES `roll` WRITE;
-/*!40000 ALTER TABLE `roll` DISABLE KEYS */;
-/*!40000 ALTER TABLE `roll` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `route_app_permisos`
---
-
-DROP TABLE IF EXISTS `route_app_permisos`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `route_app_permisos` (
-  `idroute_app_permisos` int NOT NULL,
-  `idapproute` int NOT NULL,
-  `idroll` int NOT NULL,
-  `c` tinyint NOT NULL DEFAULT '0',
-  `r` tinyint NOT NULL DEFAULT '0',
-  `u` tinyint NOT NULL DEFAULT '0',
-  `d` tinyint NOT NULL DEFAULT '0',
-  `i` tinyint NOT NULL DEFAULT '0',
-  PRIMARY KEY (`idroute_app_permisos`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `route_app_permisos`
---
-
-LOCK TABLES `route_app_permisos` WRITE;
-/*!40000 ALTER TABLE `route_app_permisos` DISABLE KEYS */;
-/*!40000 ALTER TABLE `route_app_permisos` ENABLE KEYS */;
+LOCK TABLES `roles` WRITE;
+/*!40000 ALTER TABLE `roles` DISABLE KEYS */;
+INSERT INTO `roles` VALUES (1,'Administrador','Rol con acceso total al sistema y gestión de usuarios','2026-11-06 08:21:08','2026-11-06 08:21:08'),(2,'Instructor','Rol con acceso total al sistema y gestión de usuarios','2026-11-06 08:21:08','2026-11-06 08:21:08'),(3,'Pasante','Rol de apoyo con permisos limitados','2026-11-06 08:21:08','2026-11-06 08:21:08'),(4,'Gestor','Rol de apoyo con permisos limitados','2026-11-06 08:21:08','2026-11-06 08:21:08');
+/*!40000 ALTER TABLE `roles` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -548,6 +469,36 @@ INSERT INTO `treatments` VALUES (1,1,'2026-10-15 00:00:00','acetogan',NULL,'5','
 UNLOCK TABLES;
 
 --
+-- Table structure for table `user_roles`
+--
+
+DROP TABLE IF EXISTS `user_roles`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user_roles` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `userId` int NOT NULL,
+  `roleId` int NOT NULL,
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_user_role` (`userId`,`roleId`),
+  KEY `idx_user_roles_roleId` (`roleId`),
+  CONSTRAINT `fk_user_roles_role` FOREIGN KEY (`roleId`) REFERENCES `roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_user_roles_user` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `user_roles`
+--
+
+LOCK TABLES `user_roles` WRITE;
+/*!40000 ALTER TABLE `user_roles` DISABLE KEYS */;
+/*!40000 ALTER TABLE `user_roles` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `users`
 --
 
@@ -557,12 +508,11 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `userId` int NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
-  `uuid` varchar(45) DEFAULT NULL,
+  `uuid` varchar(200) DEFAULT NULL,
   `email` varchar(50) NOT NULL,
-  `password` varchar(200) NOT NULL,
-  `salt` varchar(50) DEFAULT NULL,
+  `password` varchar(255) NOT NULL,
+  `salt` varchar(200) DEFAULT NULL,
   `documentId` varchar(30) NOT NULL,
-  `postJob` varchar(50) NOT NULL,
   `id_roll` int DEFAULT NULL,
   `verifyEmail` tinyint DEFAULT '0',
   `active` tinyint DEFAULT '0',
@@ -571,9 +521,7 @@ CREATE TABLE `users` (
   `resetPasswordExpires` datetime DEFAULT NULL,
   `createdAt` datetime DEFAULT NULL,
   `updatedAt` datetime DEFAULT NULL,
-  PRIMARY KEY (`userId`),
-  KEY `fk_id_roll_idx` (`id_roll`),
-  CONSTRAINT `fk_users_roll` FOREIGN KEY (`id_roll`) REFERENCES `roll` (`id_roll`) ON DELETE SET NULL ON UPDATE CASCADE
+  PRIMARY KEY (`userId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -583,7 +531,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'Sebastian','acef07d2-f9e8-459d-82c9-571e339742e2','sebastiancalderon5204@gmail.com','$2b$10$C5yXVOdLCe9CNiPUg6UyFOkF9WEvWWtbwWPzREN28pxQ/K7Cwhafq','$2b$10$CITODoZ5SeIRDe.mkfQIBO','1033333333','Super administrador',NULL,1,1,NULL,0,NULL,'2026-09-25 16:18:18','2026-10-25 17:09:02'),(2,'Arnold','3a8891d7-ba16-450d-b10a-d23f8311141e','arnoldandresvasquez@gmail.com','$2b$10$Uqd.GEGj5WLK8JEkjCW9ZOnQHLMSklSCXKYADTTW0fTYgjx0Jr4Ga','$2b$10$Uqd.GEGj5WLK8JEkjCW9ZO','12345678','operario',NULL,1,1,NULL,0,NULL,'2026-09-25 19:26:00','2026-09-25 19:26:00'),(3,'Stefany','0d1b4b3a-4cbf-4116-b4d7-5fc730674d2d','vasquezstefany182@gmail.com','$2b$10$R2IOIAOk/QaeNLuzSbwuEexn.NtNPqwMzXMfV46D5lu1MlqCjdu.6','$2b$10$R2IOIAOk/QaeNLuzSbwuEe','2134567890','administrador',NULL,1,1,NULL,0,NULL,'2026-10-05 12:07:33','2026-10-05 12:07:33'),(6,'Dylan','207c525e-e950-4e2d-be66-c21ac98d725c','dylan@gmail.com','$2b$10$aFo.B0SqjtTuhtwaq8PzUO4KbbiccUwARipC9MQHX0Oxxc45IzFPi','$2b$10$aFo.B0SqjtTuhtwaq8PzUO','1234568','asistente',NULL,1,1,NULL,0,NULL,'2026-10-05 12:19:07','2026-10-05 12:19:07'),(7,'tatiana','5c6625d1-d9b9-4e4c-a83c-88fc69dcf891','caperatatiana822@gmail.com','$2b$10$MY8vrF0sylmu.CLMm3KBhuJRs2EHw3U9PaBq65gUyEKhVN0WNKBzS','$2b$10$MY8vrF0sylmu.CLMm3KBhu','9876543','asistente',NULL,1,1,NULL,0,NULL,'2026-10-15 19:38:04','2026-10-15 19:38:04'),(8,'Sebastian Calderon','d10ee218-2947-43dc-a762-76cd41d57c69','sebastiancalderonlozano@gmail.com','$2b$10$d6MHvCNp6GasIAUXyO9Is.ZKmsfGrQ.kkxaC.jveDsAueeofRwYr.','$2b$10$d6MHvCNp6GasIAUXyO9Is.','1111111111','administrador',NULL,1,1,NULL,0,NULL,'2026-10-25 16:57:46','2026-10-25 16:57:46');
+INSERT INTO `users` VALUES (1,'Sebastian Calderon','acef07d2-f9e8-459d-82c9-571e339742e2','sebastiancalderon5204@gmail.com','$2b$10$i2560q.N1S2IsxZ/Nih6K.qIlq5z5BYRYTVv8njgAGu.zyXRovJ/2','$2b$10$CITODoZ5SeIRDe.mkfQIBO','1033333366',0,1,1,NULL,0,NULL,'2026-09-25 16:18:18','2026-10-29 13:59:58'),(2,'Arnold','3a8891d7-ba16-450d-b10a-d23f8311141e','arnoldandresvasquez@gmail.com','$2b$10$Uqd.GEGj5WLK8JEkjCW9ZOnQHLMSklSCXKYADTTW0fTYgjx0Jr4Ga','$2b$10$Uqd.GEGj5WLK8JEkjCW9ZO','12345678',0,1,1,NULL,0,NULL,'2026-09-25 19:26:00','2026-10-29 12:30:45'),(3,'Stefany','0d1b4b3a-4cbf-4116-b4d7-5fc730674d2d','vasquezstefany182@gmail.com','$2b$10$R2IOIAOk/QaeNLuzSbwuEexn.NtNPqwMzXMfV46D5lu1MlqCjdu.6','$2b$10$R2IOIAOk/QaeNLuzSbwuEe','2134567890',0,1,1,NULL,0,NULL,'2026-10-05 12:07:33','2026-10-05 12:07:33'),(6,'Dylan','207c525e-e950-4e2d-be66-c21ac98d725c','dylan@gmail.com','$2b$10$aFo.B0SqjtTuhtwaq8PzUO4KbbiccUwARipC9MQHX0Oxxc45IzFPi','$2b$10$aFo.B0SqjtTuhtwaq8PzUO','1234568',0,1,1,NULL,0,NULL,'2026-10-05 12:19:07','2026-10-05 12:19:07'),(7,'tatiana','5c6625d1-d9b9-4e4c-a83c-88fc69dcf891','caperatatiana822@gmail.com','$2b$10$MY8vrF0sylmu.CLMm3KBhuJRs2EHw3U9PaBq65gUyEKhVN0WNKBzS','$2b$10$MY8vrF0sylmu.CLMm3KBhu','9876543',0,1,1,NULL,0,NULL,'2026-10-15 19:38:04','2026-10-15 19:38:04'),(8,'Sebastian Calderon','d10ee218-2947-43dc-a762-76cd41d57c69','sebastiancalderonlozano@gmail.com','$2b$10$d6MHvCNp6GasIAUXyO9Is.ZKmsfGrQ.kkxaC.jveDsAueeofRwYr.','$2b$10$d6MHvCNp6GasIAUXyO9Is.','1111111111',0,1,1,NULL,0,NULL,'2026-10-25 16:57:46','2026-10-25 16:57:46');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -641,7 +589,7 @@ CREATE TABLE `weighings` (
   `updatedAt` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Fecha de última actualización del registro',
   `active` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id_weighing`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Tabla para registrar pesajes de bovinos';
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Tabla para registrar pesajes de bovinos';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -650,7 +598,7 @@ CREATE TABLE `weighings` (
 
 LOCK TABLES `weighings` WRITE;
 /*!40000 ALTER TABLE `weighings` DISABLE KEYS */;
-INSERT INTO `weighings` VALUES (1,'2','2026-10-22 00:00:00',505,4,'2 - Delgado',NULL,1,'2026-10-22 03:21:33','2026-10-22 03:21:33',1),(2,'307','2026-10-22 00:00:00',800,23,'4 - Gordo','muy gordo',4,'2026-10-22 03:25:35','2026-10-22 03:25:35',1),(3,'2','2026-10-22 00:00:00',500,-5,'4 - Gordo','djlakja',4,'2026-10-22 03:26:05','2026-10-22 03:26:05',1),(4,'305','2026-10-22 00:00:00',444,-56,'1 - Flaco',NULL,8,'2026-10-22 03:26:27','2026-10-22 03:26:27',1),(5,'6','2026-10-22 00:00:00',322,-278,'2 - Delgado','hjgkh.k',NULL,'2026-10-22 03:26:46','2026-10-22 03:26:46',1),(6,'3','2026-10-22 00:00:00',900,100,'3 - Ideal',NULL,1,'2026-10-22 03:27:19','2026-10-22 03:27:19',1),(7,'407','2026-10-22 00:00:00',400,100,'3 - Ideal','bueno',10,'2026-10-22 12:02:53','2026-10-22 12:02:53',1),(8,'407','2026-10-23 00:00:00',500,100,'3 - Ideal',NULL,10,'2026-10-23 12:35:05','2026-10-23 12:35:05',1),(9,'2','2026-10-24 00:00:00',600,100,'1 - Flaco','hakaghgjdaj',3,'2026-10-24 23:26:05','2026-10-24 23:26:05',1);
+INSERT INTO `weighings` VALUES (1,'2','2026-10-22 00:00:00',505,4,'2 - Delgado',NULL,1,'2026-10-22 03:21:33','2026-10-22 03:21:33',1),(2,'307','2026-10-22 00:00:00',800,23,'4 - Gordo','muy gordo',4,'2026-10-22 03:25:35','2026-10-22 03:25:35',1),(3,'2','2026-10-22 00:00:00',500,-5,'4 - Gordo','djlakja',4,'2026-10-22 03:26:05','2026-10-22 03:26:05',1),(4,'305','2026-10-22 00:00:00',444,-56,'1 - Flaco',NULL,8,'2026-10-22 03:26:27','2026-10-22 03:26:27',1),(5,'6','2026-10-22 00:00:00',322,-278,'2 - Delgado','hjgkh.k',NULL,'2026-10-22 03:26:46','2026-10-22 03:26:46',1),(6,'3','2026-10-22 00:00:00',900,100,'3 - Ideal',NULL,1,'2026-10-22 03:27:19','2026-10-22 03:27:19',1),(7,'407','2026-10-22 00:00:00',400,100,'3 - Ideal','bueno',10,'2026-10-22 12:02:53','2026-10-22 12:02:53',1),(8,'407','2026-10-23 00:00:00',500,100,'3 - Ideal',NULL,10,'2026-10-23 12:35:05','2026-10-23 12:35:05',1),(9,'2','2026-10-24 00:00:00',600,100,'1 - Flaco','hakaghgjdaj',3,'2026-10-24 23:26:05','2026-10-24 23:26:05',1),(10,'506','2026-10-26 00:00:00',300,100,'2 - Delgado','esta muy delgado',1,'2026-10-26 12:03:15','2026-10-26 12:03:15',1);
 /*!40000 ALTER TABLE `weighings` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -663,4 +611,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-10-25 12:09:50
+-- Dump completed on 2026-11-06  9:03:49

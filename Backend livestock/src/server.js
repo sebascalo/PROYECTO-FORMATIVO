@@ -12,6 +12,8 @@ const db = require("./config/conectionDB");
 
 // Rutas
 const userRoute = require("./routes/userRoute");
+const roleRoutes = require('./routes/roleRoutes');
+const userRoleRoutes = require('./routes/userRoleRoutes');
 //sebastian
 const pastureRoute = require("./routes/pastureRoute");
 const milkRoute = require("./routes/milkRoute");
@@ -61,6 +63,8 @@ app.get("/", (req, res) => {
 
 // Rutas API
 app.use("/api/user", userRoute);
+app.use('/api/roles', roleRoutes);
+app.use('/api/user_roles', userRoleRoutes);
 //sebastian
 app.use("/api/pasture", pastureRoute);
 app.use("/api/milk", milkRoute);

@@ -9,6 +9,7 @@ import {
   DialogTitle,
 } from "../ui/dialog";
 import ButtonCreate from "../ui/buttonCreate";
+import { toast } from "@/components/ui/toast";
 
 interface Cattle {
   id_Bovine: number;
@@ -130,6 +131,7 @@ export default function FormCreationBirth() {
     if (error) setError(null);
   };
 
+
   const limpiarFormulario = () => {
     setFormData({
       id_Bovine: "",
@@ -196,6 +198,12 @@ export default function FormCreationBirth() {
         }
         throw new Error(`El servidor respondió ${response.status}: ${backendMessage}`);
       }
+       // ✅ ÉXITO
+      toast.add({
+        title: "¡Nacimiento creado!",
+        description: `El nacimiento para el bovino "${formData.id_Bovine}" se ha creado exitosamente.`,
+        type: "success",
+      });
 
       limpiarFormulario();
       setOpen(false);
