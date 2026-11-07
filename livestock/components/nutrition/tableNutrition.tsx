@@ -1,33 +1,20 @@
+
 "use client";
+
 import { useEffect, useState } from "react";
 
 import { DataTable } from "@/components/ui/data-table";
-import { columns, type Nutrition } from "./columns";
+import { getColumns, type Nutrition } from "./columns";
 
-interface TableNutritionProps {
-  actions?: React.ReactNode;
-}
+import ButtonCreate from "../ui/buttonCreate";
+import FormCreationNutrition from "./formcreationNutrtion";
 
-// 👇 Tipos mínimos para los catálogos
-interface Cattle {
-  id_Bovine: number;
-  name: string;
-}
-
-interface Food {
-  id_food: number;
-  food_name: string;
-  food_type: string;
-}
-
-interface Responsible {
-  idResponsible: number;
-  fullName: string;
-  role: string;
-}
-
-export default function TableNutrition({ actions }: TableNutritionProps) {
+export default function TableNutrition() {
   const [nutritions, setNutritions] = useState<Nutrition[]>([]);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedNutrition, setSelectedNutrition] =
+    useState<Nutrition | null>(null);
 
   useEffect(() => {
     const fetchNutritions = async () => {
@@ -35,7 +22,7 @@ export default function TableNutrition({ actions }: TableNutritionProps) {
         const token = localStorage.getItem("token");
         const headers = { Authorization: `Bearer ${token}` };
 
-        // 👇 Traer las 4 listas en paralelo
+        // Traer las 4 listas en paralelo
         const [nutritionRes, cattleRes, foodRes, responsibleRes] =
           await Promise.all([
             fetch("http://localhost:3000/api/nutrition/NutritionAll", {
@@ -62,23 +49,34 @@ export default function TableNutrition({ actions }: TableNutritionProps) {
           ]);
 
         const nutritionList: Nutrition[] = nutritionJson.info ?? [];
-        const cattles: Cattle[] = cattleJson.info ?? [];
-        const foods: Food[] = foodJson.info ?? [];
-        const responsibles: Responsible[] = responsibleJson.info ?? [];
+        const cattles = cattleJson.info ?? [];
+        const foods = foodJson.info ?? [];
+        const responsibles = responsibleJson.info ?? [];
 
-        // 👇 "JOIN en memoria"
+        // JOIN en memoria
         const nutritionFormatted: Nutrition[] = nutritionList.map((n) => {
-          const cattle = cattles.find((c) => c.id_Bovine === n.id_Bovine);
-          const food = foods.find((f) => f.id_food === n.id_food);
+          const cattle = cattles.find(
+            (c: { id_Bovine: number }) => c.id_Bovine === n.id_Bovine,
+          );
+
+          const food = foods.find(
+            (f: { id_food: number }) => f.id_food === n.id_food,
+          );
+
           const responsible = responsibles.find(
-            (r) => r.idResponsible === n.idResponsible,
+            (r: { idResponsible: number }) =>
+              r.idResponsible === n.idResponsible,
           );
 
           return {
             ...n,
             cattleData: cattle
-              ? { id_Bovine: cattle.id_Bovine, name: cattle.name }
+              ? {
+                  id_Bovine: cattle.id_Bovine,
+                  name: cattle.name,
+                }
               : null,
+
             foodData: food
               ? {
                   id_food: food.id_food,
@@ -86,6 +84,7 @@ export default function TableNutrition({ actions }: TableNutritionProps) {
                   food_type: food.food_type,
                 }
               : null,
+
             responsibleData: responsible
               ? {
                   idResponsible: responsible.idResponsible,
@@ -102,8 +101,27 @@ export default function TableNutrition({ actions }: TableNutritionProps) {
         setNutritions([]);
       }
     };
+
     fetchNutritions();
   }, []);
+
+  // Abrir formulario para crear
+  const handleOpenCreate = () => {
+    setSelectedNutrition(null);
+    setIsModalOpen(true);
+  };
+
+  // Abrir formulario para editar
+  const handleOpenEdit = (nutrition: Nutrition) => {
+    setSelectedNutrition(nutrition);
+    setIsModalOpen(true);
+  };
+
+  // Cerrar modal
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedNutrition(null);
+  };
 
   return (
     <div className="w-full bg-white px-4 py-8">
@@ -112,6 +130,7 @@ export default function TableNutrition({ actions }: TableNutritionProps) {
           <h1 className="text-2xl font-semibold text-[#2B2A26]">
             Nutriciones
           </h1>
+
           <p className="text-sm text-[#6B6459]">
             {nutritions.length}{" "}
             {nutritions.length === 1
@@ -122,10 +141,21 @@ export default function TableNutrition({ actions }: TableNutritionProps) {
         </div>
 
         <DataTable
-          columns={columns}
+          columns={getColumns(handleOpenEdit)}
           data={nutritions}
           filterPlaceholder="Buscar en todos los campos..."
-          toolbar={actions}
+          toolbar={
+            <ButtonCreate onClick={handleOpenCreate}>
+              Agregar Nutrición
+            </ButtonCreate>
+          }
+        />
+
+        <FormCreationNutrition
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onSuccess={handleCloseModal}
+          nutritionToEdit={selectedNutrition}
         />
       </div>
     </div>

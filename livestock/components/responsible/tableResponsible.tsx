@@ -1,38 +1,62 @@
+
 "use client";
+
 import { useEffect, useState } from "react";
 
 import { DataTable } from "@/components/ui/data-table";
-import { columns, type Responsible } from "./columns";
+import { getColumns, type Responsible } from "./columns";
 
-interface TableResponsibleProps {
-  actions?: React.ReactNode;
-}
+import ButtonCreate from "../ui/buttonCreate";
+import FormCreationResponsible from "./formCreationResponsible";
 
-export default function TableResponsible({ actions }: TableResponsibleProps) {
+export default function TableResponsible() {
   const [responsibles, setResponsibles] = useState<Responsible[]>([]);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedResponsible, setSelectedResponsible] =
+    useState<Responsible | null>(null);
+
+  const fetchResponsibles = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3000/api/responsible/ResponsibleAll",
+      );
+
+      const resJson = await response.json();
+
+      const datos = Array.isArray(resJson)
+        ? resJson
+        : Array.isArray(resJson.info)
+          ? resJson.info
+          : Array.isArray(resJson.data)
+            ? resJson.data
+            : [];
+
+      setResponsibles(datos);
+    } catch (error) {
+      console.error("Error:", error);
+      setResponsibles([]);
+    }
+  };
+
   useEffect(() => {
-    const fetchResponsibles = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:3000/api/responsible/ResponsibleAll",
-        );
-        const resJson = await response.json();
-        const datos = Array.isArray(resJson)
-          ? resJson
-          : Array.isArray(resJson.info)
-            ? resJson.info
-            : Array.isArray(resJson.data)
-              ? resJson.data
-              : [];
-        setResponsibles(datos);
-      } catch (error) {
-        console.error("Error:", error);
-        setResponsibles([]);
-      }
-    };
     fetchResponsibles();
   }, []);
+
+  const handleOpenCreate = () => {
+    setSelectedResponsible(null);
+    setIsModalOpen(true);
+  };
+
+  const handleOpenEdit = (responsible: Responsible) => {
+    setSelectedResponsible(responsible);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedResponsible(null);
+  };
 
   return (
     <div className="w-full bg-white px-4 py-8">
@@ -51,10 +75,21 @@ export default function TableResponsible({ actions }: TableResponsibleProps) {
         </div>
 
         <DataTable
-          columns={columns}
+          columns={getColumns(handleOpenEdit)}
           data={responsibles}
           filterPlaceholder="Buscar en todos los campos..."
-          toolbar={actions}
+          toolbar={
+            <ButtonCreate onClick={handleOpenCreate}>
+              Agregar Responsable
+            </ButtonCreate>
+          }
+        />
+
+        <FormCreationResponsible
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onSuccess={fetchResponsibles}
+          responsibleToEdit={selectedResponsible}
         />
       </div>
     </div>

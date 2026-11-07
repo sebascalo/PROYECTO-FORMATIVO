@@ -1,16 +1,15 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
-  DialogTrigger,
   DialogTitle,
 } from "../ui/dialog";
-import ButtonCreate from "../ui/buttonCreate";
+import { type Vacunation } from "./columns";
 
-// 👇 Tipos
 interface Cattle {
   id_Bovine: number;
   name: string;
@@ -24,10 +23,22 @@ interface Responsible {
   status: "Active" | "Inactive";
 }
 
-export default function FormCreationVacunation() {
-  const [open, setOpen] = useState(false);
+interface FormCreationVacunationProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess: () => void;
+  vacunationToEdit?: Vacunation | null;
+}
+
+export default function FormCreationVacunation({
+  isOpen,
+  onClose,
+  onSuccess,
+  vacunationToEdit = null,
+}: FormCreationVacunationProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
   const [formData, setFormData] = useState({
     id_Bovine: "",
     vaccination_date: new Date().toISOString().split("T")[0],
@@ -44,76 +55,11 @@ export default function FormCreationVacunation() {
 
   const [responsibles, setResponsibles] = useState<Responsible[]>([]);
   const [loadingResponsibles, setLoadingResponsibles] = useState(true);
-  const [responsiblesError, setResponsiblesError] = useState<string | null>(null);
+  const [responsiblesError, setResponsiblesError] = useState<string | null>(
+    null,
+  );
 
-  // 👇 Cargar bovinos
-  useEffect(() => {
-    const fetchCattles = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(
-          "http://localhost:3000/api/cattle/CattleAll?limit=500",
-          { headers: { Authorization: `Bearer ${token}` } },
-        );
-        const resJson = await response.json();
-        if (!response.ok) throw new Error(resJson?.message || "Error bovinos");
-
-        const activeCattles = (resJson.info ?? []).filter(
-          (c: Cattle) => c.active === true || Number(c.active) === 1,
-        );
-        setCattles(activeCattles);
-      } catch (err) {
-        console.error("Error bovinos:", err);
-        setCattlesError(
-          err instanceof Error ? err.message : "No se pudieron cargar bovinos",
-        );
-      } finally {
-        setLoadingCattles(false);
-      }
-    };
-    fetchCattles();
-  }, []);
-
-  // 👇 Cargar responsables
-  useEffect(() => {
-    const fetchResponsibles = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(
-          "http://localhost:3000/api/responsible/ResponsibleAll?limit=200",
-          { headers: { Authorization: `Bearer ${token}` } },
-        );
-        const resJson = await response.json();
-        if (!response.ok)
-          throw new Error(resJson?.message || "Error responsables");
-
-        const activeResponsibles = (resJson.info ?? []).filter(
-          (r: Responsible) => r.status === "Active",
-        );
-        setResponsibles(activeResponsibles);
-      } catch (err) {
-        console.error("Error responsables:", err);
-        setResponsiblesError(
-          err instanceof Error
-            ? err.message
-            : "No se pudieron cargar responsables",
-        );
-      } finally {
-        setLoadingResponsibles(false);
-      }
-    };
-    fetchResponsibles();
-  }, []);
-
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >,
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (error) setError(null);
-  };
+  const isEditing = Boolean(vacunationToEdit);
 
   const limpiarFormulario = () => {
     setFormData({
@@ -125,27 +71,159 @@ export default function FormCreationVacunation() {
       idResponsible: "",
       observations: "",
     });
+
     setError(null);
+  };
+
+  // Cargar los datos cuando se selecciona una vacunación para editar
+  useEffect(() => {
+    if (vacunationToEdit) {
+      setFormData({
+        id_Bovine: String(vacunationToEdit.id_Bovine ?? ""),
+        vaccination_date: vacunationToEdit.vaccination_date
+          ? new Date(vacunationToEdit.vaccination_date)
+              .toISOString()
+              .split("T")[0]
+          : "",
+        applied_dose: vacunationToEdit.applied_dose ?? "",
+        vaccine_lot: vacunationToEdit.vaccine_lot ?? "",
+        medicine_name: vacunationToEdit.medicine_name ?? "",
+        idResponsible: String(vacunationToEdit.idResponsible ?? ""),
+        observations: vacunationToEdit.observations ?? "",
+      });
+
+      setError(null);
+    } else {
+      limpiarFormulario();
+    }
+  }, [vacunationToEdit, isOpen]);
+
+  // Cargar bovinos
+  useEffect(() => {
+    const fetchCattles = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const response = await fetch(
+          "http://localhost:3000/api/cattle/CattleAll?limit=500",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
+
+        const resJson = await response.json();
+
+        if (!response.ok) {
+          throw new Error(resJson?.message || "Error bovinos");
+        }
+
+        const activeCattles = (resJson.info ?? []).filter(
+          (c: Cattle) => c.active === true || Number(c.active) === 1,
+        );
+
+        setCattles(activeCattles);
+      } catch (err) {
+        console.error("Error bovinos:", err);
+
+        setCattlesError(
+          err instanceof Error
+            ? err.message
+            : "No se pudieron cargar bovinos",
+        );
+      } finally {
+        setLoadingCattles(false);
+      }
+    };
+
+    fetchCattles();
+  }, []);
+
+  // Cargar responsables
+  useEffect(() => {
+    const fetchResponsibles = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const response = await fetch(
+          "http://localhost:3000/api/responsible/ResponsibleAll?limit=200",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
+
+        const resJson = await response.json();
+
+        if (!response.ok) {
+          throw new Error(resJson?.message || "Error responsables");
+        }
+
+        const activeResponsibles = (resJson.info ?? []).filter(
+          (r: Responsible) => r.status === "Active",
+        );
+
+        setResponsibles(activeResponsibles);
+      } catch (err) {
+        console.error("Error responsables:", err);
+
+        setResponsiblesError(
+          err instanceof Error
+            ? err.message
+            : "No se pudieron cargar responsables",
+        );
+      } finally {
+        setLoadingResponsibles(false);
+      }
+    };
+
+    fetchResponsibles();
+  }, []);
+
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
+  ) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    if (error) setError(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
-    // 👇 Validaciones previas
-    if (!formData.id_Bovine) return setError("Debes seleccionar un bovino");
-    if (!formData.vaccination_date) return setError("La fecha es obligatoria");
-    if (!formData.applied_dose.trim())
-      return setError("La dosis aplicada es obligatoria");
-    if (!formData.vaccine_lot.trim())
-      return setError("El lote de la vacuna es obligatorio");
-    if (!formData.medicine_name.trim())
-      return setError("El nombre del medicamento es obligatorio");
-    if (!formData.idResponsible)
-      return setError("Debes seleccionar un responsable");
+    if (!formData.id_Bovine) {
+      return setError("Debes seleccionar un bovino");
+    }
 
-    if (new Date(formData.vaccination_date) > new Date())
+    if (!formData.vaccination_date) {
+      return setError("La fecha es obligatoria");
+    }
+
+    if (!formData.applied_dose.trim()) {
+      return setError("La dosis aplicada es obligatoria");
+    }
+
+    if (!formData.vaccine_lot.trim()) {
+      return setError("El lote de la vacuna es obligatorio");
+    }
+
+    if (!formData.medicine_name.trim()) {
+      return setError("El nombre del medicamento es obligatorio");
+    }
+
+    if (!formData.idResponsible) {
+      return setError("Debes seleccionar un responsable");
+    }
+
+    if (new Date(formData.vaccination_date) > new Date()) {
       return setError("La fecha no puede ser futura");
+    }
 
     const datosEnviar = {
       id_Bovine: Number(formData.id_Bovine),
@@ -158,24 +236,29 @@ export default function FormCreationVacunation() {
     };
 
     setIsSubmitting(true);
+
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(
-        "http://localhost:3000/api/vacunation/CreateVacunation",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(datosEnviar),
+
+      const url = isEditing
+        ? `http://localhost:3000/api/vacunation/UpdateVacunation/${vacunationToEdit?.id_vacunation}`
+        : "http://localhost:3000/api/vacunation/CreateVacunation";
+
+      const response = await fetch(url, {
+        method: isEditing ? "PUT" : "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-      );
+        body: JSON.stringify(datosEnviar),
+      });
 
       if (!response.ok) {
         let backendMessage = "";
+
         try {
           const errorBody = await response.json();
+
           if (Array.isArray(errorBody?.errors)) {
             backendMessage = errorBody.errors
               .map((e: { message?: string } | string) =>
@@ -191,16 +274,20 @@ export default function FormCreationVacunation() {
         } catch {
           backendMessage = await response.text();
         }
+
         throw new Error(
-          `El servidor respondió ${response.status}: ${backendMessage || "sin detalle"}`,
+          `El servidor respondió ${response.status}: ${
+            backendMessage || "sin detalle"
+          }`,
         );
       }
 
       limpiarFormulario();
-      setOpen(false);
-      window.location.reload();
+      onSuccess();
+      onClose();
     } catch (error) {
       console.error("Error:", error);
+
       setError(
         error instanceof Error
           ? error.message
@@ -212,19 +299,19 @@ export default function FormCreationVacunation() {
   };
 
   const handleOpenChange = (newOpen: boolean) => {
-    if (!newOpen) limpiarFormulario();
-    setOpen(newOpen);
+    if (!newOpen) {
+      limpiarFormulario();
+      onClose();
+    }
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <ButtonCreate>Agregar Vacunación</ButtonCreate>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[425px] md:max-w-[800px]">
         <DialogTitle className="font-bold text-2xl text-center">
-          Crear Vacunación
+          {isEditing ? "Editar Vacunación" : "Crear Vacunación"}
         </DialogTitle>
+
         <form
           id="vacunation-create-form"
           onSubmit={handleSubmit}
@@ -239,6 +326,7 @@ export default function FormCreationVacunation() {
               >
                 Bovino:
               </label>
+
               <select
                 id="id_Bovine"
                 name="id_Bovine"
@@ -254,12 +342,14 @@ export default function FormCreationVacunation() {
                       ? "Error al cargar bovinos"
                       : "Seleccione un bovino"}
                 </option>
+
                 {cattles.map((c) => (
                   <option key={c.id_Bovine} value={c.id_Bovine}>
                     {c.id_Bovine} - {c.name}
                   </option>
                 ))}
               </select>
+
               {cattlesError && (
                 <p className="text-xs text-red-600 mt-1">{cattlesError}</p>
               )}
@@ -273,6 +363,7 @@ export default function FormCreationVacunation() {
               >
                 Fecha de Vacunación:
               </label>
+
               <input
                 type="date"
                 id="vaccination_date"
@@ -292,6 +383,7 @@ export default function FormCreationVacunation() {
               >
                 Dosis Aplicada (ml):
               </label>
+
               <input
                 type="text"
                 id="applied_dose"
@@ -311,6 +403,7 @@ export default function FormCreationVacunation() {
               >
                 Lote de Vacuna:
               </label>
+
               <input
                 type="text"
                 id="vaccine_lot"
@@ -331,6 +424,7 @@ export default function FormCreationVacunation() {
               >
                 Medicamento:
               </label>
+
               <input
                 type="text"
                 id="medicine_name"
@@ -351,6 +445,7 @@ export default function FormCreationVacunation() {
               >
                 Responsable:
               </label>
+
               <select
                 id="idResponsible"
                 name="idResponsible"
@@ -366,12 +461,14 @@ export default function FormCreationVacunation() {
                       ? "Error al cargar responsables"
                       : "Seleccione un responsable"}
                 </option>
+
                 {responsibles.map((r) => (
                   <option key={r.idResponsible} value={r.idResponsible}>
                     {r.fullName} - {r.role}
                   </option>
                 ))}
               </select>
+
               {responsiblesError && (
                 <p className="text-xs text-red-600 mt-1">
                   {responsiblesError}
@@ -388,6 +485,7 @@ export default function FormCreationVacunation() {
             >
               Observaciones:
             </label>
+
             <div className="relative">
               <textarea
                 id="observations"
@@ -399,11 +497,15 @@ export default function FormCreationVacunation() {
                 className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043] bg-white resize-none"
                 placeholder="Escribe tus observaciones..."
               />
+
               {formData.observations.length > 0 && (
                 <button
                   type="button"
                   onClick={() =>
-                    setFormData((prev) => ({ ...prev, observations: "" }))
+                    setFormData((prev) => ({
+                      ...prev,
+                      observations: "",
+                    }))
                   }
                   className="absolute top-3 right-3 flex items-center justify-center w-6 h-6 rounded-full bg-gray-300 hover:bg-gray-400 text-white transition-colors"
                   aria-label="Limpiar observaciones"
@@ -425,10 +527,13 @@ export default function FormCreationVacunation() {
                 </button>
               )}
             </div>
+
             <div className="flex justify-between items-center mt-1">
               <p className="text-sm text-gray-600">
-                Complete los campos para crear una nueva vacunación.
+                Complete los campos para {isEditing ? "actualizar" : "crear"}{" "}
+                una vacunación.
               </p>
+
               <p className="text-sm text-gray-500">
                 {formData.observations.length}/100
               </p>
@@ -436,9 +541,8 @@ export default function FormCreationVacunation() {
           </div>
         </form>
 
-        {/* 👇 Oculto para accesibilidad */}
         <DialogDescription className="sr-only">
-          Complete los campos para crear una nueva vacunación.
+          Complete los campos para registrar o actualizar una vacunación.
         </DialogDescription>
 
         <DialogFooter className="flex-col gap-2 sm:flex-col">
@@ -447,22 +551,31 @@ export default function FormCreationVacunation() {
               ⚠️ {error}
             </p>
           )}
+
           <div className="flex flex-row gap-2 w-full">
             <button
               type="button"
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                limpiarFormulario();
+                onClose();
+              }}
               disabled={isSubmitting}
               className="flex-1 cursor-pointer border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 font-medium py-2 px-4 rounded-md transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               Cancelar
             </button>
+
             <button
               type="submit"
               form="vacunation-create-form"
               disabled={isSubmitting}
               className="flex-1 bg-green-600 text-white font-medium py-2 px-4 rounded-md hover:bg-green-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500/40 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? "Guardando..." : "Guardar Vacunación"}
+              {isSubmitting
+                ? "Guardando..."
+                : isEditing
+                  ? "Actualizar Vacunación"
+                  : "Guardar Vacunación"}
             </button>
           </div>
         </DialogFooter>

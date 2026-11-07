@@ -1,6 +1,7 @@
 "use client";
 
 import { createColumnHelper } from "@tanstack/react-table";
+import { Pencil } from "lucide-react";
 import { type SharedTableFeatures } from "@/components/ui/data-table-features";
 
 export type ResponsibleData = {
@@ -18,13 +19,15 @@ export type Vacunation = {
   medicine_name: string;
   idResponsible: number;
   observations: string;
-  active: boolean; // 👈 NUEVO
+  active: boolean;
   responsibleData?: ResponsibleData | null;
 };
 
 const formatDate = (dateString?: string | null) => {
   if (!dateString) return "-";
+
   const date = new Date(dateString);
+
   return date.toLocaleDateString("es-ES", {
     year: "numeric",
     month: "2-digit",
@@ -34,84 +37,119 @@ const formatDate = (dateString?: string | null) => {
 
 const columnHelper = createColumnHelper<SharedTableFeatures, Vacunation>();
 
-export const columns = columnHelper.columns([
-  columnHelper.accessor("id_Bovine", {
-    header: "ID Bovino",
-    filterFn: (row, id, value) => {
-      return String(row.getValue(id)).toLowerCase().includes(value.toLowerCase());
-    },
-    cell: ({ getValue }) => (
-      <span className="font-medium text-[#2B2A26]">
-        {getValue() ?? "Sin bovino"}
-      </span>
-    ),
-  }),
-  columnHelper.accessor("vaccination_date", {
-    header: "Fecha",
-    cell: ({ getValue }) => formatDate(getValue()),
-  }),
-  columnHelper.accessor("applied_dose", {
-    header: "Dosis (ml)",
-    cell: ({ getValue }) => {
-      const value = getValue();
-      if (!value) return <span className="text-[#6B6459]">-</span>;
-      return (
-        <span className="text-[#2B2A26] tabular-nums">
-          {value.toLowerCase().includes("ml") ? value : `${value} ml`}
+export const getColumns = (
+  handleOpenEdit: (vacunation: Vacunation) => void,
+) =>
+  columnHelper.columns([
+    columnHelper.accessor("id_Bovine", {
+      header: "ID Bovino",
+      filterFn: (row, id, value) => {
+        return String(row.getValue(id))
+          .toLowerCase()
+          .includes(value.toLowerCase());
+      },
+      cell: ({ getValue }) => (
+        <span className="font-medium text-[#2B2A26]">
+          {getValue() ?? "Sin bovino"}
         </span>
-      );
-    },
-  }),
-  columnHelper.accessor("vaccine_lot", {
-    header: "Lote",
-    cell: ({ getValue }) => (
-      <span className="text-[#6B6459]">{getValue() || "-"}</span>
-    ),
-  }),
-  columnHelper.accessor("medicine_name", {
-    header: "Medicamento",
-    cell: ({ getValue }) => (
-      <span className="text-[#2B2A26]">{getValue() || "-"}</span>
-    ),
-  }),
-  columnHelper.accessor("responsibleData", {
-    header: "Responsable",
-    cell: ({ getValue }) => {
-      const responsible = getValue();
-      if (!responsible) return <span className="text-[#6B6459]">-</span>;
-      return (
-        <div className="flex flex-col">
-          <span className="text-[#2B2A26] font-medium">
-            {responsible.fullName}
+      ),
+    }),
+
+    columnHelper.accessor("vaccination_date", {
+      header: "Fecha",
+      cell: ({ getValue }) => formatDate(getValue()),
+    }),
+
+    columnHelper.accessor("applied_dose", {
+      header: "Dosis (ml)",
+      cell: ({ getValue }) => {
+        const value = getValue();
+
+        if (!value) return <span className="text-[#6B6459]">-</span>;
+
+        return (
+          <span className="text-[#2B2A26] tabular-nums">
+            {value.toLowerCase().includes("ml") ? value : `${value} ml`}
           </span>
-          <span className="text-xs text-[#6B6459]">{responsible.role}</span>
-        </div>
-      );
-    },
-  }),
-  columnHelper.accessor("observations", {
-    header: "Observaciones",
-    cell: ({ getValue }) => (
-      <span className="text-[#6B6459] text-sm">{getValue() || "-"}</span>
-    ),
-  }),
-  // 👇 NUEVA COLUMNA ESTADO
-  columnHelper.accessor("active", {
-    header: "Estado",
-    cell: ({ getValue }) => {
-      const isActive = getValue() === true;
-      return (
-        <span className="inline-flex items-center gap-1.5 text-sm">
-          <span
-            className={`h-1.5 w-1.5 rounded-full ${
-              isActive ? "bg-[#4B6043]" : "bg-[#B0A896]"
-            }`}
-          />
-          <span className={isActive ? "text-[#2B2A26]" : "text-[#6B6459]"}>
-            {isActive ? "Activo" : "Inactivo"}
+        );
+      },
+    }),
+
+    columnHelper.accessor("vaccine_lot", {
+      header: "Lote",
+      cell: ({ getValue }) => (
+        <span className="text-[#6B6459]">{getValue() || "-"}</span>
+      ),
+    }),
+
+    columnHelper.accessor("medicine_name", {
+      header: "Medicamento",
+      cell: ({ getValue }) => (
+        <span className="text-[#2B2A26]">{getValue() || "-"}</span>
+      ),
+    }),
+
+    columnHelper.accessor("responsibleData", {
+      header: "Responsable",
+      cell: ({ getValue }) => {
+        const responsible = getValue();
+
+        if (!responsible) {
+          return <span className="text-[#6B6459]">-</span>;
+        }
+
+        return (
+          <div className="flex flex-col">
+            <span className="text-[#2B2A26] font-medium">
+              {responsible.fullName}
+            </span>
+            <span className="text-xs text-[#6B6459]">
+              {responsible.role}
+            </span>
+          </div>
+        );
+      },
+    }),
+
+    columnHelper.accessor("observations", {
+      header: "Observaciones",
+      cell: ({ getValue }) => (
+        <span className="text-[#6B6459] text-sm">{getValue() || "-"}</span>
+      ),
+    }),
+
+    columnHelper.accessor("active", {
+      header: "Estado",
+      cell: ({ getValue }) => {
+        const isActive = getValue() === true;
+
+        return (
+          <span className="inline-flex items-center gap-1.5 text-sm">
+            <span
+              className={`h-1.5 w-1.5 rounded-full ${
+                isActive ? "bg-[#4B6043]" : "bg-[#B0A896]"
+              }`}
+            />
+            <span className={isActive ? "text-[#2B2A26]" : "text-[#6B6459]"}>
+              {isActive ? "Activo" : "Inactivo"}
+            </span>
           </span>
-        </span>
-      );
-    },
-  }),
-]);
+        );
+      },
+    }),
+
+    columnHelper.display({
+      id: "actions",
+      header: "Acciones",
+      cell: ({ row }) => (
+        <button
+          type="button"
+          onClick={() => handleOpenEdit(row.original)}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#4B6043] bg-[#4B6043]/10 hover:bg-[#4B6043]/20 rounded-md transition-colors cursor-pointer"
+        >
+          <Pencil size={14} />
+          Editar
+        </button>
+      ),
+    }),
+  ]);

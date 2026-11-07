@@ -1,10 +1,12 @@
+
 "use client";
 
 import { createColumnHelper } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { type SharedTableFeatures } from "@/components/ui/data-table-features";
+import { Pencil } from "lucide-react";
 
-// 👇 Tipos del JOIN
+// Tipos del JOIN
 export type CattleData = {
   id_Bovine: number;
   name: string;
@@ -55,8 +57,9 @@ const foodTypeStyles: Record<string, string> = {
 
 const columnHelper = createColumnHelper<SharedTableFeatures, Nutrition>();
 
-export const columns = columnHelper.columns([
-  // 👇 ID BOVINO (antes "Bovino", ahora muestra el id_Bovine)
+export const getColumns = (
+  handleOpenEdit: (nutrition: Nutrition) => void,
+) => columnHelper.columns([
   columnHelper.accessor("cattleData", {
     header: "ID BOVINO",
     cell: ({ getValue }) => {
@@ -68,14 +71,18 @@ export const columns = columnHelper.columns([
       );
     },
   }),
+
   columnHelper.accessor("foodData", {
     header: "Alimento",
     cell: ({ getValue }) => {
       const food = getValue();
       if (!food) return <span className="text-[#6B6459]">-</span>;
+
       return (
         <div className="flex flex-col gap-1">
-          <span className="font-medium text-[#2B2A26]">{food.food_name}</span>
+          <span className="font-medium text-[#2B2A26]">
+            {food.food_name}
+          </span>
           <Badge
             className={
               foodTypeStyles[food.food_type] ?? "bg-[#8C8266] text-white"
@@ -87,17 +94,22 @@ export const columns = columnHelper.columns([
       );
     },
   }),
+
   columnHelper.accessor("quantity", {
     header: "Cantidad",
     cell: ({ getValue }) => (
-      <span className="text-[#2B2A26] tabular-nums">{getValue() || "-"}</span>
+      <span className="text-[#2B2A26] tabular-nums">
+        {getValue() || "-"}
+      </span>
     ),
   }),
+
   columnHelper.accessor("frequency", {
     header: "Frecuencia",
     cell: ({ getValue }) => {
       const value = getValue();
       if (!value) return <span className="text-[#6B6459]">-</span>;
+
       return (
         <Badge className={frequencyStyles[value] ?? "bg-[#8C8266] text-white"}>
           {value}
@@ -105,25 +117,31 @@ export const columns = columnHelper.columns([
       );
     },
   }),
+
   columnHelper.accessor("responsibleData", {
     header: "Responsable",
     cell: ({ getValue }) => {
       const responsible = getValue();
       if (!responsible) return <span className="text-[#6B6459]">-</span>;
+
       return (
         <div className="flex flex-col">
           <span className="text-[#2B2A26] font-medium">
             {responsible.fullName}
           </span>
-          <span className="text-xs text-[#6B6459]">{responsible.role}</span>
+          <span className="text-xs text-[#6B6459]">
+            {responsible.role}
+          </span>
         </div>
       );
     },
   }),
+
   columnHelper.accessor("active", {
     header: "Estado",
     cell: ({ getValue }) => {
       const isActive = getValue() === true;
+
       return (
         <span className="inline-flex items-center gap-1.5 text-sm">
           <span
@@ -137,5 +155,20 @@ export const columns = columnHelper.columns([
         </span>
       );
     },
+  }),
+
+  columnHelper.display({
+    id: "actions",
+    header: "Acciones",
+    cell: ({ row }) => (
+      <button
+        type="button"
+        onClick={() => handleOpenEdit(row.original)}
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#4B6043] bg-[#4B6043]/10 hover:bg-[#4B6043]/20 rounded-md transition-colors cursor-pointer"
+      >
+        <Pencil size={14} />
+        Editar
+      </button>
+    ),
   }),
 ]);

@@ -1,10 +1,11 @@
+
 "use client";
 
 import { createColumnHelper } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { type SharedTableFeatures } from "@/components/ui/data-table-features";
+import { Pencil } from "lucide-react";
 
-// Forma de los datos que devuelve tu API (/api/responsible/ResponsibleAll)
 export type Responsible = {
   idResponsible: number | string;
   fullName: string;
@@ -14,7 +15,6 @@ export type Responsible = {
   status: string;
 };
 
-// Colores por rol
 const roleStyles: Record<string, string> = {
   Veterinario: "bg-[#4B6043] text-white hover:bg-[#405539]",
   Administrador: "bg-[#8C8266] text-white hover:bg-[#77704F]",
@@ -26,7 +26,9 @@ const roleStyles: Record<string, string> = {
 
 const columnHelper = createColumnHelper<SharedTableFeatures, Responsible>();
 
-export const columns = columnHelper.columns([
+export const getColumns = (
+  handleOpenEdit: (responsible: Responsible) => void
+) => columnHelper.columns([
   columnHelper.accessor("fullName", {
     header: "Nombre Completo",
     cell: ({ getValue }) => (
@@ -62,8 +64,7 @@ export const columns = columnHelper.columns([
   columnHelper.accessor("status", {
     header: "Estado",
     cell: ({ getValue }) => {
-      const value = getValue();
-      const isActive = value === "Active";
+      const isActive = getValue() === "Active";
       return (
         <span className="inline-flex items-center gap-1.5 text-sm">
           <span
@@ -77,5 +78,19 @@ export const columns = columnHelper.columns([
         </span>
       );
     },
+  }),
+  columnHelper.display({
+    id: "actions",
+    header: "Acciones",
+    cell: ({ row }) => (
+      <button
+        type="button"
+        onClick={() => handleOpenEdit(row.original)}
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#4B6043] bg-[#4B6043]/10 hover:bg-[#4B6043]/20 rounded-md transition-colors cursor-pointer"
+      >
+        <Pencil size={14} />
+        Editar
+      </button>
+    ),
   }),
 ]);

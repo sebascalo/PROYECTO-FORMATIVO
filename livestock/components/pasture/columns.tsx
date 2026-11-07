@@ -1,8 +1,10 @@
+
 "use client";
 
 import { createColumnHelper } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { type SharedTableFeatures } from "@/components/ui/data-table-features";
+import { Pencil } from "lucide-react";
 
 export type Pasture = {
   id_pasture: number | string;
@@ -14,12 +16,17 @@ export type Pasture = {
   cattleEntryDate: string | null;
   cattleExitDate: string | null;
   observations: string;
-  active: boolean; // 👈 NUEVO
+  active: boolean;
 };
 
 const formatDate = (dateString?: string | null) => {
   if (!dateString) return "-";
-  return new Date(dateString).toLocaleDateString("es-ES", { year: "numeric", month: "2-digit", day: "2-digit" });
+
+  return new Date(dateString).toLocaleDateString("es-ES", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
 };
 
 const statusStyles: Record<string, string> = {
@@ -29,47 +36,80 @@ const statusStyles: Record<string, string> = {
 
 const columnHelper = createColumnHelper<SharedTableFeatures, Pasture>();
 
-export const columns = columnHelper.columns([
+export const getColumns = (
+  handleOpenEdit: (pasture: Pasture) => void
+) => columnHelper.columns([
   columnHelper.accessor("name", {
     header: "Nombre",
-    cell: ({ getValue }) => <span className="font-medium text-[#2B2A26]">{getValue()}</span>,
+    cell: ({ getValue }) => (
+      <span className="font-medium text-[#2B2A26]">
+        {getValue()}
+      </span>
+    ),
   }),
+
   columnHelper.accessor("extension", {
     header: () => <div className="text-right">Extensión</div>,
-    cell: ({ getValue }) => <div className="text-right tabular-nums">{getValue()} ha</div>,
+    cell: ({ getValue }) => (
+      <div className="text-right tabular-nums">
+        {getValue()} ha
+      </div>
+    ),
   }),
+
   columnHelper.accessor("forageCapacity", {
     header: () => <div className="text-right">Aforo</div>,
-    cell: ({ getValue }) => <div className="text-right tabular-nums">{getValue()} anim.</div>,
+    cell: ({ getValue }) => (
+      <div className="text-right tabular-nums">
+        {getValue()} anim.
+      </div>
+    ),
   }),
+
   columnHelper.accessor("pastureType", {
     header: "Tipo Pastura",
-    cell: ({ getValue }) => <span className="text-[#2B2A26]">{getValue()}</span>,
+    cell: ({ getValue }) => (
+      <span className="text-[#2B2A26]">{getValue()}</span>
+    ),
   }),
+
   columnHelper.accessor("currentStatus", {
     header: "Estado Actual",
     cell: ({ getValue }) => {
       const value = getValue();
-      return <Badge className={statusStyles[value] ?? "bg-[#8C8266] text-white"}>{value}</Badge>;
+
+      return (
+        <Badge className={statusStyles[value] ?? "bg-[#8C8266] text-white"}>
+          {value}
+        </Badge>
+      );
     },
   }),
+
   columnHelper.accessor("cattleEntryDate", {
     header: "Ingreso",
     cell: ({ getValue }) => formatDate(getValue()),
   }),
+
   columnHelper.accessor("cattleExitDate", {
     header: "Salida",
     cell: ({ getValue }) => formatDate(getValue()),
   }),
+
   columnHelper.accessor("observations", {
     header: "Observaciones",
-    cell: ({ getValue }) => <span className="text-[#6B6459] text-sm">{getValue() || "-"}</span>,
+    cell: ({ getValue }) => (
+      <span className="text-[#6B6459] text-sm">
+        {getValue() || "-"}
+      </span>
+    ),
   }),
-  // 👇 NUEVA COLUMNA ESTADO
+
   columnHelper.accessor("active", {
     header: "Estado",
     cell: ({ getValue }) => {
       const isActive = getValue() === true;
+
       return (
         <span className="inline-flex items-center gap-1.5 text-sm">
           <span
@@ -77,11 +117,27 @@ export const columns = columnHelper.columns([
               isActive ? "bg-[#4B6043]" : "bg-[#B0A896]"
             }`}
           />
+
           <span className={isActive ? "text-[#2B2A26]" : "text-[#6B6459]"}>
             {isActive ? "Activo" : "Inactivo"}
           </span>
         </span>
       );
     },
+  }),
+
+  columnHelper.display({
+    id: "actions",
+    header: "Acciones",
+    cell: ({ row }) => (
+      <button
+        type="button"
+        onClick={() => handleOpenEdit(row.original)}
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#4B6043] bg-[#4B6043]/10 hover:bg-[#4B6043]/20 rounded-md transition-colors cursor-pointer"
+      >
+        <Pencil size={14} />
+        Editar
+      </button>
+    ),
   }),
 ]);

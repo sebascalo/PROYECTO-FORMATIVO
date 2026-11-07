@@ -1,8 +1,10 @@
+
 "use client";
 
 import { createColumnHelper } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { type SharedTableFeatures } from "@/components/ui/data-table-features";
+import { Pencil } from "lucide-react";
 
 export type ResponsibleData = {
   idResponsible: number;
@@ -24,7 +26,11 @@ export type Milk = {
 
 const formatDate = (dateString?: string | null) => {
   if (!dateString) return "-";
-  return new Date(dateString).toLocaleDateString("es-ES", { year: "numeric", month: "2-digit", day: "2-digit" });
+  return new Date(dateString).toLocaleDateString("es-ES", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
 };
 
 const shiftStyles: Record<string, string> = {
@@ -35,65 +41,107 @@ const shiftStyles: Record<string, string> = {
 
 const columnHelper = createColumnHelper<SharedTableFeatures, Milk>();
 
-export const columns = columnHelper.columns([
-  // 👇 COLUMNA BOVINO con filtro de búsqueda arreglado
-  columnHelper.accessor("id_Bovine", {
-    header: "ID Bovino",
-    // 👇 Forzamos a que el filtro convierta el ID a texto para que funcione el buscador
-    filterFn: (row, id, value) => {
-      const searchValue = value.toLowerCase();
-      const rowValue = String(row.getValue(id)).toLowerCase();
-      return rowValue.includes(searchValue);
-    },
-    cell: ({ getValue }) => <span className="font-medium text-[#2B2A26]">{getValue()}</span>,
-  }),
-  columnHelper.accessor("milkingDate", {
-    header: "Fecha",
-    cell: ({ getValue }) => formatDate(getValue()),
-  }),
-  columnHelper.accessor("shift", {
-    header: "Turno",
-    cell: ({ getValue }) => {
-      const value = getValue();
-      if (!value) return <span className="text-[#6B6459]">-</span>;
-      return <Badge className={shiftStyles[value] ?? "bg-[#8C8266] text-white"}>{value}</Badge>;
-    },
-  }),
-  columnHelper.accessor("litersQuantity", {
-    header: () => <div className="text-right">Litros</div>,
-    cell: ({ getValue }) => (
-      <div className="text-right tabular-nums font-medium text-[#2B2A26]">
-        {getValue() !== null && getValue() !== undefined ? `${getValue()} L` : "-"}
-      </div>
-    ),
-  }),
-  columnHelper.accessor("responsibleData", {
-    header: "Responsable",
-    cell: ({ getValue }) => {
-      const responsible = getValue();
-      if (!responsible) return <span className="text-[#6B6459]">-</span>;
-      return (
-        <div className="flex flex-col">
-          <span className="text-[#2B2A26] font-medium">{responsible.fullName}</span>
-          <span className="text-xs text-[#6B6459]">{responsible.role}</span>
+export const getColumns = (handleOpenEdit: (milk: Milk) => void) =>
+  columnHelper.columns([
+    columnHelper.accessor("id_Bovine", {
+      header: "ID Bovino",
+      filterFn: (row, id, value) => {
+        const searchValue = value.toLowerCase();
+        const rowValue = String(row.getValue(id)).toLowerCase();
+        return rowValue.includes(searchValue);
+      },
+      cell: ({ getValue }) => (
+        <span className="font-medium text-[#2B2A26]">{getValue()}</span>
+      ),
+    }),
+
+    columnHelper.accessor("milkingDate", {
+      header: "Fecha",
+      cell: ({ getValue }) => formatDate(getValue()),
+    }),
+
+    columnHelper.accessor("shift", {
+      header: "Turno",
+      cell: ({ getValue }) => {
+        const value = getValue();
+        if (!value) return <span className="text-[#6B6459]">-</span>;
+        return (
+          <Badge className={shiftStyles[value] ?? "bg-[#8C8266] text-white"}>
+            {value}
+          </Badge>
+        );
+      },
+    }),
+
+    columnHelper.accessor("litersQuantity", {
+      header: () => <div className="text-right">Litros</div>,
+      cell: ({ getValue }) => (
+        <div className="text-right tabular-nums font-medium text-[#2B2A26]">
+          {getValue() !== null && getValue() !== undefined
+            ? `${getValue()} L`
+            : "-"}
         </div>
-      );
-    },
-  }),
-  columnHelper.accessor("observations", {
-    header: "Observaciones",
-    cell: ({ getValue }) => <span className="text-[#6B6459] text-sm">{getValue() || "-"}</span>,
-  }),
-  columnHelper.accessor("active", {
-    header: "Estado",
-    cell: ({ getValue }) => {
-      const isActive = getValue() === true;
-      return (
-        <span className="inline-flex items-center gap-1.5 text-sm">
-          <span className={`h-1.5 w-1.5 rounded-full ${isActive ? "bg-[#4B6043]" : "bg-[#B0A896]"}`} />
-          <span className={isActive ? "text-[#2B2A26]" : "text-[#6B6459]"}>{isActive ? "Activo" : "Inactivo"}</span>
+      ),
+    }),
+
+    columnHelper.accessor("responsibleData", {
+      header: "Responsable",
+      cell: ({ getValue }) => {
+        const responsible = getValue();
+        if (!responsible) return <span className="text-[#6B6459]">-</span>;
+        return (
+          <div className="flex flex-col">
+            <span className="text-[#2B2A26] font-medium">
+              {responsible.fullName}
+            </span>
+            <span className="text-xs text-[#6B6459]">
+              {responsible.role}
+            </span>
+          </div>
+        );
+      },
+    }),
+
+    columnHelper.accessor("observations", {
+      header: "Observaciones",
+      cell: ({ getValue }) => (
+        <span className="text-[#6B6459] text-sm">
+          {getValue() || "-"}
         </span>
-      );
-    },
-  }),
-]);
+      ),
+    }),
+
+    columnHelper.accessor("active", {
+      header: "Estado",
+      cell: ({ getValue }) => {
+        const isActive = getValue() === true;
+        return (
+          <span className="inline-flex items-center gap-1.5 text-sm">
+            <span
+              className={`h-1.5 w-1.5 rounded-full ${
+                isActive ? "bg-[#4B6043]" : "bg-[#B0A896]"
+              }`}
+            />
+            <span className={isActive ? "text-[#2B2A26]" : "text-[#6B6459]"}>
+              {isActive ? "Activo" : "Inactivo"}
+            </span>
+          </span>
+        );
+      },
+    }),
+
+    columnHelper.display({
+      id: "actions",
+      header: "Acciones",
+      cell: ({ row }) => (
+        <button
+          type="button"
+          onClick={() => handleOpenEdit(row.original)}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#4B6043] bg-[#4B6043]/10 hover:bg-[#4B6043]/20 rounded-md transition-colors cursor-pointer"
+        >
+          <Pencil size={14} />
+          Editar
+        </button>
+      ),
+    }),
+  ]);

@@ -10,72 +10,74 @@ import {
 } from "../ui/dialog";
 import ButtonCreate from "../ui/buttonCreate";
 import { Eye, EyeClosed } from "lucide-react";
-import type { User } from "./columns";
+import { API_USER_URL } from "@/api/config";
 
-const API_URL = "http://localhost:3000/api/user";
+// import {User} from "@/app/admin/usuarios/page";
+import { type User } from "./columns";
 
-const emptyForm = {
-  name: "",
-  email: "",
-  password: "",
-  documentId: "",
-  postJob: "",
-  active: true,
-  verifyEmail: false,
-};
+// 1. tipo para los cargos permitidos 
+export type UserRole = "administrador" | "instructor" | "pasante" | "gerente";
 
-interface FormCreationUserProps {
-  // Si viene un usuario => modo EDITAR. Si no viene => modo CREAR.
-  userToEdit?: User | null;
-  // Modo controlado (lo usa la tabla para abrir el modal desde el botón Editar).
-  // Si NO se envían, el componente se comporta como antes, con su propio botón.
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  // Se ejecuta cuando se guardó bien (para refrescar la tabla)
-  onSuccess?: () => void;
+// 2. interfaz de los datos que se envian al backend
+interface UserPayload {
+  name: string;
+  email: string;
+  password: string; //opcional con '?', ya que al editar no siempre se cambia
+  documentId: string;
+  postJob: UserRole;
+  verifyEmail: boolean;
+  active: boolean;
 }
 
+// 4. interfaz de los props del componente
+interface FormCreationUserProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess: () => void;
+  userToEdit?: User | null; //si viene null es crear, si viene objeto es EDITAR
+}
+
+// 5.Retorno tipado: React.jsx.Element | null
 export default function FormCreationUser({
-  userToEdit = null,
-  open,
-  onOpenChange,
+  isOpen,
+  onClose,
   onSuccess,
-}: FormCreationUserProps) {
-  const isEditMode = Boolean(userToEdit);
-
-  // Abierto controlado desde afuera (editar) o interno (crear)
-  const isControlled = open !== undefined;
-  const [internalOpen, setInternalOpen] = useState(false);
-  const isOpen = isControlled ? open : internalOpen;
-  const setOpen = (value: boolean) => {
-    if (isControlled) onOpenChange?.(value);
-    else setInternalOpen(value);
-  };
-
+  userToEdit = null, //valor por defecto 
+}: FormCreationUserProps): React.JSX.Element | null {
+  // const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [formData, setFormData] = useState(emptyForm);
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    documentId: "",
+    postJob: "",
+  });
 
   // Estados para el ojito
   const [showPassword, setShowPassword] = useState(false);
   const typePassword = showPassword ? "text" : "password";
 
-  // Al abrir en modo edición, cargamos los datos del usuario en el formulario
+  //Detectar si estamos en modo edición 
+  const isEditing = Boolean(userToEdit);
+
   useEffect(() => {
-    if (isOpen && userToEdit) {
+
+    if (userToEdit) {
       setFormData({
         name: userToEdit.name ?? "",
         email: userToEdit.email ?? "",
-        password: "", // se deja vacía: solo se envía si el usuario escribe una nueva
+        password: "",
         documentId: userToEdit.documentId ?? "",
         postJob: userToEdit.postJob ?? "",
-        active: Boolean(userToEdit.active),
-        verifyEmail: Boolean(userToEdit.verifyEmail),
       });
-      setShowPassword(false);
-      setError(null);
+    } else {
+      limpiarFormulario();
     }
-  }, [isOpen, userToEdit]);
+
+  }, [userToEdit, isOpen]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -84,8 +86,12 @@ export default function FormCreationUser({
 
     // VALIDACIÓN SOLO PARA EL DOCUMENTO
     if (name === "documentId") {
-      const soloNumeros = value.replace(/\D/g, "").slice(0, 10);
-      setFormData((prev) => ({ ...prev, [name]: soloNumeros }));
+      // Reemplaza cualquier cosa que no sea un número del 0 al 9 por un string vacío
+      const soloNumeros = value.replace(/\D/g, "");
+      // Corta el string a máximo 10 caracteres
+      const recortado = soloNumeros.slice(0, 10);
+
+      setFormData((prev) => ({ ...prev, [name]: recortado }));
       if (error) setError(null);
       return;
     }
@@ -117,33 +123,30 @@ export default function FormCreationUser({
     try {
       const token = localStorage.getItem("token");
 
-      // URL y método según el modo
-      const url = userToEdit
-        ? `${API_URL}/UpdateUser/${userToEdit.userId}`
-        : `${API_URL}/CreateUser`;
-      const method = userToEdit ? "PUT" : "POST";
+      const url = isEditing
+        ? `http://localhost:3000/api/user/UpdateUser/${userToEdit?.userId}`
+        : `http://localhost:3000/api/user/CreateUser`;
 
-      // Payload según el modo
-      const { name, email, password, documentId, postJob, active, verifyEmail } =
-        formData;
-      const payload = userToEdit
+      const method = isEditing ? "PUT" : "POST";
+
+      const payload = isEditing
         ? {
-            name,
-            email,
-            documentId,
-            postJob,
-            active,
-            verifyEmail,
-            // solo se envía la contraseña si escribieron una nueva
-            ...(password.trim() !== "" ? { password } : {}),
-          }
-        : { name, email, password, documentId, postJob };
+          name: formData.name,
+          email: formData.email,
+          documentId: formData.documentId,
+          postJob: formData.postJob,
+        }
+        : formData;
 
-      const response = await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const response = await fetch(
+        url,
+        {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload),
         },
         body: JSON.stringify(payload),
       });
@@ -173,8 +176,10 @@ export default function FormCreationUser({
       }
 
       limpiarFormulario();
-      setOpen(false);
-      onSuccess?.(); // la tabla se refresca sin recargar toda la página
+      // setOpen(false);
+      onSuccess();
+      onClose();
+      window.location.reload();
     } catch (error) {
       console.error("Error:", error);
       setError(
@@ -190,8 +195,12 @@ export default function FormCreationUser({
   };
 
   const handleOpenChange = (newOpen: boolean) => {
-    if (!newOpen) limpiarFormulario();
-    setOpen(newOpen);
+    if (!newOpen) {
+      limpiarFormulario();
+      // setOpen(newOpen);
+      onClose();
+    }
+
   };
 
   const inputClass =
@@ -199,15 +208,13 @@ export default function FormCreationUser({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      {/* El botón "Agregar Usuario" solo existe cuando NO es controlado */}
-      {!isControlled && (
-        <DialogTrigger asChild>
-          <ButtonCreate>Agregar Usuario</ButtonCreate>
-        </DialogTrigger>
-      )}
+      {/* <DialogTrigger asChild>
+        <ButtonCreate>Agregar Usuario</ButtonCreate>
+      </DialogTrigger> */}
       <DialogContent className="sm:max-w-[425px] md:max-w-[800px]">
         <DialogTitle className="font-bold text-2xl text-center">
-          {isEditMode ? "Editar Usuario" : "Crear Usuario"}
+          {/* Crear Usuario */}
+          {isEditing ? "Editar Usuario" : "Crear Usuario"}
         </DialogTitle>
         <form
           id="user-create-form"
@@ -392,7 +399,11 @@ export default function FormCreationUser({
           <div className="flex flex-row gap-2 w-full">
             <button
               type="button"
-              onClick={() => handleOpenChange(false)}
+              // onClick={() => setOpen(false)}
+              onClick={() => {
+                limpiarFormulario(), onClose()
+              }}
+
               disabled={isSubmitting}
               className="flex-1 cursor-pointer border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 font-medium py-2 px-4 rounded-md transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
             >
@@ -404,15 +415,14 @@ export default function FormCreationUser({
               disabled={isSubmitting}
               className="flex-1 bg-green-600 text-white font-medium py-2 px-4 rounded-md hover:bg-green-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500/40 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {isSubmitting
-                ? "Guardando..."
-                : isEditMode
+              {isSubmitting ? "Guardando..." :
+                isEditing
                   ? "Actualizar Usuario"
-                  : "Guardar Usuario"}
+                  :
+                  "Guardar Usuario"}
             </button>
           </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
-}

@@ -1,16 +1,18 @@
+
 "use client";
+
 import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
-  DialogTrigger,
   DialogTitle,
 } from "../ui/dialog";
-import ButtonCreate from "../ui/buttonCreate";
 
-// 👇 Tipos
+import { type Nutrition } from "./columns";
+
+// Tipos
 interface Cattle {
   id_Bovine: number;
   name: string;
@@ -31,10 +33,22 @@ interface Responsible {
   status: "Active" | "Inactive";
 }
 
-export default function FormCreationNutrition() {
-  const [open, setOpen] = useState(false);
+interface FormCreationNutritionProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess: () => void;
+  nutritionToEdit?: Nutrition | null;
+}
+
+export default function FormCreationNutrition({
+  isOpen,
+  onClose,
+  onSuccess,
+  nutritionToEdit = null,
+}: FormCreationNutritionProps): React.JSX.Element | null {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
   const [formData, setFormData] = useState({
     id_Bovine: "",
     id_food: "",
@@ -55,21 +69,30 @@ export default function FormCreationNutrition() {
   const [loadingResponsibles, setLoadingResponsibles] = useState(true);
   const [responsiblesError, setResponsiblesError] = useState<string | null>(null);
 
-  // 👇 Cargar bovinos
+  // Detectar si estamos editando
+  const isEditing = Boolean(nutritionToEdit);
+
+  // Cargar bovinos
   useEffect(() => {
     const fetchCattles = async () => {
       try {
         const token = localStorage.getItem("token");
+
         const response = await fetch(
           "http://localhost:3000/api/cattle/CattleAll?limit=500",
           { headers: { Authorization: `Bearer ${token}` } },
         );
+
         const resJson = await response.json();
-        if (!response.ok) throw new Error(resJson?.message || "Error bovinos");
+
+        if (!response.ok) {
+          throw new Error(resJson?.message || "Error bovinos");
+        }
 
         const activeCattles = (resJson.info ?? []).filter(
           (c: Cattle) => c.active === true || Number(c.active) === 1,
         );
+
         setCattles(activeCattles);
       } catch (err) {
         console.error("Error bovinos:", err);
@@ -80,24 +103,31 @@ export default function FormCreationNutrition() {
         setLoadingCattles(false);
       }
     };
+
     fetchCattles();
   }, []);
 
-  // 👇 Cargar alimentos
+  // Cargar alimentos
   useEffect(() => {
     const fetchFoods = async () => {
       try {
         const token = localStorage.getItem("token");
+
         const response = await fetch(
           "http://localhost:3000/api/food/FoodAll?limit=500",
           { headers: { Authorization: `Bearer ${token}` } },
         );
+
         const resJson = await response.json();
-        if (!response.ok) throw new Error(resJson?.message || "Error alimentos");
+
+        if (!response.ok) {
+          throw new Error(resJson?.message || "Error alimentos");
+        }
 
         const activeFoods = (resJson.info ?? []).filter(
           (f: Food) => f.active === true,
         );
+
         setFoods(activeFoods);
       } catch (err) {
         console.error("Error alimentos:", err);
@@ -108,25 +138,31 @@ export default function FormCreationNutrition() {
         setLoadingFoods(false);
       }
     };
+
     fetchFoods();
   }, []);
 
-  // 👇 Cargar responsables
+  // Cargar responsables
   useEffect(() => {
     const fetchResponsibles = async () => {
       try {
         const token = localStorage.getItem("token");
+
         const response = await fetch(
           "http://localhost:3000/api/responsible/ResponsibleAll?limit=200",
           { headers: { Authorization: `Bearer ${token}` } },
         );
+
         const resJson = await response.json();
-        if (!response.ok)
+
+        if (!response.ok) {
           throw new Error(resJson?.message || "Error responsables");
+        }
 
         const activeResponsibles = (resJson.info ?? []).filter(
           (r: Responsible) => r.status === "Active",
         );
+
         setResponsibles(activeResponsibles);
       } catch (err) {
         console.error("Error responsables:", err);
@@ -139,8 +175,24 @@ export default function FormCreationNutrition() {
         setLoadingResponsibles(false);
       }
     };
+
     fetchResponsibles();
   }, []);
+
+  // Cargar datos cuando se abre para editar
+  useEffect(() => {
+    if (nutritionToEdit) {
+      setFormData({
+        id_Bovine: String(nutritionToEdit.id_Bovine ?? ""),
+        id_food: String(nutritionToEdit.id_food ?? ""),
+        quantity: nutritionToEdit.quantity ?? "",
+        frequency: nutritionToEdit.frequency ?? "",
+        idResponsible: String(nutritionToEdit.idResponsible ?? ""),
+      });
+    } else {
+      limpiarFormulario();
+    }
+  }, [nutritionToEdit, isOpen]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -148,7 +200,9 @@ export default function FormCreationNutrition() {
     >,
   ) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({ ...prev, [name]: value }));
+
     if (error) setError(null);
   };
 
@@ -160,6 +214,7 @@ export default function FormCreationNutrition() {
       frequency: "",
       idResponsible: "",
     });
+
     setError(null);
   };
 
@@ -167,12 +222,25 @@ export default function FormCreationNutrition() {
     e.preventDefault();
     setError(null);
 
-    if (!formData.id_Bovine) return setError("Debes seleccionar un bovino");
-    if (!formData.id_food) return setError("Debes seleccionar un alimento");
-    if (!formData.quantity.trim()) return setError("La cantidad es obligatoria");
-    if (!formData.frequency) return setError("Debes seleccionar una frecuencia");
-    if (!formData.idResponsible)
+    if (!formData.id_Bovine) {
+      return setError("Debes seleccionar un bovino");
+    }
+
+    if (!formData.id_food) {
+      return setError("Debes seleccionar un alimento");
+    }
+
+    if (!formData.quantity.trim()) {
+      return setError("La cantidad es obligatoria");
+    }
+
+    if (!formData.frequency) {
+      return setError("Debes seleccionar una frecuencia");
+    }
+
+    if (!formData.idResponsible) {
       return setError("Debes seleccionar un responsable");
+    }
 
     const datosEnviar = {
       id_Bovine: Number(formData.id_Bovine),
@@ -183,24 +251,31 @@ export default function FormCreationNutrition() {
     };
 
     setIsSubmitting(true);
+
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(
-        "http://localhost:3000/api/nutrition/CreateNutrition",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(datosEnviar),
+
+      const url = isEditing
+        ? `http://localhost:3000/api/nutrition/UpdateNutrition/${nutritionToEdit?.id_nutrition}`
+        : "http://localhost:3000/api/nutrition/CreateNutrition";
+
+      const method = isEditing ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-      );
+        body: JSON.stringify(datosEnviar),
+      });
 
       if (!response.ok) {
         let backendMessage = "";
+
         try {
           const errorBody = await response.json();
+
           if (Array.isArray(errorBody?.errors)) {
             backendMessage = errorBody.errors
               .map((e: { message?: string } | string) =>
@@ -216,16 +291,19 @@ export default function FormCreationNutrition() {
         } catch {
           backendMessage = await response.text();
         }
+
         throw new Error(
           `El servidor respondió ${response.status}: ${backendMessage || "sin detalle"}`,
         );
       }
 
       limpiarFormulario();
-      setOpen(false);
+      onSuccess();
+      onClose();
       window.location.reload();
     } catch (error) {
       console.error("Error:", error);
+
       setError(
         error instanceof Error
           ? error.message
@@ -237,19 +315,19 @@ export default function FormCreationNutrition() {
   };
 
   const handleOpenChange = (newOpen: boolean) => {
-    if (!newOpen) limpiarFormulario();
-    setOpen(newOpen);
+    if (!newOpen) {
+      limpiarFormulario();
+      onClose();
+    }
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <ButtonCreate>Agregar Nutrición</ButtonCreate>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[425px] md:max-w-[800px]">
         <DialogTitle className="font-bold text-2xl text-center">
-          Crear Nutrición
+          {isEditing ? "Editar Nutrición" : "Crear Nutrición"}
         </DialogTitle>
+
         <form
           id="nutrition-create-form"
           onSubmit={handleSubmit}
@@ -264,6 +342,7 @@ export default function FormCreationNutrition() {
               >
                 Bovino:
               </label>
+
               <select
                 id="id_Bovine"
                 name="id_Bovine"
@@ -279,12 +358,14 @@ export default function FormCreationNutrition() {
                       ? "Error al cargar bovinos"
                       : "Seleccione un bovino"}
                 </option>
+
                 {cattles.map((c) => (
                   <option key={c.id_Bovine} value={c.id_Bovine}>
                     {c.id_Bovine} - {c.name}
                   </option>
                 ))}
               </select>
+
               {cattlesError && (
                 <p className="text-xs text-red-600 mt-1">{cattlesError}</p>
               )}
@@ -298,6 +379,7 @@ export default function FormCreationNutrition() {
               >
                 Alimento:
               </label>
+
               <select
                 id="id_food"
                 name="id_food"
@@ -313,12 +395,14 @@ export default function FormCreationNutrition() {
                       ? "Error al cargar alimentos"
                       : "Seleccione un alimento"}
                 </option>
+
                 {foods.map((f) => (
                   <option key={f.id_food} value={f.id_food}>
                     {f.food_name} ({f.food_type})
                   </option>
                 ))}
               </select>
+
               {foodsError && (
                 <p className="text-xs text-red-600 mt-1">{foodsError}</p>
               )}
@@ -332,6 +416,7 @@ export default function FormCreationNutrition() {
               >
                 Cantidad:
               </label>
+
               <input
                 type="text"
                 id="quantity"
@@ -351,6 +436,7 @@ export default function FormCreationNutrition() {
               >
                 Frecuencia:
               </label>
+
               <select
                 id="frequency"
                 name="frequency"
@@ -377,6 +463,7 @@ export default function FormCreationNutrition() {
               >
                 Responsable:
               </label>
+
               <select
                 id="idResponsible"
                 name="idResponsible"
@@ -392,12 +479,14 @@ export default function FormCreationNutrition() {
                       ? "Error al cargar responsables"
                       : "Seleccione un responsable"}
                 </option>
+
                 {responsibles.map((r) => (
                   <option key={r.idResponsible} value={r.idResponsible}>
                     {r.fullName} - {r.role}
                   </option>
                 ))}
               </select>
+
               {responsiblesError && (
                 <p className="text-xs text-red-600 mt-1">
                   {responsiblesError}
@@ -407,14 +496,13 @@ export default function FormCreationNutrition() {
           </div>
         </form>
 
-        {/* 👇 Descripción arriba a la izquierda */}
         <p className="text-sm text-gray-600 -mt-2">
-          Complete los campos para crear una nueva nutrición.
+          Complete los campos para {isEditing ? "actualizar" : "crear"} una
+          nutrición.
         </p>
 
-        {/* 👇 Oculto para accesibilidad */}
         <DialogDescription className="sr-only">
-          Complete los campos para crear una nueva nutrición.
+          Formulario para crear o editar una nutrición.
         </DialogDescription>
 
         <DialogFooter className="flex-col gap-2 sm:flex-col">
@@ -423,22 +511,31 @@ export default function FormCreationNutrition() {
               ⚠️ {error}
             </p>
           )}
+
           <div className="flex flex-row gap-2 w-full">
             <button
               type="button"
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                limpiarFormulario();
+                onClose();
+              }}
               disabled={isSubmitting}
               className="flex-1 cursor-pointer border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 font-medium py-2 px-4 rounded-md transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               Cancelar
             </button>
+
             <button
               type="submit"
               form="nutrition-create-form"
               disabled={isSubmitting}
               className="flex-1 bg-green-600 text-white font-medium py-2 px-4 rounded-md hover:bg-green-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500/40 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? "Guardando..." : "Guardar Nutrición"}
+              {isSubmitting
+                ? "Guardando..."
+                : isEditing
+                  ? "Actualizar Nutrición"
+                  : "Guardar Nutrición"}
             </button>
           </div>
         </DialogFooter>

@@ -1,12 +1,13 @@
+
 "use client";
+
 import { useEffect, useState } from "react";
 
 import { DataTable } from "@/components/ui/data-table";
-import { columns, type Mount } from "./columns";
+import { getColumns, type Mount } from "./columns";
 
-interface TableMountProps {
-  actions?: React.ReactNode;
-}
+import ButtonCreate from "../ui/buttonCreate";
+import FormCreationMount from "./formCreationMount";
 
 interface Cattle {
   id_Bovine: number;
@@ -19,8 +20,11 @@ interface Responsible {
   role: string;
 }
 
-export default function TableMount({ actions }: TableMountProps) {
+export default function TableMount() {
   const [mounts, setMounts] = useState<Mount[]>([]);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedMount, setSelectedMount] = useState<Mount | null>(null);
 
   useEffect(() => {
     const fetchMounts = async () => {
@@ -86,8 +90,24 @@ export default function TableMount({ actions }: TableMountProps) {
         setMounts([]);
       }
     };
+
     fetchMounts();
   }, []);
+
+  const handleOpenCreate = () => {
+    setSelectedMount(null);
+    setIsModalOpen(true);
+  };
+
+  const handleOpenEdit = (mount: Mount) => {
+    setSelectedMount(mount);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedMount(null);
+  };
 
   return (
     <div className="w-full bg-white px-4 py-8">
@@ -98,15 +118,29 @@ export default function TableMount({ actions }: TableMountProps) {
           </h1>
           <p className="text-sm text-[#6B6459]">
             {mounts.length}{" "}
-            {mounts.length === 1 ? "monta registrada" : "montas registradas"}.
+            {mounts.length === 1
+              ? "monta registrada"
+              : "montas registradas"}
+            .
           </p>
         </div>
 
         <DataTable
-          columns={columns}
+          columns={getColumns(handleOpenEdit)}
           data={mounts}
           filterPlaceholder="Buscar en todos los campos..."
-          toolbar={actions}
+          toolbar={
+            <ButtonCreate onClick={handleOpenCreate}>
+              Agregar Monta
+            </ButtonCreate>
+          }
+        />
+
+        <FormCreationMount
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onSuccess={handleCloseModal}
+          mountToEdit={selectedMount}
         />
       </div>
     </div>
