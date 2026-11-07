@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react"; 
 import {
   Dialog,
   DialogContent,
@@ -56,7 +56,7 @@ export default function FormCreationUser({
     postJob: "",
   });
 
-  // Estados para el ojito
+  // 👇 Estados para el ojito
   const [showPassword, setShowPassword] = useState(false);
   const typePassword = showPassword ? "text" : "password";
 
@@ -84,7 +84,7 @@ export default function FormCreationUser({
   ) => {
     const { name, value } = e.target;
 
-    // VALIDACIÓN SOLO PARA EL DOCUMENTO
+    // 👇 VALIDACIÓN SOLO PARA EL DOCUMENTO
     if (name === "documentId") {
       // Reemplaza cualquier cosa que no sea un número del 0 al 9 por un string vacío
       const soloNumeros = value.replace(/\D/g, "");
@@ -96,12 +96,19 @@ export default function FormCreationUser({
       return;
     }
 
+    // Comportamiento normal para los demás campos
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (error) setError(null);
   };
 
   const limpiarFormulario = () => {
-    setFormData(emptyForm);
+    setFormData({
+      name: "",
+      email: "",
+      password: "",
+      documentId: "",
+      postJob: "",
+    });
     setShowPassword(false);
     setError(null);
   };
@@ -110,13 +117,9 @@ export default function FormCreationUser({
     e.preventDefault();
     setError(null);
 
+    // 👇 Validación extra al enviar
     if (formData.documentId.length === 0) {
       return setError("El documento es obligatorio");
-    }
-
-    // Al crear la contraseña es obligatoria, al editar es opcional
-    if (!isEditMode && formData.password.trim() === "") {
-      return setError("La contraseña es obligatoria");
     }
 
     setIsSubmitting(true);
@@ -148,8 +151,7 @@ export default function FormCreationUser({
           },
           body: JSON.stringify(payload),
         },
-        body: JSON.stringify(payload),
-      });
+      );
 
       if (!response.ok) {
         let backendMessage = "";
@@ -185,9 +187,7 @@ export default function FormCreationUser({
       setError(
         error instanceof Error
           ? error.message
-          : isEditMode
-            ? "No se pudo actualizar el usuario. Intenta de nuevo."
-            : "No se pudo guardar el usuario. Intenta de nuevo.",
+          : "No se pudo guardar el usuario. Intenta de nuevo.",
       );
     } finally {
       setIsSubmitting(false);
@@ -202,9 +202,6 @@ export default function FormCreationUser({
     }
 
   };
-
-  const inputClass =
-    "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043]";
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
@@ -236,7 +233,7 @@ export default function FormCreationUser({
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className={inputClass}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043]"
                 placeholder="Ej: Juan Pérez"
               />
             </div>
@@ -255,7 +252,7 @@ export default function FormCreationUser({
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className={inputClass}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043]"
                 placeholder="ejemplo@correo.com"
               />
             </div>
@@ -267,11 +264,6 @@ export default function FormCreationUser({
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
                 Contraseña:
-                {isEditMode && (
-                  <span className="ml-1 text-xs font-normal text-gray-400">
-                    (opcional si no la cambias)
-                  </span>
-                )}
               </label>
               <div className="relative">
                 <input
@@ -280,10 +272,8 @@ export default function FormCreationUser({
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  className={`${inputClass} pr-10`}
-                  placeholder={
-                    isEditMode ? "Dejar en blanco para mantener la actual" : "********"
-                  }
+                  className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043]"
+                  placeholder="********"
                 />
                 <button
                   type="button"
@@ -291,7 +281,11 @@ export default function FormCreationUser({
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 cursor-pointer"
                   aria-label="Mostrar u ocultar contraseña"
                 >
-                  {showPassword ? <Eye size={18} /> : <EyeClosed size={18} />}
+                  {showPassword ? (
+                    <Eye size={18} />
+                  ) : (
+                    <EyeClosed size={18} />
+                  )}
                 </button>
               </div>
             </div>
@@ -310,9 +304,9 @@ export default function FormCreationUser({
                 name="documentId"
                 value={formData.documentId}
                 onChange={handleChange}
-                inputMode="numeric"
-                maxLength={10}
-                className={inputClass}
+                inputMode="numeric" // 👈 Abre teclado numérico en móviles
+                maxLength={10}      // 👈 Límite estricto de 10 caracteres
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043]"
                 placeholder="Ej: 1234567890"
               />
             </div>
@@ -330,7 +324,7 @@ export default function FormCreationUser({
                 name="postJob"
                 value={formData.postJob}
                 onChange={handleChange}
-                className={`${inputClass} bg-white`}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043] bg-white"
               >
                 <option value="">Seleccione un cargo</option>
                 <option value="administrador">Administrador</option>
@@ -340,54 +334,17 @@ export default function FormCreationUser({
                 <option value="asistente">Asistente</option>
               </select>
             </div>
-
-            {/* ACTIVO / VERIFICADO: solo tienen sentido al editar */}
-            {isEditMode && (
-              <div className="col-span-2 flex flex-col gap-2 rounded-md border border-gray-200 p-3">
-                <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={formData.active}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        active: e.target.checked,
-                      }))
-                    }
-                    className="h-4 w-4 accent-[#4B6043]"
-                  />
-                  Usuario activo
-                </label>
-                <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={formData.verifyEmail}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        verifyEmail: e.target.checked,
-                      }))
-                    }
-                    className="h-4 w-4 accent-[#4B6043]"
-                  />
-                  Correo verificado
-                </label>
-              </div>
-            )}
           </div>
         </form>
 
+        {/* 👇 Descripción arriba a la izquierda */}
         <p className="text-sm text-gray-600 -mt-2">
-          {isEditMode
-            ? "Modifique los campos que necesite actualizar."
-            : "Complete los campos para crear un nuevo usuario."}
+          Complete los campos para crear un nuevo usuario.
         </p>
 
-        {/* Oculto para accesibilidad */}
+        {/* 👇 Oculto para accesibilidad */}
         <DialogDescription className="sr-only">
-          {isEditMode
-            ? "Modifique los campos para actualizar el usuario."
-            : "Complete los campos para crear un nuevo usuario."}
+          Complete los campos para crear un nuevo usuario.
         </DialogDescription>
 
         <DialogFooter className="flex-col gap-2 sm:flex-col">
@@ -426,3 +383,4 @@ export default function FormCreationUser({
       </DialogContent>
     </Dialog>
   );
+}

@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { DataTable } from "@/components/ui/data-table";
 import { getColumns, type User } from "./columns";
@@ -7,49 +7,43 @@ import { getColumns, type User } from "./columns";
 import ButtonCreate from "../ui/buttonCreate";
 import FormCreationUser from "./formCreationUser";
 
-// interface TableUserProps {
-//   actions?: React.ReactNode;
-// }
-
 export default function TableUser() {
   const [users, setUsers] = useState<User[]>([]);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/api/user/UserAll");
+      const resJson = await response.json();
+
+      const datos = Array.isArray(resJson)
+        ? resJson
+        : Array.isArray(resJson.info)
+          ? resJson.info
+          : Array.isArray(resJson.data)
+            ? resJson.data
+            : Array.isArray(resJson.users)
+              ? resJson.users
+              : [];
+
+      setUsers(datos);
+    } catch (error) {
+      console.error("Error:", error);
+      setUsers([]);
+    }
+  };
+
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await fetch("http://localhost:3000/api/user/UserAll");
-        const resJson = await response.json();
-
-        const datos = Array.isArray(resJson)
-          ? resJson
-          : Array.isArray(resJson.info)
-            ? resJson.info
-            : Array.isArray(resJson.data)
-              ? resJson.data
-              : Array.isArray(resJson.users)
-                ? resJson.users
-                : [];
-
-        setUsers(datos);
-      } catch (error) {
-        console.error("Error:", error);
-        setUsers([]);
-      }
-    };
     fetchUsers();
-  }, [refreshKey, localReload]); // se vuelve a ejecutar al crear o editar
+  }, []); // Dejamos el arreglo vacío para que cargue una sola vez al inicio
 
   const handleOpenCreate = () => {
-    // Implementation for opening create user form
     setSelectedUser(null);
     setIsModalOpen(true);
   };
 
   const handleOpenEdit = (user: User) => {
-    // Implementation for opening edit user form
     setSelectedUser(user);
     setIsModalOpen(true);
   };
@@ -57,7 +51,8 @@ export default function TableUser() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedUser(null);
-  }
+    fetchUsers(); // Recarga la tabla automáticamente al guardar
+  };
 
   return (
     <div className="w-full bg-white px-4 py-8">
@@ -83,19 +78,13 @@ export default function TableUser() {
             </ButtonCreate>
           }
         />
+        
+        {/* Un solo formulario, controlado por el estado */}
         <FormCreationUser
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        onSuccess = {handleCloseModal}
-        userToEdit={selectedUser}
-        />
-
-        {/* Mismo formulario de creación, reutilizado en modo edición */}
-        <FormCreationUser
-          userToEdit={userToEdit}
-          open={editOpen}
-          onOpenChange={setEditOpen}
-          onSuccess={() => setLocalReload((n) => n + 1)}
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onSuccess={handleCloseModal}
+          userToEdit={selectedUser}
         />
       </div>
     </div>
