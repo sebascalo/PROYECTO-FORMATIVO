@@ -2,8 +2,9 @@
 
 import { createColumnHelper } from "@tanstack/react-table";
 import { Pencil } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { type SharedTableFeatures } from "@/components/ui/data-table-features";
+import { useEffect, useState } from "react";
+import { Badge } from "@/components/ui/badge";
 
 // Forma de los datos que devuelve tu API (/api/user/UserAll)
 export type User = {
@@ -11,19 +12,79 @@ export type User = {
   name: string;
   email: string;
   documentId: string;
-  postJob: string;
+  id_roll?: number | string | null; // id del rol (puede ser NULL en usuarios antiguos)
   verifyEmail: boolean;
   active: boolean;
 };
+const ROLES_URL = "http://localhost:3000/api/roles";
 
-// Colores por cargo
-const postJobStyles: Record<string, string> = {
+// Colores por nombre de rol
+const roleStyles: Record<string, string> = {
   administrador: "bg-[#4B6043] text-white hover:bg-[#405539]",
-  veterinaria: "bg-[#8C8266] text-white hover:bg-[#77704F]",
-  operario: "bg-[#A9744F] text-white hover:bg-[#94623F]",
-  gerente: "bg-[#4B6043] text-white hover:bg-[#405539]",
-  asistente: "bg-[#6B6459] text-white hover:bg-[#5A5449]",
+  instructor: "bg-[#8C8266] text-white hover:bg-[#77704F]",
+  pasante: "bg-[#A9744F] text-white hover:bg-[#94623F]",
+  gestor: "bg-[#6B6459] text-white hover:bg-[#5A5449]",
 };
+
+// Caché del módulo: aunque la tabla tenga muchas filas, solo se hace UNA
+// petición a /api/roles y todas las filas reutilizan el resultado.
+let rolesPromise: Promise<Record<number, string>> | null = null;
+
+function loadRoles(): Promise<Record<number, string>> {
+  if (!rolesPromise) {
+    const token = localStorage.getItem("token");
+    rolesPromise = fetch(ROLES_URL, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error(`Status ${res.status}`);
+        return res.json();
+      })
+      .then((body) => {
+        // Diccionario { 1: "Administrador", 2: "Instructor", ... }
+        // (tu backend devuelve la lista en `info`)
+        const map: Record<number, string> = {};
+        (body?.info ?? []).forEach((r: { id: number; name: string }) => {
+          map[r.id] = r.name;
+        });
+        return map;
+      })
+      .catch((err) => {
+        console.error("Error cargando roles:", err);
+        rolesPromise = null; // permite reintentar
+        return {};
+      });
+  }
+  return rolesPromise;
+}
+
+// Celda de la columna "Rol". Es un componente (y no una función suelta)
+// porque necesita useState/useEffect para esperar a que lleguen los roles.
+function RoleCell({ roleId }: { roleId?: number | string | null }) {
+  const [name, setName] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    loadRoles().then((map) => {
+      if (!active) return;
+      setName(roleId != null && roleId !== "" ? (map[Number(roleId)] ?? null) : null);
+    });
+    return () => {
+      active = false;
+    };
+  }, [roleId]);
+
+  if (roleId == null || roleId === "") {
+    return <span className="text-[#6B6459]">Sin rol</span>;
+  }
+  if (!name) return <span className="text-[#6B6459]">...</span>;
+
+  return (
+    <Badge className={roleStyles[name.toLowerCase()] ?? "bg-[#8C8266] text-white"}>
+      {name}
+    </Badge>
+  );
+}
 
 const columnHelper = createColumnHelper<SharedTableFeatures, User>();
 
@@ -49,17 +110,10 @@ export const getColumns = (handleOpenEdit: (user: User) => void) => columnHelper
       </span>
     ),
   }),
-  columnHelper.accessor("postJob", {
-    header: "Cargo",
-    cell: ({ getValue }) => {
-      const value = getValue();
-      if (!value) return <span className="text-[#6B6459]">-</span>;
-      return (
-        <Badge className={postJobStyles[value] ?? "bg-[#8C8266] text-white"}>
-          {value}
-        </Badge>
-      );
-    },
+  // CAMBIO: antes mostraba el número del rol; ahora muestra su nombre.
+  columnHelper.accessor("id_roll", {
+    header: "Rol",
+    cell: ({ getValue }) => <RoleCell roleId={getValue()} />,
   }),
   columnHelper.accessor("verifyEmail", {
     header: "Verificación",

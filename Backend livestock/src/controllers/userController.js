@@ -78,7 +78,7 @@ const createUser = async (req, res) => {
         const salt = bycript.genSaltSync(10);
         const hashed_password = bycript.hashSync(password, salt);
 
-        data = { name, email, password: hashed_password, salt, documentId, id_roll };
+        data = { name, email, password: hashed_password, documentId, id_roll };
         const user = await userCreate(data);
 
         // Leer JSON

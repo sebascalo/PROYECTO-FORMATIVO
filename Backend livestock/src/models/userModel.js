@@ -31,11 +31,6 @@ const user = db.define('user', {
         min: 3,
         allowNull: false
     },
-    salt: {
-        type: DataTypes.STRING,
-        max: 50,
-        allowNull: false
-    },
     documentId: {
         type: DataTypes.STRING,
         max: 30,

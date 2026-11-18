@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react"; 
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -13,78 +13,131 @@ import { Eye, EyeClosed } from "lucide-react";
 import { API_USER_URL } from "@/api/config";
 
 // import {User} from "@/app/admin/usuarios/page";
+// IMPORTANTE: en columns.tsx el tipo User debe tener el campo: id_roll?: number | null
 import { type User } from "./columns";
 
-// 1. tipo para los cargos permitidos 
-export type UserRole = "administrador" | "instructor" | "pasante" | "gerente";
-
-// 2. interfaz de los datos que se envian al backend
-interface UserPayload {
+/* ==========================================================================
+   NUEVO: tipo del rol que viene de la tabla `roles` de la base de datos.
+   Reemplaza al antiguo `UserRole` (que tenía los cargos fijos en el código)
+   y a `UserPayload` (que ya no se usaba).
+   ========================================================================== */
+interface Role {
+  id: number;
   name: string;
-  email: string;
-  password: string; //opcional con '?', ya que al editar no siempre se cambia
-  documentId: string;
-  postJob: UserRole;
-  verifyEmail: boolean;
-  active: boolean;
+  description?: string | null;
 }
 
-// 4. interfaz de los props del componente
+/* ==========================================================================
+   NUEVO: URLs del backend.
+   Coinciden con las rutas base de tu server.js:
+     app.use("/api/user", userRoute);
+     app.use("/api/roles", roleRoutes);
+   ========================================================================== */
+const API_BASE = "http://localhost:3000/api";
+const USER_URL = `${API_BASE}/user`;
+const ROLES_URL = `${API_BASE}/roles`;
+
+// Interfaz de los props del componente
 interface FormCreationUserProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  userToEdit?: User | null; //si viene null es crear, si viene objeto es EDITAR
+  userToEdit?: User | null; // si viene null es crear, si viene objeto es EDITAR
 }
 
-// 5.Retorno tipado: React.jsx.Element | null
+// Retorno tipado: React.JSX.Element | null
 export default function FormCreationUser({
   isOpen,
   onClose,
   onSuccess,
-  userToEdit = null, //valor por defecto 
+  userToEdit = null, // valor por defecto
 }: FormCreationUserProps): React.JSX.Element | null {
-  // const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  /* ------------------------------------------------------------------------
+     NUEVO: estados para los roles que vienen de la base de datos.
+     - roles: la lista que se pinta en el <select>
+     - loadingRoles: para mostrar "Cargando roles..." mientras se piden
+     ------------------------------------------------------------------------ */
+  const [roles, setRoles] = useState<Role[]>([]);
+  const [loadingRoles, setLoadingRoles] = useState(false);
+
+  /* ------------------------------------------------------------------------
+     CAMBIO: `postJob` pasa a llamarse `id_roll`, que es el nombre del campo
+     que espera el backend (createUser lo exige y lo guarda en users.id_roll).
+     Guarda el ID del rol como string (el value de un <select> siempre es string).
+     ------------------------------------------------------------------------ */
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     documentId: "",
-    postJob: "",
+    id_roll: "",
   });
 
-  // 👇 Estados para el ojito
+  // Estados para el ojito
   const [showPassword, setShowPassword] = useState(false);
   const typePassword = showPassword ? "text" : "password";
 
-  //Detectar si estamos en modo edición 
+  // Detectar si estamos en modo edición
   const isEditing = Boolean(userToEdit);
 
   useEffect(() => {
-
     if (userToEdit) {
       setFormData({
         name: userToEdit.name ?? "",
         email: userToEdit.email ?? "",
         password: "",
         documentId: userToEdit.documentId ?? "",
-        postJob: userToEdit.postJob ?? "",
+        // CAMBIO: al editar, precargamos el rol actual del usuario
+        // (se convierte a string para que coincida con el value del <option>)
+        id_roll: userToEdit.id_roll != null ? String(userToEdit.id_roll) : "",
       });
     } else {
       limpiarFormulario();
     }
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userToEdit, isOpen]);
+
+  /* ==========================================================================
+     NUEVO: cargar los roles desde la base de datos.
+     Se ejecuta cada vez que se abre el modal (isOpen pasa a true).
+     Llama a GET /api/roles, que devuelve { message, data: [ {id, name, ...} ] }
+     ========================================================================== */
+  useEffect(() => {
+    if (!isOpen) return; // si el modal está cerrado no pedimos nada
+
+    const fetchRoles = async () => {
+      setLoadingRoles(true);
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch(ROLES_URL, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) throw new Error(`Status ${res.status}`);
+
+        const body = await res.json();
+        // Tu clase Response devuelve { success, message, info, error }:
+        // la lista de roles viene en `info` (no en `data`).
+        setRoles(Array.isArray(body?.info) ? body.info : []);
+      } catch (err) {
+        console.error("Error cargando roles:", err);
+        setError("No se pudieron cargar los roles");
+      } finally {
+        setLoadingRoles(false);
+      }
+    };
+
+    fetchRoles();
+  }, [isOpen]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
 
-    // 👇 VALIDACIÓN SOLO PARA EL DOCUMENTO
+    // VALIDACIÓN SOLO PARA EL DOCUMENTO
     if (name === "documentId") {
       // Reemplaza cualquier cosa que no sea un número del 0 al 9 por un string vacío
       const soloNumeros = value.replace(/\D/g, "");
@@ -96,7 +149,7 @@ export default function FormCreationUser({
       return;
     }
 
-    // Comportamiento normal para los demás campos
+    // Comportamiento normal para los demás campos (incluye id_roll)
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (error) setError(null);
   };
@@ -107,7 +160,7 @@ export default function FormCreationUser({
       email: "",
       password: "",
       documentId: "",
-      postJob: "",
+      id_roll: "", // CAMBIO: antes era postJob
     });
     setShowPassword(false);
     setError(null);
@@ -117,9 +170,13 @@ export default function FormCreationUser({
     e.preventDefault();
     setError(null);
 
-    // 👇 Validación extra al enviar
+    // Validación extra al enviar
     if (formData.documentId.length === 0) {
       return setError("El documento es obligatorio");
+    }
+    // NUEVO: el rol es obligatorio
+    if (!formData.id_roll) {
+      return setError("Debes seleccionar un rol");
     }
 
     setIsSubmitting(true);
@@ -127,40 +184,41 @@ export default function FormCreationUser({
       const token = localStorage.getItem("token");
 
       const url = isEditing
-        ? `http://localhost:3000/api/user/UpdateUser/${userToEdit?.userId}`
-        : `http://localhost:3000/api/user/CreateUser`;
+        ? `${USER_URL}/UpdateUser/${userToEdit?.userId}`
+        : `${USER_URL}/CreateUser`;
 
       const method = isEditing ? "PUT" : "POST";
 
+      /* CAMBIO: el payload ahora envía `id_roll` en lugar de `postJob`.
+         Se manda como string porque el backend (createUser) hace id_roll.trim(),
+         y eso falla si llegara un número. */
       const payload = isEditing
         ? {
-          name: formData.name,
-          email: formData.email,
-          documentId: formData.documentId,
-          postJob: formData.postJob,
-        }
-        : formData;
+            name: formData.name,
+            email: formData.email,
+            documentId: formData.documentId,
+            id_roll: formData.id_roll,
+          }
+        : formData; // name, email, password, documentId, id_roll
 
-      const response = await fetch(
-        url,
-        {
-          method: method,
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(payload),
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-      );
+        body: JSON.stringify(payload),
+      });
 
       if (!response.ok) {
         let backendMessage = "";
         try {
           const errorBody = await response.json();
-          if (Array.isArray(errorBody?.errors)) {
-            backendMessage = errorBody.errors
+          // El backend manda los errores en `error` (array de textos u objetos)
+          if (Array.isArray(errorBody?.error)) {
+            backendMessage = errorBody.error
               .map((e: { message?: string } | string) =>
-                typeof e === "string" ? e : e.message ?? String(e),
+                typeof e === "string" ? e : (e.message ?? String(e)),
               )
               .join(" | ");
           } else {
@@ -177,8 +235,9 @@ export default function FormCreationUser({
         );
       }
 
+      // El usuario ya quedó guardado en `users`, incluyendo su id_roll.
+      // (Ya no se usa la tabla user_roles.)
       limpiarFormulario();
-      // setOpen(false);
       onSuccess();
       onClose();
       window.location.reload();
@@ -197,20 +256,14 @@ export default function FormCreationUser({
   const handleOpenChange = (newOpen: boolean) => {
     if (!newOpen) {
       limpiarFormulario();
-      // setOpen(newOpen);
       onClose();
     }
-
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      {/* <DialogTrigger asChild>
-        <ButtonCreate>Agregar Usuario</ButtonCreate>
-      </DialogTrigger> */}
       <DialogContent className="sm:max-w-[425px] md:max-w-[800px]">
         <DialogTitle className="font-bold text-2xl text-center">
-          {/* Crear Usuario */}
           {isEditing ? "Editar Usuario" : "Crear Usuario"}
         </DialogTitle>
         <form
@@ -281,11 +334,7 @@ export default function FormCreationUser({
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 cursor-pointer"
                   aria-label="Mostrar u ocultar contraseña"
                 >
-                  {showPassword ? (
-                    <Eye size={18} />
-                  ) : (
-                    <EyeClosed size={18} />
-                  )}
+                  {showPassword ? <Eye size={18} /> : <EyeClosed size={18} />}
                 </button>
               </div>
             </div>
@@ -304,45 +353,56 @@ export default function FormCreationUser({
                 name="documentId"
                 value={formData.documentId}
                 onChange={handleChange}
-                inputMode="numeric" // 👈 Abre teclado numérico en móviles
-                maxLength={10}      // 👈 Límite estricto de 10 caracteres
+                inputMode="numeric" // Abre teclado numérico en móviles
+                maxLength={10} // Límite estricto de 10 caracteres
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043]"
                 placeholder="Ej: 1234567890"
               />
             </div>
 
-            {/* CARGO */}
+            {/* ================================================================
+                CAMBIO: ROL
+                Antes: <select name="postJob"> con opciones fijas escritas a mano
+                (administrador, veterinaria, operario...).
+                Ahora: <select name="id_roll"> cuyas opciones se generan con .map()
+                a partir de la lista `roles` traída de la base de datos.
+                  - value  = el ID del rol  -> es lo que se guarda en users.id_roll
+                  - texto  = el nombre del rol -> lo que ve el usuario
+                ================================================================ */}
             <div className="col-span-2">
               <label
-                htmlFor="postJob"
+                htmlFor="id_roll"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Cargo:
+                Rol:
               </label>
               <select
-                id="postJob"
-                name="postJob"
-                value={formData.postJob}
+                id="id_roll"
+                name="id_roll"
+                value={formData.id_roll}
                 onChange={handleChange}
+                disabled={loadingRoles} // se bloquea mientras cargan los roles
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4B6043]/30 focus:border-[#4B6043] bg-white"
               >
-                <option value="">Seleccione un cargo</option>
-                <option value="administrador">Administrador</option>
-                <option value="veterinaria">Veterinario</option>
-                <option value="operario">Operario</option>
-                <option value="gerente">Gerente</option>
-                <option value="asistente">Asistente</option>
+                <option value="">
+                  {loadingRoles ? "Cargando roles..." : "Seleccione un rol"}
+                </option>
+                {roles.map((role) => (
+                  <option key={role.id} value={String(role.id)}>
+                    {role.name}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
         </form>
 
-        {/* 👇 Descripción arriba a la izquierda */}
+        {/* Descripción arriba a la izquierda */}
         <p className="text-sm text-gray-600 -mt-2">
           Complete los campos para crear un nuevo usuario.
         </p>
 
-        {/* 👇 Oculto para accesibilidad */}
+        {/* Oculto para accesibilidad */}
         <DialogDescription className="sr-only">
           Complete los campos para crear un nuevo usuario.
         </DialogDescription>
@@ -356,11 +416,10 @@ export default function FormCreationUser({
           <div className="flex flex-row gap-2 w-full">
             <button
               type="button"
-              // onClick={() => setOpen(false)}
               onClick={() => {
-                limpiarFormulario(), onClose()
+                limpiarFormulario();
+                onClose();
               }}
-
               disabled={isSubmitting}
               className="flex-1 cursor-pointer border border-gray-300 text-gray-700 bg-white hover:bg-gray-100 font-medium py-2 px-4 rounded-md transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
             >
@@ -372,11 +431,11 @@ export default function FormCreationUser({
               disabled={isSubmitting}
               className="flex-1 bg-green-600 text-white font-medium py-2 px-4 rounded-md hover:bg-green-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500/40 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? "Guardando..." :
-                isEditing
+              {isSubmitting
+                ? "Guardando..."
+                : isEditing
                   ? "Actualizar Usuario"
-                  :
-                  "Guardar Usuario"}
+                  : "Guardar Usuario"}
             </button>
           </div>
         </DialogFooter>
