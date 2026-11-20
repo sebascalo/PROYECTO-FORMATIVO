@@ -12,6 +12,10 @@ const role = db.define("roles", {
         type: DataTypes.STRING(50),
         allowNull: false
     },
+    slug:{
+        type: DataTypes.STRING(50),
+        allowNull: false
+    },
     description: {
         type: DataTypes.STRING(255),
         allowNull: true

@@ -28,17 +28,19 @@ const getAllRolesById = async (req, res) => {
 
 const createRole = async (req, res) => {
     try {
-        const { name, description } = req.body;
+        const { name, slug, description } = req.body;
         var errors = [];
 
         if (!name || String(name).trim() === "") errors.push("El nombre del rol es obligatorio");
+        if (!slug || String(slug).trim() === "") errors.push("El slug del rol es obligatorio");
+        if (!description || String(description).trim() === "") errors.push("La descripción del rol es obligatoria");
 
         if (errors.length > 0) {
             const response = new Response("Error al crear el rol", null, errors);
             return res.status(400).json(response.json);
         }
 
-        const data = { name, description };
+        const data = { name, slug, description };
         const role = await roleCreate(data);
         const response = new Response("Rol creado exitosamente", role, null);
         res.status(201).json(response.json);
@@ -52,10 +54,12 @@ const createRole = async (req, res) => {
 const updateRole = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, description } = req.body;
+        const { name, slug, description } = req.body;
         var errors = [];
 
         if (!name || String(name).trim() === "") errors.push("El nombre del rol es obligatorio");
+        if (!slug || String(slug).trim() === "") errors.push("El slug del rol es obligatorio");
+        if (!description || String(description).trim() === "") errors.push("La descripción del rol es obligatoria");
 
         if (errors.length > 0) {
             const response = new Response("Error al actualizar el rol", null, errors);

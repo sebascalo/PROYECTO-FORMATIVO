@@ -387,6 +387,7 @@ DROP TABLE IF EXISTS `roles`;
 CREATE TABLE `roles` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
+  `slug` varchar(50) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -401,7 +402,7 @@ CREATE TABLE `roles` (
 
 LOCK TABLES `roles` WRITE;
 /*!40000 ALTER TABLE `roles` DISABLE KEYS */;
-INSERT INTO `roles` VALUES (1,'Administrador','Rol con acceso total al sistema y gestión de usuarios','2026-11-06 08:21:08','2026-11-06 08:21:08'),(2,'Instructor','Rol con acceso total al sistema y gestión de usuarios','2026-11-06 08:21:08','2026-11-06 08:21:08'),(3,'Pasante','Rol de apoyo con permisos limitados','2026-11-06 08:21:08','2026-11-06 08:21:08'),(4,'Gestor','Rol de apoyo con permisos limitados','2026-11-06 08:21:08','2026-11-06 08:21:08');
+INSERT INTO `roles` VALUES (1,'Administrador','admin','Rol con acceso total al sistema y gestión de usuarios','2026-11-06 08:21:08','2026-11-19 20:40:46'),(2,'Instructor','instructor','Rol con acceso total al sistema y gestión de usuarios','2026-11-06 08:21:08','2026-11-19 20:41:14'),(3,'Pasante','pasante','Rol de apoyo con permisos limitados','2026-11-06 08:21:08','2026-11-19 20:40:46'),(4,'Gestor','gestor','Rol de apoyo con permisos limitados','2026-11-06 08:21:08','2026-11-19 20:40:46');
 /*!40000 ALTER TABLE `roles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -554,4 +555,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-11-18 13:39:54
+-- Dump completed on 2026-11-20 13:31:03
