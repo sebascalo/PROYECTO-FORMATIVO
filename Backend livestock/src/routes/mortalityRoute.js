@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { getAllMortalities, getAllMortalitiesById, createMortality, updateMortality, deleteMortality } = require("../controllers/mortalityController");
 const ValidateToken = require("../middlewares/handlerToken");
+const { authorizeRoles } = require("../middlewares/authMiddleware");
 
 /**
  * @swagger
@@ -15,7 +16,7 @@ const ValidateToken = require("../middlewares/handlerToken");
  */
 
 // Rutas para mortalidad
-router.get("/MortalityAll", ValidateToken, getAllMortalities);
+router.get("/MortalityAll", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), getAllMortalities);
 
 /**
  * @swagger
@@ -36,7 +37,7 @@ router.get("/MortalityAll", ValidateToken, getAllMortalities);
  */
 
 // Rutas para mortalidad con id
-router.get("/MortalityById/:id_mortality", ValidateToken, getAllMortalitiesById);
+router.get("/MortalityById/:id_mortality", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"),    getAllMortalitiesById);
 
 /**
  * @swagger
@@ -71,7 +72,7 @@ router.post("/CreateMortality", ValidateToken, createMortality);
  */
 
 // Rutas para actualizar un registro de mortalidad existente
-router.put("/UpdateMortality/:id_mortality", ValidateToken, updateMortality);
+router.put("/UpdateMortality/:id_mortality", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), updateMortality);
 
 /**
  * @swagger
@@ -92,6 +93,6 @@ router.put("/UpdateMortality/:id_mortality", ValidateToken, updateMortality);
  */
 
 // Rutas para eliminar un registro de mortalidad existente
-router.delete("/DeleteMortality/:id_mortality", ValidateToken, deleteMortality);
+router.delete("/DeleteMortality/:id_mortality", ValidateToken, authorizeRoles("admin", "instructor"), deleteMortality);
 
 module.exports = router;

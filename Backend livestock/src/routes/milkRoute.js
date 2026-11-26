@@ -2,6 +2,7 @@ const express = require ('express');
 const router = express.Router();
 const {getAllMilks, getAllMilksById, createMilk, updateMilk, deleteMilk} = require("../controllers/milkController");
 const ValidateToken = require("../middlewares/handlerToken");
+const { authorizeRoles } = require("../middlewares/authMiddleware");
 
 /**
  * @swagger
@@ -15,7 +16,7 @@ const ValidateToken = require("../middlewares/handlerToken");
  */
 
 //Rutas para produccion de leche
-router.get("/MilkAll", ValidateToken, getAllMilks);
+router.get("/MilkAll", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), getAllMilks);
 
 /**
  * @swagger
@@ -36,7 +37,7 @@ router.get("/MilkAll", ValidateToken, getAllMilks);
  */
 
 //Rutas para produccion de leche con id
-router.get("/MilkById/:id_milk", ValidateToken, getAllMilksById);
+router.get("/MilkById/:id_milk", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), getAllMilksById);
 
 /**
  * @swagger
@@ -71,7 +72,7 @@ router.post("/CreateMilk", ValidateToken, createMilk);
  */
 
 //Rutas para actualizar una produccion de leche existente
-router.put("/UpdateMilk/:id_milk", ValidateToken, updateMilk);
+router.put("/UpdateMilk/:id_milk", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), updateMilk);
 
 /**
  * @swagger
@@ -92,6 +93,6 @@ router.put("/UpdateMilk/:id_milk", ValidateToken, updateMilk);
  */
 
 //Rutas para inactivar una produccion de leche existente
-router.delete("/DeleteMilk/:id_milk", ValidateToken, deleteMilk);
+router.delete("/DeleteMilk/:id_milk", ValidateToken, authorizeRoles("admin", "instructor"), deleteMilk);
 
 module.exports= router;

@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const { getAllVacunations, getAllVacunationsById, createVacunation, updateVacunation, deleteVacunation } = require("../controllers/vacunationController");
 const ValidateToken = require("../middlewares/handlerToken");
+const { authorizeRoles } = require("../middlewares/authMiddleware");
 
 /**
  * @swagger
@@ -14,7 +15,7 @@ const ValidateToken = require("../middlewares/handlerToken");
  */
 
 // Rutas para vacunaciones
-router.get("/VacunationAll", ValidateToken, getAllVacunations);
+router.get("/VacunationAll", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), getAllVacunations);
 
 /**
  * @swagger
@@ -35,7 +36,7 @@ router.get("/VacunationAll", ValidateToken, getAllVacunations);
  */
 
 // Rutas para vacunaciones con id
-router.get("/VacunationById/:id_vacunation", ValidateToken, getAllVacunationsById);
+router.get("/VacunationById/:id_vacunation", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), getAllVacunationsById);
 
 /**
  * @swagger
@@ -49,7 +50,7 @@ router.get("/VacunationById/:id_vacunation", ValidateToken, getAllVacunationsByI
  */
 
 // Rutas para crear una nueva vacunación
-router.post("/CreateVacunation", ValidateToken, createVacunation);
+router.post("/CreateVacunation", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), createVacunation);
 
 /**
  * @swagger
@@ -70,7 +71,7 @@ router.post("/CreateVacunation", ValidateToken, createVacunation);
  */
 
 // Rutas para actualizar una vacunación existente
-router.put("/UpdateVacunation/:id_vacunation", ValidateToken, updateVacunation);
+router.put("/UpdateVacunation/:id_vacunation", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), updateVacunation);
 
 /**
  * @swagger
@@ -91,6 +92,6 @@ router.put("/UpdateVacunation/:id_vacunation", ValidateToken, updateVacunation);
  */
 
 // Rutas para eliminar una vacunación existente
-router.delete("/DeleteVacunation/:id_vacunation", ValidateToken, deleteVacunation);
+router.delete("/DeleteVacunation/:id_vacunation", ValidateToken, authorizeRoles("admin", "instructor"), deleteVacunation);
 
 module.exports = router;

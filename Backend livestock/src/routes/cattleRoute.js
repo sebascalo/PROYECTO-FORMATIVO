@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { getAllCattles, getAllCattlesById, createCattle, updateCattle, deleteCattle } = require("../controllers/cattleController");
 const ValidateToken = require("../middlewares/handlerToken");
+const { authorizeRoles } = require("../middlewares/authMiddleware");
 
 /**
  * @swagger
@@ -15,7 +16,7 @@ const ValidateToken = require("../middlewares/handlerToken");
  */
 
 // Rutas para bovinos
-router.get("/CattleAll", ValidateToken, getAllCattles);
+router.get("/CattleAll", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), getAllCattles);
 
 /**
  * @swagger
@@ -36,7 +37,7 @@ router.get("/CattleAll", ValidateToken, getAllCattles);
  */
 
 // Rutas para bovinos con id
-router.get("/CattleById/:id_Bovine", ValidateToken, getAllCattlesById);
+router.get("/CattleById/:id_Bovine", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), getAllCattlesById);
 
 /**
  * @swagger
@@ -50,7 +51,7 @@ router.get("/CattleById/:id_Bovine", ValidateToken, getAllCattlesById);
  */
 
 // Rutas para crear un nuevo bovino
-router.post("/CreateCattle", ValidateToken, createCattle);
+router.post("/CreateCattle", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), createCattle);
 
 /**
  * @swagger
@@ -71,7 +72,7 @@ router.post("/CreateCattle", ValidateToken, createCattle);
  */
 
 // Rutas para actualizar un bovino existente
-router.put("/UpdateCattle/:id_Bovine", ValidateToken, updateCattle);
+router.put("/UpdateCattle/:id_Bovine", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), updateCattle);
 
 /**
  * @swagger
@@ -92,6 +93,6 @@ router.put("/UpdateCattle/:id_Bovine", ValidateToken, updateCattle);
  */
 
 // Rutas para eliminar un bovino existente
-router.delete("/DeleteCattle/:id_Bovine", ValidateToken, deleteCattle);
+router.delete("/DeleteCattle/:id_Bovine", ValidateToken, authorizeRoles("admin", "instructor"), deleteCattle);
 
 module.exports = router;

@@ -1,37 +1,24 @@
-const jwt = require("jsonwebtoken");
+const Response = require("../functions/response");
 
-const verifyToken = (req, res, next) => {
+// Recibe los roles permitidos y devuelve el middleware
+function authorizeRoles(...allowedRoles) {
+    return (req, res, next) => {
 
-    const authHeader = req.headers.authorization;
+        // Paso 1: verificar que ValidateToken haya cargado el usuario y su rol
+        if (!req.user || !req.user.role) {
+            const response = new Response("No se pudo verificar el rol del usuario", null, false);
+            return res.status(403).json(response.json);
+        }
 
-    if (!authHeader) {
+        // Paso 2: comprobar si el rol del usuario está permitido
+        if (!allowedRoles.includes(req.user.role)) {
+            const response = new Response("No tienes permiso para realizar esta accion", null, false);
+            return res.status(403).json(response.json);
+        }
 
-        return res.status(401).json({
-            message: "Token requerido"
-        });
-
-    }
-
-    const token = authHeader.split(" ")[1];
-
-    try {
-
-        const decoded = jwt.verify(
-            token,
-            process.env.JWT_SECRET
-        );
-
-        req.user = decoded;
-
+        // Paso 3: rol autorizado, continuar al controlador
         next();
+    };
+}
 
-    } catch (error) {
-
-        return res.status(401).json({
-            message: "Token inválido"
-        });
-
-    }
-};
-
-module.exports = verifyToken;
+module.exports = { authorizeRoles };

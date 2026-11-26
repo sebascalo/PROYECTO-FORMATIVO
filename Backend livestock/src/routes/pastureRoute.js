@@ -2,7 +2,7 @@ const express = require ('express');
 const router = express.Router();
 const {getAllPastures, getAllPasturesById, createPasture, updatePasture, deletePasture} = require("../controllers/pastureController");
 const ValidateToken = require("../middlewares/handlerToken");
-
+const { authorizeRoles } = require("../middlewares/authMiddleware");
 /**
  * @swagger
  * /api/PastureAll:
@@ -15,7 +15,7 @@ const ValidateToken = require("../middlewares/handlerToken");
  */
 
 //Rutas para potreros
-router.get("/PastureAll", ValidateToken, getAllPastures); 
+router.get("/PastureAll", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), getAllPastures); 
 
 /**
  * @swagger
@@ -36,7 +36,7 @@ router.get("/PastureAll", ValidateToken, getAllPastures);
  */
 
 //Rutas para potreros con id
-router.get("/PastureById/:id_pasture", ValidateToken, getAllPasturesById);
+router.get("/PastureById/:id_pasture", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), getAllPasturesById);
 
 /**
  * @swagger
@@ -50,7 +50,7 @@ router.get("/PastureById/:id_pasture", ValidateToken, getAllPasturesById);
  */
 
 //Rutas para crear un nuevo potrero
-router.post("/CreatePasture", ValidateToken, createPasture);
+router.post("/CreatePasture", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), createPasture);
 
 /**
  * @swagger
@@ -71,7 +71,7 @@ router.post("/CreatePasture", ValidateToken, createPasture);
  */
 
 //Rutas para actualizar un potrero existente
-router.put("/UpdatePasture/:id_pasture", ValidateToken, updatePasture);
+router.put("/UpdatePasture/:id_pasture", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), updatePasture);
 
 /**
  * @swagger
@@ -92,6 +92,6 @@ router.put("/UpdatePasture/:id_pasture", ValidateToken, updatePasture);
  */
 
 //Rutas para eliminar un potrero existente
-router.delete("/DeletePasture/:id_pasture", ValidateToken, deletePasture);
+router.delete("/DeletePasture/:id_pasture", ValidateToken, authorizeRoles("admin", "instructor"), deletePasture);
 
 module.exports= router;

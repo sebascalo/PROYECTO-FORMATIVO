@@ -5,11 +5,16 @@ const path = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
 
-const { getUserByEmail, updateForEmailUser, getUserByToken} = require('../services/userService');
+const {
+  getUserByEmail,
+  updateForEmailUser,
+  getUserByToken,
+} = require("../services/userService");
 const User = require("../models/userModel");
 const { sendEmail } = require("../services/emailService");
+const Role = require("../models/roleModel");
 
-const  Response = require("../functions/response");
+const Response = require("../functions/response");
 
 dotenv.config();
 
@@ -23,7 +28,7 @@ const login = async (req, res) => {
       const response = new Response(
         "Error correo o contraseña vacios",
         null,
-        "Correo o contraseña vacíos"
+        "Correo o contraseña vacíos",
       );
       return res.status(400).json(response);
     }
@@ -32,7 +37,7 @@ const login = async (req, res) => {
       const response = new Response(
         "Error correo o contraseña incorrectos",
         null,
-        "Usuario y contraseña incorrectos"
+        "Usuario y contraseña incorrectos",
       );
       return res.status(400).json(response.json);
     }
@@ -43,112 +48,126 @@ const login = async (req, res) => {
       const response = new Response(
         "Error correo o contraseña incorrectos",
         null,
-        "Usuario y contraseña incorrectos"
+        "Usuario y contraseña incorrectos",
       );
 
       return res.status(400).json(response.json);
     }
 
+    const role = await Role.findByPk(user.id_roll);
+    if (!role) {
+      const response = new Response(
+        "Usuario sin rol asignado",
+        null,
+        "El usuario no tiene un rol válido, contacta al administrador",
+      );
+      return res.status(403).json(response.json);
+    }
     const token = jwt.sign(
-      { user: email },
-      JWT_KEY_SECRET,
       {
-        expiresIn: "1h",
-      }
+        user: email,
+        userId: user.userId,
+        role: role.slug, // admin, instructor, pasante o gestor
+      },
+      JWT_KEY_SECRET,
+      { expiresIn: "1h" },
     );
 
     const response = new Response(
       "login successful",
       { token, userId: user.userId },
-      null
+      null,
     );
 
     return res.json(response.success);
-
   } catch (error) {
     console.error("Error en login:", error);
 
-    const errorResponse = new Response(
-      "Error interno del servidor",
-      null,
-      [
-        {
-          message: error.message || "Ocurrió un error inesperado",
-        },
-      ]
-    );
+    const errorResponse = new Response("Error interno del servidor", null, [
+      {
+        message: error.message || "Ocurrió un error inesperado",
+      },
+    ]);
     return res.status(500).json(errorResponse.json);
   }
 };
 
-
 // recuperar contraseña
 const resetPassword = async (req, res) => {
   try {
-  const { email } = req.body;
+    const { email } = req.body;
 
-  if (email == "") {
-    res.status(400);
-    const response = new Response(
-      "Error recuperación contraseña",
-      null,
-      "El usurio no contiene informacion",
-    );
-    return res.json(response);
-  }
-  const user = await getUserByEmail(email);
-  if (!user) {
-    res.status(400);
-    const response = new Response(
-      "Usuario no encontrado",
-      null,
-      "El correo proporcionado no está registrado",
-    );
-    return res.json(response);
-  }
-  // Token aleatorio (va en el correo) y su versión cifrada (va en la BD)
-  const token = crypto.randomBytes(32).toString("hex");
-  const tokenHash = await bcrypt.hash(token, 10);
-
-  let data = {
-    resetPasswordToken: tokenHash,
-    resetPasswordExpires: new Date(Date.now() + 60 * 60 * 1000), // 1 hora
-    solNewPassword: true
-  };
-  await updateForEmailUser(email, data);
-
-  const routeTemplate = path.join(process.cwd(), "public", "recuperarPassword.json");
-  const resetPasswordTemplate = fs.readFileSync(routeTemplate);
-  const dataTemaplate = JSON.parse(resetPasswordTemplate);
-
-  let htmlModific = fs.readFileSync(dataTemaplate.html, "utf-8");
-  for (const key in dataTemaplate.params) {
-    if (key === "@link") {
-      htmlModific = htmlModific.replace(`{{${key}}}`, `${dataTemaplate.params[key]}=${token}`);
-      continue;
+    if (email == "") {
+      res.status(400);
+      const response = new Response(
+        "Error recuperación contraseña",
+        null,
+        "El usurio no contiene informacion",
+      );
+      return res.json(response);
     }
-    htmlModific = htmlModific.replace(`{{${key}}}`, dataTemaplate.params[key]);
-  }
+    const user = await getUserByEmail(email);
+    if (!user) {
+      res.status(400);
+      const response = new Response(
+        "Usuario no encontrado",
+        null,
+        "El correo proporcionado no está registrado",
+      );
+      return res.json(response);
+    }
+    // Token aleatorio (va en el correo) y su versión cifrada (va en la BD)
+    const token = crypto.randomBytes(32).toString("hex");
+    const tokenHash = await bcrypt.hash(token, 10);
+
+    let data = {
+      resetPasswordToken: tokenHash,
+      resetPasswordExpires: new Date(Date.now() + 60 * 60 * 1000), // 1 hora
+      solNewPassword: true,
+    };
+    await updateForEmailUser(email, data);
+
+    const routeTemplate = path.join(
+      process.cwd(),
+      "public",
+      "recuperarPassword.json",
+    );
+    const resetPasswordTemplate = fs.readFileSync(routeTemplate);
+    const dataTemaplate = JSON.parse(resetPasswordTemplate);
+
+    let htmlModific = fs.readFileSync(dataTemaplate.html, "utf-8");
+    for (const key in dataTemaplate.params) {
+      if (key === "@link") {
+        htmlModific = htmlModific.replace(
+          `{{${key}}}`,
+          `${dataTemaplate.params[key]}=${token}`,
+        );
+        continue;
+      }
+      htmlModific = htmlModific.replace(
+        `{{${key}}}`,
+        dataTemaplate.params[key],
+      );
+    }
     htmlModific = htmlModific.replace("{{@name}}", user.name);
-    htmlModific = htmlModific.replace("{{@fecha}}", new Date().toLocaleDateString());
+    htmlModific = htmlModific.replace(
+      "{{@fecha}}",
+      new Date().toLocaleDateString(),
+    );
     htmlModific = htmlModific.replace("{{@año}}", new Date().getFullYear());
 
-  console.log("HTML Modificado:", email);
-  await sendEmail(email, dataTemaplate.subject, null, htmlModific);
+    console.log("HTML Modificado:", email);
+    await sendEmail(email, dataTemaplate.subject, null, htmlModific);
 
-  const response = new Response("Correo de recuperación enviado");
-  return res.status(200).json(response.json);
+    const response = new Response("Correo de recuperación enviado");
+    return res.status(200).json(response.json);
   } catch (error) {
     console.error("Error en resetPassword:", error);
-    const errorResponse = new Response(
-      "Error interno del servidor",
-      null,
-      [
-        {
-          message: error.message || "Ocurrió un error inesperado",
-        },
-      ]
-    );
+    const errorResponse = new Response("Error interno del servidor", null, [
+      {
+        message: error.message || "Ocurrió un error inesperado",
+      },
+    ]);
     return res.status(500).json(errorResponse.json);
   }
 };
@@ -179,7 +198,6 @@ const validateResetPassword = async (req, res) => {
 
     const response = new Response("Token válido", { token }, null);
     return res.json(response.success);
-
   } catch (error) {
     console.error("Error validando token:", error);
     const response = new Response(
@@ -245,7 +263,6 @@ const newPassword = async (req, res) => {
       null,
     );
     return res.json(response.success);
-
   } catch (error) {
     console.error("Error cambiando contraseña:", error);
     const response = new Response(
@@ -262,21 +279,29 @@ const changePasswordAuth = async (req, res) => {
     const { email, currentPassword, newPassword } = req.body;
 
     const user = await getUserByEmail(email);
-    if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
+    if (!user)
+      return res.status(404).json({ message: "Usuario no encontrado" });
 
     // Validar que la contraseña actual sea correcta
     const match = bcrypt.compareSync(currentPassword, user.password);
     if (!match) {
-      return res.status(400).json({ message: "La contraseña actual es incorrecta" });
+      return res
+        .status(400)
+        .json({ message: "La contraseña actual es incorrecta" });
     }
 
     // Encriptar y guardar la nueva
     user.password = await bcrypt.hash(newPassword, 10);
     await user.save();
 
-    return res.json({ success: true, message: "Contraseña actualizada correctamente" });
+    return res.json({
+      success: true,
+      message: "Contraseña actualizada correctamente",
+    });
   } catch (error) {
-    return res.status(500).json({ message: "Error al cambiar contraseña", error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Error al cambiar contraseña", error: error.message });
   }
 };
 
@@ -285,5 +310,5 @@ module.exports = {
   resetPassword,
   validateResetPassword,
   newPassword,
-  changePasswordAuth
+  changePasswordAuth,
 };

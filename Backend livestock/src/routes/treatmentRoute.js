@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { getAllTreatments, getAllTreatmentsById, createTreatment, updateTreatment, deleteTreatment } = require("../controllers/treatmentController");
 const ValidateToken = require("../middlewares/handlerToken");
+const { authorizeRoles } = require("../middlewares/authMiddleware");
 
 /**
  * @swagger
@@ -15,7 +16,7 @@ const ValidateToken = require("../middlewares/handlerToken");
  */
 
 // Rutas para tratamientos
-router.get("/TreatmentAll", ValidateToken, getAllTreatments);
+router.get("/TreatmentAll", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), getAllTreatments);
 
 /**
  * @swagger
@@ -36,7 +37,7 @@ router.get("/TreatmentAll", ValidateToken, getAllTreatments);
  */
 
 // Rutas para tratamientos con id
-router.get("/TreatmentById/:id_treatment", ValidateToken, getAllTreatmentsById);
+router.get("/TreatmentById/:id_treatment", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), getAllTreatmentsById);
 
 /**
  * @swagger
@@ -50,7 +51,7 @@ router.get("/TreatmentById/:id_treatment", ValidateToken, getAllTreatmentsById);
  */
 
 // Rutas para crear un nuevo tratamiento
-router.post("/CreateTreatment", ValidateToken, createTreatment);
+router.post("/CreateTreatment", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), createTreatment);
 
 /**
  * @swagger
@@ -71,7 +72,7 @@ router.post("/CreateTreatment", ValidateToken, createTreatment);
  */
 
 // Rutas para actualizar un tratamiento existente
-router.put("/UpdateTreatment/:id_treatment", ValidateToken, updateTreatment);
+router.put("/UpdateTreatment/:id_treatment", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), updateTreatment);
 
 /**
  * @swagger
@@ -92,6 +93,6 @@ router.put("/UpdateTreatment/:id_treatment", ValidateToken, updateTreatment);
  */
 
 // Rutas para eliminar un tratamiento existente
-router.delete("/DeleteTreatment/:id_treatment", ValidateToken, deleteTreatment);
+router.delete("/DeleteTreatment/:id_treatment", ValidateToken, authorizeRoles("admin", "instructor"), deleteTreatment);
 
 module.exports = router;

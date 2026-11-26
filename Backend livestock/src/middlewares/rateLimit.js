@@ -3,7 +3,7 @@ const rateLimit = require("express-rate-limit");
 const limiter = rateLimit({
 
     windowMs: 60 * 1000, // 1 minuto
-    max: 50,
+    max: 200,
     message: {
         success: false,
         message: "Demasiadas solicitudes. Intenta nuevamente en un minuto."

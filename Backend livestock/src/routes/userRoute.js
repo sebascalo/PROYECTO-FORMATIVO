@@ -9,6 +9,7 @@ const {
     updateUser,
     deleteUser,
 } = require("../controllers/userController");
+const { authorizeRoles } = require("../middlewares/authMiddleware");
 
 /**
  * @swagger
@@ -22,7 +23,7 @@ const {
  */
 
 // Obtener usuarios
-router.get("/UserAll",ValidateToken, getAllUsers);
+router.get("/UserAll",ValidateToken, authorizeRoles("admin", "instructor"), getAllUsers);
 
 /**
  * @swagger
@@ -43,7 +44,7 @@ router.get("/UserAll",ValidateToken, getAllUsers);
  */
 
 // Obtener usuario por ID
-router.get("/UserById/:userId",ValidateToken, getAllUsersById);
+router.get("/UserById/:userId",ValidateToken, authorizeRoles("admin", "instructor"), getAllUsersById);
 
 /**
  * @swagger
@@ -57,7 +58,7 @@ router.get("/UserById/:userId",ValidateToken, getAllUsersById);
  */
 
 // Crear usuario
-router.post("/CreateUser",ValidateToken, createUser);
+router.post("/CreateUser",ValidateToken, authorizeRoles("admin", "instructor"), createUser);
 
 /**
  * @swagger
@@ -78,7 +79,7 @@ router.post("/CreateUser",ValidateToken, createUser);
  */
 
 // Actualizar usuario
-router.put("/UpdateUser/:userId",ValidateToken, updateUser);
+router.put("/UpdateUser/:userId",ValidateToken, authorizeRoles("admin", "instructor"), updateUser);
 
 /**
  * @swagger
@@ -99,6 +100,6 @@ router.put("/UpdateUser/:userId",ValidateToken, updateUser);
  */
 
 // Inactivar usuario
-router.delete("/DeleteUser/:userId",ValidateToken, deleteUser);
+router.delete("/DeleteUser/:userId",ValidateToken, authorizeRoles("admin", "instructor"), deleteUser);
 
 module.exports = router;

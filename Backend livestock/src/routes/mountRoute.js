@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { getAllMounts, getAllMountsById, createMount, updateMount, deleteMount } = require("../controllers/mountController");
 const ValidateToken = require("../middlewares/handlerToken");
+const { authorizeRoles } = require("../middlewares/authMiddleware");
 
 /**
  * @swagger
@@ -15,7 +16,7 @@ const ValidateToken = require("../middlewares/handlerToken");
  */
 
 // Rutas para montas naturales
-router.get("/MountAll", ValidateToken, getAllMounts);
+router.get("/MountAll", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"),   getAllMounts);
 
 /**
  * @swagger
@@ -36,7 +37,7 @@ router.get("/MountAll", ValidateToken, getAllMounts);
  */
 
 // Rutas para montas naturales con id
-router.get("/MountById/:id_mount", ValidateToken, getAllMountsById);
+router.get("/MountById/:id_mount", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), getAllMountsById);
 
 /**
  * @swagger
@@ -50,7 +51,7 @@ router.get("/MountById/:id_mount", ValidateToken, getAllMountsById);
  */
 
 // Rutas para crear una nueva monta natural
-router.post("/CreateMount", ValidateToken, createMount);
+router.post("/CreateMount", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), createMount);
 
 /**
  * @swagger
@@ -71,7 +72,7 @@ router.post("/CreateMount", ValidateToken, createMount);
  */
 
 // Rutas para actualizar una monta natural existente
-router.put("/UpdateMount/:id_mount", ValidateToken, updateMount);
+router.put("/UpdateMount/:id_mount", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), updateMount);
 
 /**
  * @swagger
@@ -92,6 +93,6 @@ router.put("/UpdateMount/:id_mount", ValidateToken, updateMount);
  */
 
 // Rutas para eliminar una monta natural existente
-router.delete("/DeleteMount/:id_mount", ValidateToken, deleteMount);
+router.delete("/DeleteMount/:id_mount", ValidateToken, authorizeRoles("admin", "instructor"), deleteMount);
 
 module.exports = router;

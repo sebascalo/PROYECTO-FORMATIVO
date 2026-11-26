@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { getAllArtificialInseminations, getAllArtificialInseminationsById, createArtificialInsemination, updateArtificialInsemination, deleteArtificialInsemination } = require("../controllers/artificialInseminationController");
 const ValidateToken = require("../middlewares/handlerToken");
+const { authorizeRoles } = require("../middlewares/authMiddleware");
 
 /**
  * @swagger
@@ -15,7 +16,7 @@ const ValidateToken = require("../middlewares/handlerToken");
  */
 
 // Rutas para inseminaciones artificiales
-router.get("/ArtificialInseminationAll", ValidateToken, getAllArtificialInseminations);
+router.get("/ArtificialInseminationAll", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), getAllArtificialInseminations);
 
 /**
  * @swagger
@@ -36,7 +37,7 @@ router.get("/ArtificialInseminationAll", ValidateToken, getAllArtificialInsemina
  */
 
 // Rutas para inseminaciones artificiales con id
-router.get("/ArtificialInseminationById/:id_artifInse", ValidateToken, getAllArtificialInseminationsById);
+router.get("/ArtificialInseminationById/:id_artifInse", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), getAllArtificialInseminationsById);
 
 /**
  * @swagger
@@ -50,7 +51,7 @@ router.get("/ArtificialInseminationById/:id_artifInse", ValidateToken, getAllArt
  */
 
 // Rutas para crear una nueva inseminación artificial
-router.post("/CreateArtificialInsemination", ValidateToken, createArtificialInsemination);
+router.post("/CreateArtificialInsemination", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), createArtificialInsemination);
 
 /**
  * @swagger
@@ -71,7 +72,7 @@ router.post("/CreateArtificialInsemination", ValidateToken, createArtificialInse
  */
 
 // Rutas para actualizar una inseminación artificial existente
-router.put("/UpdateArtificialInsemination/:id_artifInse", ValidateToken, updateArtificialInsemination);
+router.put("/UpdateArtificialInsemination/:id_artifInse", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), updateArtificialInsemination);
 
 /**
  * @swagger
@@ -92,6 +93,6 @@ router.put("/UpdateArtificialInsemination/:id_artifInse", ValidateToken, updateA
  */
 
 // Rutas para eliminar una inseminación artificial existente
-router.delete("/DeleteArtificialInsemination/:id_artifInse", ValidateToken, deleteArtificialInsemination);
+router.delete("/DeleteArtificialInsemination/:id_artifInse", ValidateToken, authorizeRoles("admin", "instructor"), deleteArtificialInsemination);
 
 module.exports = router;

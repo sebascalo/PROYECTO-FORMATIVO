@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { getAllFoods, getAllFoodsById, createFood, updateFood, deleteFood } = require("../controllers/foodController");
 const ValidateToken = require("../middlewares/handlerToken");
+const { authorizeRoles } = require("../middlewares/authMiddleware");
 
 /**
  * @swagger
@@ -15,7 +16,7 @@ const ValidateToken = require("../middlewares/handlerToken");
  */
 
 // Rutas para alimentos
-router.get("/FoodAll", ValidateToken, getAllFoods);
+router.get("/FoodAll", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), getAllFoods);
 
 /**
  * @swagger
@@ -36,7 +37,7 @@ router.get("/FoodAll", ValidateToken, getAllFoods);
  */
 
 // Rutas para alimentos con id
-router.get("/FoodById/:id_food", ValidateToken, getAllFoodsById);
+router.get("/FoodById/:id_food", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), getAllFoodsById);
 
 /**
  * @swagger
@@ -50,7 +51,7 @@ router.get("/FoodById/:id_food", ValidateToken, getAllFoodsById);
  */
 
 // Rutas para crear un nuevo alimento
-router.post("/CreateFood", ValidateToken, createFood);
+router.post("/CreateFood", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), createFood);
 
 /**
  * @swagger
@@ -71,7 +72,7 @@ router.post("/CreateFood", ValidateToken, createFood);
  */
 
 // Rutas para actualizar un alimento existente
-router.put("/UpdateFood/:id_food", ValidateToken, updateFood);
+router.put("/UpdateFood/:id_food", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), updateFood);
 
 /**
  * @swagger
@@ -92,6 +93,6 @@ router.put("/UpdateFood/:id_food", ValidateToken, updateFood);
  */
 
 // Rutas para eliminar un alimento existente
-router.delete("/DeleteFood/:id_food", ValidateToken, deleteFood);
+router.delete("/DeleteFood/:id_food", ValidateToken, authorizeRoles("admin", "instructor"), deleteFood);
 
 module.exports = router;

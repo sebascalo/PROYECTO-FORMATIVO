@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { getAllResponsibles, getAllResponsiblesById, createResponsible, updateResponsible, deleteResponsible } = require("../controllers/responsibleController");
 const ValidateToken = require("../middlewares/handlerToken");
+const { authorizeRoles } = require("../middlewares/authMiddleware");
 
 /**
  * @swagger
@@ -15,7 +16,7 @@ const ValidateToken = require("../middlewares/handlerToken");
  */
 
 // Rutas para responsables
-router.get("/ResponsibleAll", ValidateToken, getAllResponsibles);
+router.get("/ResponsibleAll", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), getAllResponsibles);
 
 /**
  * @swagger
@@ -36,7 +37,7 @@ router.get("/ResponsibleAll", ValidateToken, getAllResponsibles);
  */
 
 // Rutas para responsables con id
-router.get("/ResponsibleById/:idResponsible", ValidateToken, getAllResponsiblesById);
+router.get("/ResponsibleById/:idResponsible", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), getAllResponsiblesById);
 
 /**
  * @swagger
@@ -50,7 +51,7 @@ router.get("/ResponsibleById/:idResponsible", ValidateToken, getAllResponsiblesB
  */
 
 // Rutas para crear un nuevo responsable
-router.post("/CreateResponsible", ValidateToken, createResponsible);
+router.post("/CreateResponsible", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), createResponsible);
 
 /**
  * @swagger
@@ -71,7 +72,7 @@ router.post("/CreateResponsible", ValidateToken, createResponsible);
  */
 
 // Rutas para actualizar un responsable existente
-router.put("/UpdateResponsible/:idResponsible", ValidateToken, updateResponsible);
+router.put("/UpdateResponsible/:idResponsible", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), updateResponsible);
 
 /**
  * @swagger
@@ -92,6 +93,6 @@ router.put("/UpdateResponsible/:idResponsible", ValidateToken, updateResponsible
  */
 
 // Rutas para eliminar un responsable existente
-router.delete("/DeleteResponsible/:idResponsible", ValidateToken, deleteResponsible);
+router.delete("/DeleteResponsible/:idResponsible", ValidateToken, authorizeRoles("admin", "instructor"), deleteResponsible);
 
 module.exports = router;

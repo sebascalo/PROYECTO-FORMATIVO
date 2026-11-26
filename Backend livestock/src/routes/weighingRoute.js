@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { getAllWeighings, getAllWeighingsById, createWeighing, updateWeighing, deleteWeighing } = require("../controllers/weighingController");
 const ValidateToken = require("../middlewares/handlerToken");
+const { authorizeRoles } = require("../middlewares/authMiddleware");
 
 /**
  * @swagger
@@ -15,7 +16,7 @@ const ValidateToken = require("../middlewares/handlerToken");
  */
 
 // Rutas para pesajes
-router.get("/WeighingAll", ValidateToken, getAllWeighings);
+router.get("/WeighingAll", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), getAllWeighings);
 
 /**
  * @swagger
@@ -36,7 +37,7 @@ router.get("/WeighingAll", ValidateToken, getAllWeighings);
  */
 
 // Rutas para pesajes con id
-router.get("/WeighingById/:id_weighing", ValidateToken, getAllWeighingsById);
+router.get("/WeighingById/:id_weighing", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), getAllWeighingsById);
 
 /**
  * @swagger
@@ -50,7 +51,7 @@ router.get("/WeighingById/:id_weighing", ValidateToken, getAllWeighingsById);
  */
 
 // Rutas para crear un nuevo pesaje
-router.post("/CreateWeighing", ValidateToken, createWeighing);
+router.post("/CreateWeighing", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), createWeighing);
 
 /**
  * @swagger
@@ -71,7 +72,7 @@ router.post("/CreateWeighing", ValidateToken, createWeighing);
  */
 
 // Rutas para actualizar un pesaje existente
-router.put("/UpdateWeighing/:id_weighing", ValidateToken, updateWeighing);
+router.put("/UpdateWeighing/:id_weighing", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), updateWeighing);
 
 /**
  * @swagger
@@ -92,6 +93,6 @@ router.put("/UpdateWeighing/:id_weighing", ValidateToken, updateWeighing);
  */
 
 // Rutas para eliminar un pesaje existente
-router.delete("/DeleteWeighing/:id_weighing", ValidateToken, deleteWeighing);
+router.delete("/DeleteWeighing/:id_weighing", ValidateToken, authorizeRoles("admin", "instructor"), deleteWeighing);
 
 module.exports = router;

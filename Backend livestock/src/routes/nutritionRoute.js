@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { getAllNutritions, getAllNutritionsById, createNutrition, updateNutrition, deleteNutrition } = require("../controllers/nutritionController");
 const ValidateToken = require("../middlewares/handlerToken");
+const { authorizeRoles } = require("../middlewares/authMiddleware");
 
 /**
  * @swagger
@@ -15,7 +16,7 @@ const ValidateToken = require("../middlewares/handlerToken");
  */
 
 // Rutas para nutrición
-router.get("/NutritionAll", ValidateToken, getAllNutritions);
+router.get("/NutritionAll", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), getAllNutritions);
 
 /**
  * @swagger
@@ -36,7 +37,7 @@ router.get("/NutritionAll", ValidateToken, getAllNutritions);
  */
 
 // Rutas para nutrición con id
-router.get("/NutritionById/:id_nutrition", ValidateToken, getAllNutritionsById);
+router.get("/NutritionById/:id_nutrition", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), getAllNutritionsById);
 
 /**
  * @swagger
@@ -50,7 +51,7 @@ router.get("/NutritionById/:id_nutrition", ValidateToken, getAllNutritionsById);
  */
 
 // Rutas para crear un nuevo registro de nutrición
-router.post("/CreateNutrition", ValidateToken, createNutrition);
+router.post("/CreateNutrition", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"),   createNutrition);
 
 /**
  * @swagger
@@ -71,7 +72,7 @@ router.post("/CreateNutrition", ValidateToken, createNutrition);
  */
 
 // Rutas para actualizar un registro de nutrición existente
-router.put("/UpdateNutrition/:id_nutrition", ValidateToken, updateNutrition);
+router.put("/UpdateNutrition/:id_nutrition", ValidateToken, authorizeRoles("admin", "instructor", "gestor", "pasante"), updateNutrition);
 
 /**
  * @swagger
@@ -92,6 +93,6 @@ router.put("/UpdateNutrition/:id_nutrition", ValidateToken, updateNutrition);
  */
 
 // Rutas para eliminar un registro de nutrición existente
-router.delete("/DeleteNutrition/:id_nutrition", ValidateToken, deleteNutrition);
+router.delete("/DeleteNutrition/:id_nutrition", ValidateToken, authorizeRoles("admin", "instructor"), deleteNutrition);
 
 module.exports = router;
